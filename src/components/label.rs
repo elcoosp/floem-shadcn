@@ -91,7 +91,7 @@ impl IntoView for FormLabel {
 
         Box::new(floem::views::Label::new(display_text).style(move |s| {
             s.font_size(14.0)
-                .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                 .line_height(1.0)
                 .with_shadcn_theme(move |s, t| {
                     if error {
@@ -167,7 +167,7 @@ impl<V: IntoView + 'static> IntoView for LabelWithIcon<V> {
 
         let label = floem::views::Label::new(display_text).style(move |s| {
             s.font_size(14.0)
-                .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                 .line_height(1.0)
                 .with_shadcn_theme(move |s, t| {
                     if disabled {
@@ -246,7 +246,7 @@ impl<L: IntoView + 'static, I: IntoView + 'static> IntoView for FormField<L, I> 
             floem::views::Label::new(desc)
                 .style(move |s| {
                     s.font_size(12.0)
-                        .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
+                        .text_muted_foreground()
                 })
                 .into_any()
         } else {

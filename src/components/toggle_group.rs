@@ -277,7 +277,7 @@ impl IntoView for ToggleGroupItem {
                     .padding_top(8.0)
                     .padding_bottom(8.0)
                     .font_size(14.0)
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default
@@ -376,7 +376,7 @@ impl IntoView for ToggleGroupItemMultiple {
                     .padding_top(8.0)
                     .padding_bottom(8.0)
                     .font_size(14.0)
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default

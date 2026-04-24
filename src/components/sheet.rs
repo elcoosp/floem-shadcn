@@ -268,7 +268,7 @@ impl IntoView for SheetTitle {
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(18.0)
-                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
             })
         }))

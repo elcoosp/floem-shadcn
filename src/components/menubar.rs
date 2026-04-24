@@ -136,7 +136,7 @@ impl<C: IntoView + 'static> IntoView for MenubarMenu<C> {
                         .padding_top(6.0)
                         .padding_bottom(6.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                         .color(t.foreground)
                         .border_radius(t.radius)
                         .cursor(CursorStyle::Pointer);
@@ -255,7 +255,7 @@ impl IntoView for MenubarTrigger {
                     .padding_top(6.0)
                     .padding_bottom(6.0)
                     .font_size(14.0)
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                     .color(t.foreground)
                     .border_radius(t.radius)
                     .cursor(CursorStyle::Pointer)

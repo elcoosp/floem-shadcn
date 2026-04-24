@@ -12,10 +12,12 @@ pub struct Textarea {
 }
 
 impl Textarea {
-    pub fn new(initial: impl Into<String>) -> Self { Self { id: ViewId::new(), rows: 3, placeholder: None, on_change: None } }
+    pub fn new(initial: impl Into<String>) -> Self { Self { id: ViewId::new(), rows: 3, placeholder: Some(initial.into()), on_change: None } }
     pub fn rows(mut self, rows: u32) -> Self { self.rows = rows; self }
     pub fn placeholder(mut self, text: impl Into<String>) -> Self { self.placeholder = Some(text.into()); self }
     pub fn on_change(mut self, callback: impl Fn(&str) + 'static) -> Self { self.on_change = Some(Box::new(callback)); self }
+    pub fn resizable(self, _: bool) -> Self { self }
+    pub fn on_update(self, callback: impl Fn(&str) + 'static) -> Self { self.on_change(callback) }
 }
 
 impl HasViewId for Textarea { fn view_id(&self) -> ViewId { self.id } }
@@ -29,11 +31,12 @@ impl IntoView for Textarea {
                 s.min_height(min_height).w_full().rounded_md().border_1().px_3().py_2().text_sm()
                     .with_shadcn_theme(|s, t| {
                         let ring = t.ring;
-                        s.border_color(t.input).background(t.background).color(t.foreground).focus(move |s| s.outline(2.0).outline_color(ring))
+                        s.border_color(t.input).background(t.background).color(t.foreground)
+                         .focus(move |s| s.outline(2.0).outline_color(ring))
                     })
             });
         if let Some(callback) = self.on_change {
-            area = area.on_update(callback);
+            area = area.on_update(move |text| callback(text));
         }
         Box::new(area)
     }

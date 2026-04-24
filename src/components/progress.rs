@@ -80,14 +80,14 @@ impl Progress {
                         floem::style::Width,
                         floem::style::Transition::linear(millis(200)),
                     )
-                    .with_shadcn_theme(|s, t| s.background(t.primary))
+                    .bg_primary()
             }),
         )
         .style(|s| {
             s.width_full()
                 .height(8.0)
                 .border_radius(4.0)
-                .with_shadcn_theme(|s, t| s.background(t.muted))
+                .bg_muted()
         })
     }
 }

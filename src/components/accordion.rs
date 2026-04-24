@@ -118,7 +118,7 @@ impl AccordionItem {
                 floem::views::Label::new(title).style(|s| {
                     s.with_shadcn_theme(|s, t| {
                         s.font_size(14.0)
-                            .font_weight(FontFontWeight::MEDIUM)
+                            .font_weight(FontFontFontWeight::MEDIUM)
                             .color(t.foreground)
                             .flex_grow(1.0)
                     })

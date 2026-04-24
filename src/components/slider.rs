@@ -148,7 +148,7 @@ impl Slider {
         // When pointer capture is active, PointerMove gives view-relative coords
         let calc_value_relative = move |container_id: ViewId, x: f64| {
             let content_rect = container_id.get_content_rect();
-            let layout_rect = container_id.layout_rect();
+            let layout_rect = container_id.get_layout_rect();
             let track_width = content_rect.width();
             // x is view-relative, convert to content-relative by subtracting the padding
             // padding = content_rect.x0 - layout_rect.x0 (in window coords, but same offset)
@@ -175,7 +175,7 @@ impl Slider {
                 .padding_left(8.0) // account for thumb overflow
                 .padding_right(8.0)
         })
-        .on_event(floem::event::EventListener::PointerDown, move |e| {
+        .on_event(floem::event::Event::PointerDown, move |e| {
             if disabled {
                 return floem::event::EventPropagation::Continue;
             }
@@ -191,7 +191,7 @@ impl Slider {
             }
             floem::event::EventPropagation::Continue
         })
-        .on_event(floem::event::EventListener::PointerMove, move |e| {
+        .on_event(floem::event::Event::PointerMove, move |e| {
             if disabled || !is_dragging.get() {
                 return floem::event::EventPropagation::Continue;
             }
@@ -202,7 +202,7 @@ impl Slider {
             }
             floem::event::EventPropagation::Continue
         })
-        .on_event(floem::event::EventListener::PointerUp, move |_| {
+        .on_event(floem::event::Event::PointerUp, move |_| {
             is_dragging.set(false);
             // Pointer capture is automatically released on pointer up
             floem::event::EventPropagation::Continue

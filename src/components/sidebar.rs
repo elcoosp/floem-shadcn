@@ -385,7 +385,7 @@ impl IntoView for SidebarGroupLabel {
             floem::views::Label::derived(move || text.clone()).style(|s| {
                 s.with_shadcn_theme(|s, t| {
                     s.font_size(11.0)
-                        .font_weight(FontFontWeight::SEMIBOLD)
+                        .font_weight(FontFontFontWeight::SEMIBOLD)
                         .color(t.muted_foreground)
                         .padding_left(8.0)
                         .padding_right(8.0)
@@ -692,7 +692,7 @@ impl IntoView for SidebarMenuButton {
                 if active {
                     base.background(t.accent)
                         .color(t.accent_foreground)
-                        .font_weight(FontFontWeight::MEDIUM)
+                        .font_weight(FontFontFontWeight::MEDIUM)
                 } else {
                     base.background(peniko::Color::TRANSPARENT).color(t.foreground)
                 }
@@ -766,7 +766,7 @@ impl IntoView for SidebarMenuButtonWithLabel {
                     if active {
                         base.background(t.accent)
                             .color(t.accent_foreground)
-                            .font_weight(FontFontWeight::MEDIUM)
+                            .font_weight(FontFontFontWeight::MEDIUM)
                     } else {
                         base.background(peniko::Color::TRANSPARENT)
                             .color(t.foreground)

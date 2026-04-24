@@ -338,7 +338,7 @@ impl IntoView for CommandGroup {
                     .padding_top(6.0)
                     .padding_bottom(6.0)
                     .font_size(12.0)
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                     .color(t.muted_foreground)
             })
         });
@@ -612,7 +612,7 @@ impl IntoView for CommandShortcut {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(12.0)
                     .color(t.muted_foreground)
-                    .margin_left(floem::style::PxPctAuto::Auto)
+                    .margin_left(floem::unit::LengthAuto::Auto)
             })
         }))
     }

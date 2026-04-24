@@ -103,7 +103,7 @@ impl Alert {
         if let Some(title) = self.title {
             content_children.push(Box::new(floem::views::Label::new(title).style(move |s| {
                 s.font_size(14.0)
-                    .font_weight(FontFontWeight::MEDIUM)
+                    .font_weight(FontFontFontWeight::MEDIUM)
                     .line_height(1.0)
                     .with_shadcn_theme(move |s, t| {
                         let color = match variant {
@@ -119,7 +119,7 @@ impl Alert {
             content_children.push(Box::new(floem::views::Label::new(description).style(
                 move |s| {
                     s.font_size(14.0)
-                        .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
+                        .text_muted_foreground()
                 },
             )));
         }

@@ -132,7 +132,7 @@ impl IntoView for CardHeader {
         if let Some(title) = self.title {
             children
                 .push(Box::new(Label::derived(move || title.clone()).style(|s| {
-                    s.text_lg().font_weight(FontFontWeight::SEMIBOLD).leading_none()
+                    s.text_lg().font_weight(FontFontFontWeight::SEMIBOLD).leading_none()
                 })));
         }
 
@@ -141,7 +141,7 @@ impl IntoView for CardHeader {
                 |s| {
                     s.text_sm()
                         .line_height(1.43) // 20px / 14px
-                        .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
+                        .text_muted_foreground()
                 },
             )));
         }
@@ -257,7 +257,7 @@ impl<V: IntoView + 'static> IntoView for CardTitle<V> {
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
-                .style(|s| s.text_lg().font_weight(FontFontWeight::SEMIBOLD).leading_none()),
+                .style(|s| s.text_lg().font_weight(FontFontFontWeight::SEMIBOLD).leading_none()),
         )
     }
 }
@@ -297,7 +297,7 @@ impl<V: IntoView + 'static> IntoView for CardDescription<V> {
             floem::views::Container::with_id(self.id, self.child).style(|s| {
                 s.text_sm()
                     .line_height(1.43) // 20px / 14px
-                    .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
+                    .text_muted_foreground()
             }),
         )
     }

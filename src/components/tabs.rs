@@ -181,7 +181,7 @@ impl Tab {
                         .border(1.0) // border
                         .border_color(peniko::Color::TRANSPARENT) // border-transparent
                         .font_size(14.0)
-                        .font_weight(FontFontWeight::MEDIUM)
+                        .font_weight(FontFontFontWeight::MEDIUM)
                         .cursor(CursorStyle::Pointer)
                         .transition(
                             floem::style::Background,

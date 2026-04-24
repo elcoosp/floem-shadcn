@@ -135,7 +135,7 @@ impl IntoView for Toggle {
                     .padding_top(py)
                     .padding_bottom(py)
                     .font_size(font_size)
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default

@@ -218,7 +218,7 @@ impl IntoView for Toast {
         let title_view = floem::views::Label::new(title).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(14.0)
-                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
                     .color(match variant {
                         ToastVariant::Default => t.foreground,
                         ToastVariant::Success => t.foreground,
@@ -341,7 +341,7 @@ impl IntoView for ToastAction {
         let btn = floem::views::Label::new(text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(13.0)
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                     .color(t.foreground)
                     .padding_left(12.0)
                     .padding_right(12.0)

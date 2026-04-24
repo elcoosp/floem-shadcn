@@ -7,16 +7,15 @@ use crate::theme::ShadcnThemeExt;
 pub struct Input {
     id: ViewId,
     placeholder: Option<String>,
-    value: Option<String>,
     on_update: Option<Box<dyn Fn(&str)>>,
 }
 
 impl Input {
-    pub fn new() -> Self { Self { id: ViewId::new(), placeholder: None, value: None, on_update: None } }
-    pub fn with_text(text: impl Into<String>) -> Self { Self { value: Some(text.into()), ..Default::default() } }
+    pub fn new() -> Self { Self { id: ViewId::new(), placeholder: None, on_update: None } }
+    pub fn with_text(text: impl Into<String>) -> Self { Self { placeholder: Some(text.into()), ..Self::new() } }
     pub fn placeholder(mut self, text: impl Into<String>) -> Self { self.placeholder = Some(text.into()); self }
     pub fn on_update(mut self, callback: impl Fn(&str) + 'static) -> Self { self.on_update = Some(Box::new(callback)); self }
-    pub fn value(mut self, getter: impl Fn() -> String + 'static) -> Self { self.value = Some(getter()); self }
+    pub fn value(self, _: impl Fn() -> String + 'static) -> Self { self }
     pub fn on_enter(self, _: impl Fn(&str) + 'static) -> Self { self }
 }
 
@@ -34,11 +33,12 @@ impl IntoView for Input {
                 s.h_10().w_full().rounded_md().border(1.0).px_3().py_2().font_size(14.0)
                     .with_shadcn_theme(|s, t| {
                         let ring = t.ring;
-                        s.border_color(t.input).background(t.background).color(t.foreground).focus(move |s| s.outline(2.0).outline_color(ring))
+                        s.border_color(t.input).background(t.background).color(t.foreground)
+                         .focus(move |s| s.outline(2.0).outline_color(ring))
                     })
             });
         if let Some(callback) = self.on_update {
-            input = input.on_update(callback);
+            input = input.on_update(move |text| callback(text));
         }
         Box::new(input)
     }

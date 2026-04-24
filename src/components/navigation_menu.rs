@@ -174,14 +174,14 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                         .color(t.foreground)
                         .border_radius(t.radius)
                         .cursor(CursorStyle::Pointer)
                         .hover(|s| s.background(t.accent).color(t.accent_foreground))
                 })
             })
-            .on_event_stop(floem::event::EventListener::PointerEnter, move |_| {
+            .on_event_stop(floem::event::Event::PointerEnter, move |_| {
                 is_open.set(true);
             });
 
@@ -215,7 +215,7 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
                         }
                     })
                 })
-                .on_event_stop(floem::event::EventListener::PointerEnter, move |_| {
+                .on_event_stop(floem::event::Event::PointerEnter, move |_| {
                     is_open.set(true);
                 })
                 .into_any()
@@ -226,7 +226,7 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
         Box::new(
             floem::views::Container::new(floem::views::Stack::new((trigger, dropdown)))
                 .style(|s| s.position(floem::style::Position::Relative))
-                .on_event_stop(floem::event::EventListener::PointerLeave, move |_| {
+                .on_event_stop(floem::event::Event::PointerLeave, move |_| {
                     is_open.set(false);
                 }),
         )
@@ -274,7 +274,7 @@ impl IntoView for NavigationMenuTrigger {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                         .color(t.foreground)
                         .border_radius(t.radius)
                         .cursor(CursorStyle::Pointer)
@@ -395,7 +395,7 @@ impl IntoView for NavigationMenuLink {
         let title = floem::views::Label::new(label).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(14.0)
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                     .color(t.foreground)
             })
         });

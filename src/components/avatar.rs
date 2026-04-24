@@ -58,8 +58,8 @@ impl Avatar {
 
         floem::views::Container::new(floem::views::Label::new(fallback).style(move |s| {
             s.font_size(font_size)
-                .font_weight(FontFontWeight::MEDIUM)
-                .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
+                .font_weight(FontFontFontWeight::MEDIUM)
+                .text_muted_foreground()
         }))
         .style(move |s| {
             s.width(size)
@@ -68,7 +68,7 @@ impl Avatar {
                 .display(floem::style::Display::Flex)
                 .items_center()
                 .justify_center()
-                .with_shadcn_theme(|s, t| s.background(t.muted))
+                .bg_muted()
         })
     }
 }

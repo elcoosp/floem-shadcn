@@ -202,7 +202,7 @@ impl IntoView for Calendar {
             s.with_shadcn_theme(move |s, t| {
                 s.flex_grow(1.0)
                     .font_size(14.0)
-                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
                     .justify_center()
             })
@@ -339,7 +339,7 @@ fn day_header(text: &'static str) -> impl IntoView {
         s.with_shadcn_theme(move |s, t| {
             s.width(32.0)
                 .font_size(12.0)
-                .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                 .color(t.muted_foreground)
                 .justify_center()
         })
@@ -389,7 +389,7 @@ impl IntoView for CalendarSimple {
                     s.width_full()
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
+                        .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
                         .color(t.foreground)
                         .justify_center()
                 })

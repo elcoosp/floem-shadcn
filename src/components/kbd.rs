@@ -55,7 +55,7 @@ impl IntoView for Kbd {
                             .padding_top(2.0)
                             .padding_bottom(2.0)
                             .font_size(11.0)
-                            .font_weight(FontFontWeight::MEDIUM)
+                            .font_weight(FontFontFontWeight::MEDIUM)
                             .background(t.muted)
                             .color(t.muted_foreground)
                             .border(1.0)

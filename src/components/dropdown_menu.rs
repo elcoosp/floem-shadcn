@@ -467,7 +467,7 @@ impl IntoView for DropdownMenuLabel {
                     .padding_top(8.0)
                     .padding_bottom(4.0)
                     .font_size(12.0)
-                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
             })
         }))

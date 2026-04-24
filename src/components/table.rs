@@ -189,7 +189,7 @@ impl IntoView for TableFooter {
             s.with_shadcn_theme(|s, t| {
                 s.width_full()
                     .grid()
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
                     .background(t.muted.with_alpha(0.5))
                     .border_top(1.0)
                     .border_color(t.border)
@@ -298,7 +298,7 @@ impl IntoView for TableHead {
                     .height(40.0) // h-10
                     .padding_horiz(8.0) // px-2
                     .font_size(14.0) // text-sm
-                    .font_weight(floem::style::FontFontFontWeight::MEDIUM) // font-medium
+                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM) // font-medium
                     .color(t.foreground) // text-foreground
                     .items_center(); // align-middle vertically
                 if let Some(w) = width {
@@ -359,7 +359,7 @@ impl<V: IntoView + 'static> IntoView for TableHeadCustom<V> {
                         .height(40.0) // h-10
                         .padding_horiz(8.0) // px-2
                         .font_size(14.0) // text-sm
-                        .font_weight(floem::style::FontFontFontWeight::MEDIUM) // font-medium
+                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM) // font-medium
                         .color(t.foreground) // text-foreground
                         .items_center(); // align-middle vertically
                     if let Some(w) = width {

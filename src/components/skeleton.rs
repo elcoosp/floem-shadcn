@@ -99,7 +99,7 @@ impl Skeleton {
                 style = style.height(20.0);
             }
 
-            style.with_shadcn_theme(|s, t| s.background(t.muted))
+            style.bg_muted()
         })
     }
 }

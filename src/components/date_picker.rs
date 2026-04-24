@@ -254,7 +254,7 @@ fn create_calendar_content(
             s.with_shadcn_theme(move |s, t| {
                 s.flex_grow(1.0)
                     .font_size(14.0)
-                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
                     .justify_center()
             })
