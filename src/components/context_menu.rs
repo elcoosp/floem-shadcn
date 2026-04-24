@@ -182,11 +182,7 @@ where
     TV: IntoView + 'static,
 {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -221,11 +217,7 @@ impl<V: IntoView + 'static> HasViewId for ContextMenuContent<V> {
 
 impl<V: IntoView + 'static> IntoView for ContextMenuContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -297,11 +289,7 @@ impl HasViewId for ContextMenuItem {
 
 impl IntoView for ContextMenuItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -400,11 +388,7 @@ impl HasViewId for ContextMenuSeparator {
 
 impl IntoView for ContextMenuSeparator {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Empty::new().style(|s| {
@@ -447,11 +431,7 @@ impl HasViewId for ContextMenuLabel {
 
 impl IntoView for ContextMenuLabel {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -464,7 +444,7 @@ impl IntoView for ContextMenuLabel {
                     .padding_top(8.0)
                     .padding_bottom(4.0)
                     .font_size(12.0)
-                    .font_weight(floem::text::Weight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
             })
         }))
@@ -499,11 +479,7 @@ impl<V: IntoView + 'static> HasViewId for ContextMenuGroup<V> {
 
 impl<V: IntoView + 'static> IntoView for ContextMenuGroup<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(

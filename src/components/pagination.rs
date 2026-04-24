@@ -68,11 +68,7 @@ impl HasViewId for Pagination {
 
 impl IntoView for Pagination {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let current_page = self.current_page;
@@ -304,11 +300,7 @@ impl<V: IntoView + 'static> HasViewId for PaginationContent<V> {
 
 impl<V: IntoView + 'static> IntoView for PaginationContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -350,11 +342,7 @@ impl<V: IntoView + 'static> HasViewId for PaginationItem<V> {
 
 impl<V: IntoView + 'static> IntoView for PaginationItem<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Container::with_id(self.id, self.child))
@@ -399,11 +387,7 @@ impl HasViewId for PaginationLink {
 
 impl IntoView for PaginationLink {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let page = self.page;
@@ -481,11 +465,7 @@ impl HasViewId for PaginationPrevious {
 
 impl IntoView for PaginationPrevious {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let current_page = self.current_page;
@@ -572,11 +552,7 @@ impl HasViewId for PaginationNext {
 
 impl IntoView for PaginationNext {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let current_page = self.current_page;
@@ -654,11 +630,7 @@ impl HasViewId for PaginationEllipsis {
 
 impl IntoView for PaginationEllipsis {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Label::new("...").style(|s| {

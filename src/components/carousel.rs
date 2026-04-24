@@ -104,11 +104,7 @@ impl<I: IntoView + 'static> HasViewId for Carousel<I> {
 
 impl<I: IntoView + 'static> IntoView for Carousel<I> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let current = self.current;
@@ -244,11 +240,7 @@ impl<V: IntoView + 'static> HasViewId for CarouselItem<V> {
 
 impl<V: IntoView + 'static> IntoView for CarouselItem<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -322,11 +314,7 @@ impl HasViewId for CarouselPrevious {
 
 impl IntoView for CarouselPrevious {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let current = self.current;
@@ -399,11 +387,7 @@ impl HasViewId for CarouselNext {
 
 impl IntoView for CarouselNext {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let current = self.current;

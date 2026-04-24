@@ -74,11 +74,7 @@ impl HasViewId for FormLabel {
 
 impl IntoView for FormLabel {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -95,7 +91,7 @@ impl IntoView for FormLabel {
 
         Box::new(floem::views::Label::new(display_text).style(move |s| {
             s.font_size(14.0)
-                .font_weight(floem::text::Weight::MEDIUM)
+                .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                 .line_height(1.0)
                 .with_shadcn_theme(move |s, t| {
                     if error {
@@ -156,11 +152,7 @@ impl<V: IntoView + 'static> HasViewId for LabelWithIcon<V> {
 
 impl<V: IntoView + 'static> IntoView for LabelWithIcon<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -175,7 +167,7 @@ impl<V: IntoView + 'static> IntoView for LabelWithIcon<V> {
 
         let label = floem::views::Label::new(display_text).style(move |s| {
             s.font_size(14.0)
-                .font_weight(floem::text::Weight::MEDIUM)
+                .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                 .line_height(1.0)
                 .with_shadcn_theme(move |s, t| {
                     if disabled {
@@ -243,11 +235,7 @@ impl<L: IntoView + 'static, I: IntoView + 'static> HasViewId for FormField<L, I>
 
 impl<L: IntoView + 'static, I: IntoView + 'static> IntoView for FormField<L, I> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let description = self.description;

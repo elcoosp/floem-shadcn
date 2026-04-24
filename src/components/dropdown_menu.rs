@@ -152,11 +152,7 @@ where
     TV: IntoView + 'static,
 {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -191,11 +187,7 @@ impl<V: IntoView + 'static> HasViewId for DropdownMenuContent<V> {
 
 impl<V: IntoView + 'static> IntoView for DropdownMenuContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -259,11 +251,7 @@ impl HasViewId for DropdownMenuItem {
 
 impl IntoView for DropdownMenuItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -356,11 +344,7 @@ impl<V: IntoView + 'static> HasViewId for DropdownMenuItemCustom<V> {
 
 impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let disabled = self.disabled;
@@ -427,11 +411,7 @@ impl HasViewId for DropdownMenuSeparator {
 
 impl IntoView for DropdownMenuSeparator {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Empty::new().style(|s| {
@@ -474,11 +454,7 @@ impl HasViewId for DropdownMenuLabel {
 
 impl IntoView for DropdownMenuLabel {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -491,7 +467,7 @@ impl IntoView for DropdownMenuLabel {
                     .padding_top(8.0)
                     .padding_bottom(4.0)
                     .font_size(12.0)
-                    .font_weight(floem::text::Weight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
             })
         }))
@@ -526,11 +502,7 @@ impl<V: IntoView + 'static> HasViewId for DropdownMenuGroup<V> {
 
 impl<V: IntoView + 'static> IntoView for DropdownMenuGroup<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -570,11 +542,7 @@ impl HasViewId for DropdownMenuShortcut {
 
 impl IntoView for DropdownMenuShortcut {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;

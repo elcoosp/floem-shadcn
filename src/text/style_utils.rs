@@ -52,7 +52,7 @@ impl Default for TextStyles {
             text_color: Color::BLACK,
             font_size: 14.0,
             line_height: LineHeightValue::Normal(1.5),
-            font_weight: Weight::NORMAL,
+            font_weight: FontWeight::NORMAL,
             font_family: Vec::new(),
         }
     }
@@ -64,7 +64,7 @@ pub fn extract_text_styles(style: &BuiltinStyle<'_>) -> TextStyles {
         text_color: style.color().unwrap_or(Color::BLACK),
         font_size: style.font_size().unwrap_or(14.0),
         line_height: style.line_height().unwrap_or(LineHeightValue::Normal(1.5)),
-        font_weight: style.font_weight().unwrap_or(Weight::NORMAL),
+        font_weight: style.font_weight().unwrap_or(FontWeight::NORMAL),
         font_family: style
             .font_family()
             .map(|f| vec![FamilyOwned::Name(f)])

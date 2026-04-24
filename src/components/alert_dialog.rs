@@ -108,11 +108,7 @@ impl HasViewId for AlertDialog {
 
 impl IntoView for AlertDialog {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -133,7 +129,7 @@ impl IntoView for AlertDialog {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::text::Weight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                         .background(t.primary)
                         .color(t.primary_foreground)
                         .border_radius(t.radius)
@@ -172,7 +168,7 @@ impl IntoView for AlertDialog {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::text::Weight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                         .background(t.secondary)
                         .color(t.secondary_foreground)
                         .border_radius(t.radius)
@@ -204,7 +200,7 @@ impl IntoView for AlertDialog {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::text::Weight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                         .background(bg)
                         .color(fg)
                         .border_radius(t.radius)
@@ -224,7 +220,7 @@ impl IntoView for AlertDialog {
             .style(|s| s.gap(8.0).justify_end());
 
         // Dialog content in Overlay - escapes parent clipping
-        let dialog_overlay = Overlay::new().child(
+        let dialog_overlay = Overlay::new(
             floem::views::Stack::new((
                 // Backdrop - semi-transparent, doesn't close on click for alert dialogs
                 floem::views::Empty::new()
@@ -301,11 +297,7 @@ impl<V: IntoView + 'static> HasViewId for AlertDialogTrigger<V> {
 
 impl<V: IntoView + 'static> IntoView for AlertDialogTrigger<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -350,11 +342,7 @@ impl<V: IntoView + 'static> HasViewId for AlertDialogContent<V> {
 
 impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -362,7 +350,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
 
         // Alert dialog content in Overlay - escapes parent clipping
         Box::new(
-            Overlay::new().child(
+            Overlay::new(
                 floem::views::Stack::new((
                     // Backdrop - semi-transparent, doesn't close on click for alert dialogs
                     floem::views::Empty::new()
@@ -436,11 +424,7 @@ impl<V: IntoView + 'static> HasViewId for AlertDialogHeader<V> {
 
 impl<V: IntoView + 'static> IntoView for AlertDialogHeader<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -481,11 +465,7 @@ impl<V: IntoView + 'static> HasViewId for AlertDialogFooter<V> {
 
 impl<V: IntoView + 'static> IntoView for AlertDialogFooter<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -527,11 +507,7 @@ impl HasViewId for AlertDialogTitle {
 
 impl IntoView for AlertDialogTitle {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -539,7 +515,7 @@ impl IntoView for AlertDialogTitle {
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(18.0)
-                    .font_weight(floem::text::Weight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
             })
         }))
@@ -574,11 +550,7 @@ impl HasViewId for AlertDialogDescription {
 
 impl IntoView for AlertDialogDescription {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -643,11 +615,7 @@ impl HasViewId for AlertDialogAction {
 
 impl IntoView for AlertDialogAction {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -675,7 +643,7 @@ impl IntoView for AlertDialogAction {
                             .padding_top(8.0)
                             .padding_bottom(8.0)
                             .font_size(14.0)
-                            .font_weight(floem::text::Weight::MEDIUM)
+                            .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                             .background(bg)
                             .color(fg)
                             .border_radius(t.radius)
@@ -731,11 +699,7 @@ impl HasViewId for AlertDialogCancel {
 
 impl IntoView for AlertDialogCancel {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -750,7 +714,7 @@ impl IntoView for AlertDialogCancel {
                             .padding_top(8.0)
                             .padding_bottom(8.0)
                             .font_size(14.0)
-                            .font_weight(floem::text::Weight::MEDIUM)
+                            .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                             .background(t.secondary)
                             .color(t.secondary_foreground)
                             .border_radius(t.radius)

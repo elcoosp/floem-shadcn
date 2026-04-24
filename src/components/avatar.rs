@@ -15,7 +15,7 @@
 //! ```
 
 use floem::prelude::*;
-use floem::text::Weight;
+use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
@@ -58,7 +58,7 @@ impl Avatar {
 
         floem::views::Container::new(floem::views::Label::new(fallback).style(move |s| {
             s.font_size(font_size)
-                .font_weight(Weight::MEDIUM)
+                .font_weight(FontFontWeight::MEDIUM)
                 .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
         }))
         .style(move |s| {
@@ -87,11 +87,7 @@ impl HasViewId for Avatar {
 
 impl IntoView for Avatar {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())

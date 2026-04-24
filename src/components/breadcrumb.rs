@@ -51,11 +51,7 @@ impl<V: IntoView + 'static> HasViewId for Breadcrumb<V> {
 
 impl<V: IntoView + 'static> IntoView for Breadcrumb<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -98,11 +94,7 @@ impl<V: IntoView + 'static> HasViewId for BreadcrumbList<V> {
 
 impl<V: IntoView + 'static> IntoView for BreadcrumbList<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -169,11 +161,7 @@ impl HasViewId for BreadcrumbItem {
 
 impl IntoView for BreadcrumbItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -187,7 +175,7 @@ impl IntoView for BreadcrumbItem {
 
                 if is_current {
                     base.color(t.foreground)
-                        .font_weight(floem::text::Weight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                 } else if has_href {
                     base.color(t.muted_foreground)
                         .cursor(CursorStyle::Pointer)
@@ -244,11 +232,7 @@ impl<V: IntoView + 'static> HasViewId for BreadcrumbLink<V> {
 
 impl<V: IntoView + 'static> IntoView for BreadcrumbLink<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let on_click = self.on_click;
@@ -299,11 +283,7 @@ impl HasViewId for BreadcrumbPage {
 
 impl IntoView for BreadcrumbPage {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -311,7 +291,7 @@ impl IntoView for BreadcrumbPage {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(14.0)
                     .color(t.foreground)
-                    .font_weight(floem::text::Weight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
             })
         }))
     }
@@ -367,11 +347,7 @@ impl HasViewId for BreadcrumbSeparator {
 
 impl IntoView for BreadcrumbSeparator {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let separator = self.separator;
@@ -426,11 +402,7 @@ impl HasViewId for BreadcrumbEllipsis {
 
 impl IntoView for BreadcrumbEllipsis {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let on_click = self.on_click;

@@ -84,11 +84,7 @@ impl<V: IntoView + 'static> HasViewId for Drawer<V> {
 
 impl<V: IntoView + 'static> IntoView for Drawer<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -176,8 +172,7 @@ impl<V: IntoView + 'static> IntoView for Drawer<V> {
             });
 
         // Use Overlay with fixed positioning
-        let drawer_overlay = Overlay::new()
-            .child(
+        let drawer_overlay = Overlay::new(
                 floem::views::Stack::new((backdrop, drawer_panel))
                     .style(|s| s.width_full().height_full()),
             )
@@ -224,11 +219,7 @@ impl<V: IntoView + 'static> HasViewId for DrawerTrigger<V> {
 
 impl<V: IntoView + 'static> IntoView for DrawerTrigger<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -271,11 +262,7 @@ impl<V: IntoView + 'static> HasViewId for DrawerContent<V> {
 
 impl<V: IntoView + 'static> IntoView for DrawerContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -317,11 +304,7 @@ impl<V: IntoView + 'static> HasViewId for DrawerHeader<V> {
 
 impl<V: IntoView + 'static> IntoView for DrawerHeader<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -364,11 +347,7 @@ impl HasViewId for DrawerTitle {
 
 impl IntoView for DrawerTitle {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -376,7 +355,7 @@ impl IntoView for DrawerTitle {
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(18.0)
-                    .font_weight(floem::text::Weight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
             })
         }))
@@ -411,11 +390,7 @@ impl HasViewId for DrawerDescription {
 
 impl IntoView for DrawerDescription {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -456,11 +431,7 @@ impl<V: IntoView + 'static> HasViewId for DrawerFooter<V> {
 
 impl<V: IntoView + 'static> IntoView for DrawerFooter<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -505,11 +476,7 @@ impl<V: IntoView + 'static> HasViewId for DrawerClose<V> {
 
 impl<V: IntoView + 'static> IntoView for DrawerClose<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;

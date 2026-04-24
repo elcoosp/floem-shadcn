@@ -20,7 +20,7 @@
 //! ```
 
 use floem::prelude::*;
-use floem::text::Weight;
+use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
@@ -103,7 +103,7 @@ impl Alert {
         if let Some(title) = self.title {
             content_children.push(Box::new(floem::views::Label::new(title).style(move |s| {
                 s.font_size(14.0)
-                    .font_weight(Weight::MEDIUM)
+                    .font_weight(FontFontWeight::MEDIUM)
                     .line_height(1.0)
                     .with_shadcn_theme(move |s, t| {
                         let color = match variant {
@@ -170,11 +170,7 @@ impl HasViewId for Alert {
 
 impl IntoView for Alert {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())

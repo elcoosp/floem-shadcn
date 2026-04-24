@@ -128,11 +128,7 @@ impl HasViewId for ToastContainer {
 
 impl IntoView for ToastContainer {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let toasts = self.toasts;
@@ -168,7 +164,7 @@ impl IntoView for ToastContainer {
         });
 
         // Use Overlay with fixed positioning
-        Box::new(Overlay::new().child(toast_list).style(move |s| {
+        Box::new(Overlay::new(toast_list).style(move |s| {
             let has_toasts = !toasts.get().is_empty();
             s.fixed()
                 .inset_0()
@@ -210,11 +206,7 @@ impl Toast {
 
 impl IntoView for Toast {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let title = self.data.title.clone();
@@ -226,7 +218,7 @@ impl IntoView for Toast {
         let title_view = floem::views::Label::new(title).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(14.0)
-                    .font_weight(floem::text::Weight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
                     .color(match variant {
                         ToastVariant::Default => t.foreground,
                         ToastVariant::Success => t.foreground,
@@ -340,11 +332,7 @@ impl HasViewId for ToastAction {
 
 impl IntoView for ToastAction {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -353,7 +341,7 @@ impl IntoView for ToastAction {
         let btn = floem::views::Label::new(text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(13.0)
-                    .font_weight(floem::text::Weight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                     .color(t.foreground)
                     .padding_left(12.0)
                     .padding_right(12.0)

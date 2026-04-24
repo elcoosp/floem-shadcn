@@ -208,11 +208,7 @@ where
     CV: IntoView + 'static,
 {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -249,11 +245,7 @@ impl<V: IntoView + 'static> HasViewId for PopoverTrigger<V> {
 
 impl<V: IntoView + 'static> IntoView for PopoverTrigger<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let open = self.open;
@@ -297,11 +289,7 @@ impl<V: IntoView + 'static> HasViewId for PopoverContent<V> {
 
 impl<V: IntoView + 'static> IntoView for PopoverContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let open = self.open;

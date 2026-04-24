@@ -93,11 +93,7 @@ impl<V: IntoView + 'static> HasViewId for Badge<V> {
 
 impl<V: IntoView + 'static> IntoView for Badge<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())

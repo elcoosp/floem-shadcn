@@ -58,11 +58,7 @@ impl<V: IntoView + 'static> HasViewId for NavigationMenu<V> {
 
 impl<V: IntoView + 'static> IntoView for NavigationMenu<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -108,11 +104,7 @@ impl<V: IntoView + 'static> HasViewId for NavigationMenuList<V> {
 
 impl<V: IntoView + 'static> IntoView for NavigationMenuList<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -167,11 +159,7 @@ impl<C: IntoView + 'static> HasViewId for NavigationMenuItem<C> {
 
 impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let label = self.label;
@@ -186,7 +174,7 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::text::Weight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                         .color(t.foreground)
                         .border_radius(t.radius)
                         .cursor(CursorStyle::Pointer)
@@ -273,11 +261,7 @@ impl HasViewId for NavigationMenuTrigger {
 
 impl IntoView for NavigationMenuTrigger {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let label = self.label;
@@ -290,7 +274,7 @@ impl IntoView for NavigationMenuTrigger {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::text::Weight::MEDIUM)
+                        .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                         .color(t.foreground)
                         .border_radius(t.radius)
                         .cursor(CursorStyle::Pointer)
@@ -329,11 +313,7 @@ impl<V: IntoView + 'static> HasViewId for NavigationMenuContent<V> {
 
 impl<V: IntoView + 'static> IntoView for NavigationMenuContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -404,11 +384,7 @@ impl HasViewId for NavigationMenuLink {
 
 impl IntoView for NavigationMenuLink {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let label = self.label;
@@ -419,7 +395,7 @@ impl IntoView for NavigationMenuLink {
         let title = floem::views::Label::new(label).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(14.0)
-                    .font_weight(floem::text::Weight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                     .color(t.foreground)
             })
         });
@@ -482,11 +458,7 @@ impl HasViewId for NavigationMenuIndicator {
 
 impl IntoView for NavigationMenuIndicator {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Empty::new().style(|s| {
@@ -528,11 +500,7 @@ impl<V: IntoView + 'static> HasViewId for NavigationMenuViewport<V> {
 
 impl<V: IntoView + 'static> IntoView for NavigationMenuViewport<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Container::new(self.child).style(|s| {

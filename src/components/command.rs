@@ -81,11 +81,7 @@ impl HasViewId for Command {
 
 impl IntoView for Command {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let search = self.search;
@@ -171,11 +167,7 @@ impl HasViewId for CommandInput {
 
 impl IntoView for CommandInput {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let search = self.search;
@@ -236,11 +228,7 @@ impl HasViewId for CommandList {
 
 impl IntoView for CommandList {
     type V = Stem;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Stem::with_id(self.id).style(|s| {
@@ -287,11 +275,7 @@ impl HasViewId for CommandEmpty {
 
 impl IntoView for CommandEmpty {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -340,11 +324,7 @@ impl HasViewId for CommandGroup {
 
 impl IntoView for CommandGroup {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let heading = self.heading;
@@ -358,7 +338,7 @@ impl IntoView for CommandGroup {
                     .padding_top(6.0)
                     .padding_bottom(6.0)
                     .font_size(12.0)
-                    .font_weight(floem::text::Weight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                     .color(t.muted_foreground)
             })
         });
@@ -421,11 +401,7 @@ impl HasViewId for CommandItem {
 
 impl IntoView for CommandItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -512,11 +488,7 @@ impl<V: IntoView + 'static> HasViewId for CommandItemCustom<V> {
 
 impl<V: IntoView + 'static> IntoView for CommandItemCustom<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let disabled = self.disabled;
@@ -588,11 +560,7 @@ impl HasViewId for CommandSeparator {
 
 impl IntoView for CommandSeparator {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Empty::new().style(|s| {
@@ -635,11 +603,7 @@ impl HasViewId for CommandShortcut {
 
 impl IntoView for CommandShortcut {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let keys = self.keys;

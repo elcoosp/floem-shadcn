@@ -115,7 +115,7 @@ impl TextInput {
                     adjusted.state.position.x -= padding.3;
                     adjusted.state.position.x += offset;
                     adjusted.state.position.y -= padding.0;
-                    id.request_active();
+                    id.request_focus();
                     id.request_focus();
                     doc_signal.get_untracked().pointer_down(&adjusted);
                     last_cursor_action.set(Instant::now());
@@ -346,7 +346,7 @@ impl View for TextInput {
     }
 
     fn view_style(&self) -> Option<Style> {
-        Some(Style::new().cursor(StyleCursorStyle::Text).focusable(true))
+        Some(Style::new().cursor(StyleCursorStyle::Text).focusable())
     }
 
     fn compute_layout(&mut self, _cx: &mut ComputeLayoutCx) -> Option<Rect> {

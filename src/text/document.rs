@@ -60,7 +60,7 @@ impl Document {
         let text_color = RwSignal::new(Color::BLACK);
         let font_size = RwSignal::new(14.0);
         let line_height = RwSignal::new(LineHeightValue::Normal(1.5));
-        let font_weight = RwSignal::new(Weight::NORMAL);
+        let font_weight = RwSignal::new(FontWeight::NORMAL);
         let font_family = RwSignal::new(Vec::new());
 
         Self {

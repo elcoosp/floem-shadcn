@@ -23,7 +23,7 @@
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
-use floem::text::Weight;
+use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
@@ -61,11 +61,7 @@ impl<V: floem::view::IntoViewIter + 'static> HasViewId for Tabs<V> {
 
 impl<V: floem::view::IntoViewIter + 'static> IntoView for Tabs<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -105,11 +101,7 @@ impl<V: floem::view::IntoViewIter + 'static> HasViewId for TabsList<V> {
 
 impl<V: floem::view::IntoViewIter + 'static> IntoView for TabsList<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -189,7 +181,7 @@ impl Tab {
                         .border(1.0) // border
                         .border_color(peniko::Color::TRANSPARENT) // border-transparent
                         .font_size(14.0)
-                        .font_weight(Weight::MEDIUM)
+                        .font_weight(FontFontWeight::MEDIUM)
                         .cursor(CursorStyle::Pointer)
                         .transition(
                             floem::style::Background,
@@ -221,11 +213,7 @@ impl HasViewId for Tab {
 
 impl IntoView for Tab {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -270,11 +258,7 @@ impl<V: IntoView + 'static> HasViewId for TabsContent<V> {
 
 impl<V: IntoView + 'static> IntoView for TabsContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let id = self.id;

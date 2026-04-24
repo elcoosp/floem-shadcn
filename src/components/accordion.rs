@@ -19,7 +19,7 @@
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
-use floem::text::Weight;
+use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
@@ -56,11 +56,7 @@ impl<V: IntoView + 'static> HasViewId for Accordion<V> {
 
 impl<V: IntoView + 'static> IntoView for Accordion<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -122,7 +118,7 @@ impl AccordionItem {
                 floem::views::Label::new(title).style(|s| {
                     s.with_shadcn_theme(|s, t| {
                         s.font_size(14.0)
-                            .font_weight(Weight::MEDIUM)
+                            .font_weight(FontFontWeight::MEDIUM)
                             .color(t.foreground)
                             .flex_grow(1.0)
                     })
@@ -202,11 +198,7 @@ impl HasViewId for AccordionItem {
 
 impl IntoView for AccordionItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())

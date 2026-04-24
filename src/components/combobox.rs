@@ -140,12 +140,8 @@ impl HasViewId for Combobox {
 }
 
 impl IntoView for Combobox {
-    type V = floem::views::Stem;
-    type Intermediate = Self;
+    type V = Container;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let scope = self.scope;
@@ -154,7 +150,7 @@ impl IntoView for Combobox {
         // Build the Stem within the combobox's scope so children have access to context
         // Note: id.set_scope() is not needed here because ParentView::child() handles it
         // when .child() is called, using ParentView::scope() to get the scope.
-        scope.enter(move || floem::views::Stem::with_id(id))
+        scope.enter(move || Container::with_id(id), ())
     }
 }
 
@@ -211,11 +207,7 @@ impl HasViewId for ComboboxTrigger {
 
 impl IntoView for ComboboxTrigger {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let ctx = Context::get::<ComboboxContext>();
@@ -340,18 +332,14 @@ impl HasViewId for ComboboxContent {
 
 impl IntoView for ComboboxContent {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let ctx = Context::get::<ComboboxContext>();
         let id = self.id;
 
         // Create a Stem that children will be added to via .child()
-        let content_stem = floem::views::Stem::with_id(id).style(|s| s.flex_col().width_full());
+        let content_stem = Container::with_id(id).style(|s| s.flex_col().width_full(), ());
 
         if let Some(ctx) = ctx {
             let is_open = ctx.is_open;
@@ -360,7 +348,7 @@ impl IntoView for ComboboxContent {
             let trigger_size = ctx.trigger_size;
 
             Box::new(
-                floem::views::Overlay::new().child(
+                floem::views::Overlay::new(
                     floem::views::Stack::new((
                         // Backdrop - closes dropdown when clicking outside
                         floem::views::Empty::new()
@@ -448,11 +436,7 @@ impl HasViewId for ComboboxInput {
 
 impl IntoView for ComboboxInput {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let ctx = Context::get::<ComboboxContext>();
@@ -542,18 +526,14 @@ impl HasViewId for ComboboxList {
 
 impl IntoView for ComboboxList {
     type V = floem::views::Scroll;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let max_height = self.max_height;
 
         // Create a Stem that children will be added to via .child()
         let items_container =
-            floem::views::Stem::with_id(self.id).style(|s| s.flex_col().width_full().p_1());
+            Container::with_id(self.id).style(|s| s.flex_col().width_full().p_1(), ());
 
         // Wrap in Scroll for actual scrolling
         floem::views::Scroll::new(items_container)
@@ -601,11 +581,7 @@ impl HasViewId for ComboboxItem {
 
 impl IntoView for ComboboxItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let ctx = Context::get::<ComboboxContext>();
@@ -735,11 +711,7 @@ impl HasViewId for ComboboxEmpty {
 
 impl IntoView for ComboboxEmpty {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -791,15 +763,11 @@ impl HasViewId for ComboboxGroup {
 }
 
 impl IntoView for ComboboxGroup {
-    type V = floem::views::Stem;
-    type Intermediate = Self;
+    type V = Container;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
-        floem::views::Stem::with_id(self.id).style(|s| s.flex_col().width_full())
+        Container::with_id(self.id).style(|s| s.flex_col().width_full(), ())
     }
 }
 
@@ -833,11 +801,7 @@ impl HasViewId for ComboboxLabel {
 
 impl IntoView for ComboboxLabel {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Label::new(self.text).style(|s| {
@@ -881,11 +845,7 @@ impl HasViewId for ComboboxSeparator {
 
 impl IntoView for ComboboxSeparator {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Empty::new().style(|s| {

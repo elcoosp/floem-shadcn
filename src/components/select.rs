@@ -109,11 +109,7 @@ impl HasViewId for Select {
 
 impl IntoView for Select {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let selected = self.selected;
@@ -220,7 +216,7 @@ impl IntoView for Select {
         .style(|s| s.width_full().max_height(300.0));
 
         // Dropdown in Overlay - escapes parent clipping and z-index constraints
-        let dropdown_overlay = Overlay::new().child(
+        let dropdown_overlay = Overlay::new(
             floem::views::Stack::new((
                 // Backdrop - closes dropdown when clicking outside
                 floem::views::Empty::new()
@@ -392,11 +388,7 @@ impl<V: IntoView + 'static> HasViewId for SelectTrigger<V> {
 
 impl<V: IntoView + 'static> IntoView for SelectTrigger<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -458,11 +450,7 @@ impl<V: IntoView + 'static> HasViewId for SelectContent<V> {
 
 impl<V: IntoView + 'static> IntoView for SelectContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -554,11 +542,7 @@ impl HasViewId for SelectItem {
 
 impl IntoView for SelectItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let value = self.value;
@@ -674,11 +658,7 @@ impl HasViewId for SelectLabel {
 
 impl IntoView for SelectLabel {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         // shadcn/ui SelectLabel (v4 new-york):
@@ -723,11 +703,7 @@ impl HasViewId for SelectSeparator {
 
 impl IntoView for SelectSeparator {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         // shadcn/ui SelectSeparator (v4 new-york):
@@ -776,11 +752,7 @@ impl<V: IntoView + 'static> HasViewId for SelectGroup<V> {
 
 impl<V: IntoView + 'static> IntoView for SelectGroup<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let label_view = SelectLabel::new(self.label);

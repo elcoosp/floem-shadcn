@@ -218,11 +218,7 @@ impl HasViewId for Slider {
 
 impl IntoView for Slider {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())

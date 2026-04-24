@@ -143,11 +143,7 @@ impl HasViewId for Calendar {
 
 impl IntoView for Calendar {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let selected = self.selected;
@@ -206,7 +202,7 @@ impl IntoView for Calendar {
             s.with_shadcn_theme(move |s, t| {
                 s.flex_grow(1.0)
                     .font_size(14.0)
-                    .font_weight(floem::text::Weight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
                     .justify_center()
             })
@@ -343,7 +339,7 @@ fn day_header(text: &'static str) -> impl IntoView {
         s.with_shadcn_theme(move |s, t| {
             s.width(32.0)
                 .font_size(12.0)
-                .font_weight(floem::text::Weight::MEDIUM)
+                .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                 .color(t.muted_foreground)
                 .justify_center()
         })
@@ -380,11 +376,7 @@ impl HasViewId for CalendarSimple {
 
 impl IntoView for CalendarSimple {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let year = self.year;
@@ -397,7 +389,7 @@ impl IntoView for CalendarSimple {
                     s.width_full()
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::text::Weight::SEMIBOLD)
+                        .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
                         .color(t.foreground)
                         .justify_center()
                 })

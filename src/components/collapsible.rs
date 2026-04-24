@@ -161,11 +161,7 @@ where
     CV: IntoView + 'static,
 {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -208,11 +204,7 @@ impl<V: IntoView + 'static> HasViewId for CollapsibleTrigger<V> {
 
 impl<V: IntoView + 'static> IntoView for CollapsibleTrigger<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let open = self.open;
@@ -277,11 +269,7 @@ impl<V: IntoView + 'static> HasViewId for CollapsibleContent<V> {
 
 impl<V: IntoView + 'static> IntoView for CollapsibleContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let open = self.open;

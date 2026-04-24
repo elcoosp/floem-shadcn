@@ -57,11 +57,7 @@ impl<V: IntoView + 'static> HasViewId for RadioGroup<V> {
 
 impl<V: IntoView + 'static> IntoView for RadioGroup<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         // shadcn/ui: grid gap-3
@@ -206,11 +202,7 @@ impl HasViewId for RadioGroupItem {
 
 impl IntoView for RadioGroupItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())

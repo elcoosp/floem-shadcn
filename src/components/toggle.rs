@@ -111,11 +111,7 @@ impl HasViewId for Toggle {
 
 impl IntoView for Toggle {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let pressed = self.pressed;
@@ -139,7 +135,7 @@ impl IntoView for Toggle {
                     .padding_top(py)
                     .padding_bottom(py)
                     .font_size(font_size)
-                    .font_weight(floem::text::Weight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default
@@ -262,11 +258,7 @@ impl<V: IntoView + 'static> HasViewId for ToggleCustom<V> {
 
 impl<V: IntoView + 'static> IntoView for ToggleCustom<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let pressed = self.pressed;

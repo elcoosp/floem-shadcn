@@ -136,11 +136,7 @@ where
     V: IntoView + 'static,
 {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -193,11 +189,7 @@ impl<V: IntoView + 'static> HasViewId for AspectRatioSimple<V> {
 
 impl<V: IntoView + 'static> IntoView for AspectRatioSimple<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let ratio = self.ratio;

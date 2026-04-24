@@ -70,15 +70,11 @@ impl HasViewId for Table {
 }
 
 impl IntoView for Table {
-    type V = floem::views::Stem;
-    type Intermediate = Self;
+    type V = Container;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
-        floem::views::Stem::with_id(self.id).style(|s| {
+        Container::with_id(self.id, ()).style(|s| {
             s.with_shadcn_theme(|s, t| {
                 s.width_full()
                     .grid()
@@ -117,15 +113,11 @@ impl HasViewId for TableHeader {
 }
 
 impl IntoView for TableHeader {
-    type V = floem::views::Stem;
-    type Intermediate = Self;
+    type V = Container;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
-        floem::views::Stem::with_id(self.id)
+        Container::with_id(self.id, ())
             .style(|s| s.width_full().grid().grid_auto_flow(GridAutoFlow::Row))
     }
 }
@@ -155,15 +147,11 @@ impl HasViewId for TableBody {
 }
 
 impl IntoView for TableBody {
-    type V = floem::views::Stem;
-    type Intermediate = Self;
+    type V = Container;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
-        floem::views::Stem::with_id(self.id)
+        Container::with_id(self.id, ())
             .style(|s| s.width_full().grid().grid_auto_flow(GridAutoFlow::Row))
     }
 }
@@ -193,19 +181,15 @@ impl HasViewId for TableFooter {
 }
 
 impl IntoView for TableFooter {
-    type V = floem::views::Stem;
-    type Intermediate = Self;
+    type V = Container;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
-        floem::views::Stem::with_id(self.id).style(|s| {
+        Container::with_id(self.id, ()).style(|s| {
             s.with_shadcn_theme(|s, t| {
                 s.width_full()
                     .grid()
-                    .font_weight(floem::text::Weight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                     .background(t.muted.with_alpha(0.5))
                     .border_top(1.0)
                     .border_color(t.border)
@@ -239,15 +223,11 @@ impl HasViewId for TableRow {
 }
 
 impl IntoView for TableRow {
-    type V = floem::views::Stem;
-    type Intermediate = Self;
+    type V = Container;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
-        floem::views::Stem::with_id(self.id).style(|s| {
+        Container::with_id(self.id, ()).style(|s| {
             s.with_shadcn_theme(|s, t| {
                 s.width_full()
                     .grid() // Use Grid for cells
@@ -306,11 +286,7 @@ impl HasViewId for TableHead {
 
 impl IntoView for TableHead {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -322,7 +298,7 @@ impl IntoView for TableHead {
                     .height(40.0) // h-10
                     .padding_horiz(8.0) // px-2
                     .font_size(14.0) // text-sm
-                    .font_weight(floem::text::Weight::MEDIUM) // font-medium
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM) // font-medium
                     .color(t.foreground) // text-foreground
                     .items_center(); // align-middle vertically
                 if let Some(w) = width {
@@ -371,11 +347,7 @@ impl<V: IntoView + 'static> HasViewId for TableHeadCustom<V> {
 
 impl<V: IntoView + 'static> IntoView for TableHeadCustom<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let width = self.width;
@@ -387,7 +359,7 @@ impl<V: IntoView + 'static> IntoView for TableHeadCustom<V> {
                         .height(40.0) // h-10
                         .padding_horiz(8.0) // px-2
                         .font_size(14.0) // text-sm
-                        .font_weight(floem::text::Weight::MEDIUM) // font-medium
+                        .font_weight(floem::style::FontFontFontWeight::MEDIUM) // font-medium
                         .color(t.foreground) // text-foreground
                         .items_center(); // align-middle vertically
                     if let Some(w) = width {
@@ -437,11 +409,7 @@ impl HasViewId for TableCell {
 
 impl IntoView for TableCell {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -500,11 +468,7 @@ impl<V: IntoView + 'static> HasViewId for TableCellCustom<V> {
 
 impl<V: IntoView + 'static> IntoView for TableCellCustom<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let width = self.width;
@@ -556,11 +520,7 @@ impl HasViewId for TableCaption {
 
 impl IntoView for TableCaption {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;

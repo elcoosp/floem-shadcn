@@ -127,11 +127,7 @@ impl<V: IntoView + 'static> HasViewId for Dialog<V> {
 
 impl<V: IntoView + 'static> IntoView for Dialog<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let scope = self.scope;
@@ -173,11 +169,7 @@ impl<V: IntoView + 'static> HasViewId for DialogTrigger<V> {
 
 impl<V: IntoView + 'static> IntoView for DialogTrigger<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         // Get the dialog context from the current scope
@@ -223,11 +215,7 @@ impl<V: IntoView + 'static> HasViewId for DialogClose<V> {
 
 impl<V: IntoView + 'static> IntoView for DialogClose<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         // Get the dialog context from the current scope
@@ -289,11 +277,7 @@ impl HasViewId for DialogContent {
 
 impl IntoView for DialogContent {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let id = self.id;
@@ -405,11 +389,7 @@ impl HasViewId for DialogHeader {
 
 impl IntoView for DialogHeader {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         // shadcn/ui DialogHeader: flex flex-col gap-2 text-center sm:text-left
@@ -469,11 +449,7 @@ impl<V: IntoView + 'static> HasViewId for DialogFooter<V> {
 
 impl<V: IntoView + 'static> IntoView for DialogFooter<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         // shadcn/ui: flex flex-col-reverse gap-2 sm:flex-row sm:justify-end
@@ -512,11 +488,7 @@ impl<V: IntoView + 'static> HasViewId for DialogTitle<V> {
 
 impl<V: IntoView + 'static> IntoView for DialogTitle<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -555,11 +527,7 @@ impl<V: IntoView + 'static> HasViewId for DialogDescription<V> {
 
 impl<V: IntoView + 'static> IntoView for DialogDescription<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(

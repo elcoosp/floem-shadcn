@@ -67,11 +67,7 @@ impl<V: IntoView + 'static> HasViewId for Sheet<V> {
 
 impl<V: IntoView + 'static> IntoView for Sheet<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let open = self.open;
@@ -93,8 +89,7 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
         let content_wrapper = floem::views::Container::new(self.content);
 
         // Use Overlay with fixed positioning
-        let sheet_overlay = Overlay::new()
-            .child(
+        let sheet_overlay = Overlay::new(
                 floem::views::Stack::new((backdrop, content_wrapper))
                     .style(|s| s.width_full().height_full()),
             )
@@ -148,11 +143,7 @@ impl<V: IntoView + 'static> HasViewId for SheetContent<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let side = self.side;
@@ -229,11 +220,7 @@ impl<V: IntoView + 'static> HasViewId for SheetHeader<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetHeader<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -274,18 +261,14 @@ impl HasViewId for SheetTitle {
 
 impl IntoView for SheetTitle {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(18.0)
-                    .font_weight(floem::text::Weight::SEMIBOLD)
+                    .font_weight(floem::style::FontFontFontWeight::SEMIBOLD)
                     .color(t.foreground)
             })
         }))
@@ -320,11 +303,7 @@ impl HasViewId for SheetDescription {
 
 impl IntoView for SheetDescription {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -362,11 +341,7 @@ impl<V: IntoView + 'static> HasViewId for SheetFooter<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetFooter<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -411,11 +386,7 @@ impl<V: IntoView + 'static> HasViewId for SheetClose<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetClose<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let open = self.open;

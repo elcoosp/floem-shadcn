@@ -182,7 +182,7 @@ impl TextArea {
                             is_resizing.set(true);
                             resize_start_pos.set(Point::new(pos.x, pos.y));
                             resize_start_size.set(Size::new(width, height));
-                            id.request_active();
+                            id.request_focus();
                             return EventPropagation::Stop;
                         }
                     }
@@ -192,7 +192,7 @@ impl TextArea {
                     let mut adjusted = pointer_event.clone();
                     adjusted.state.position.x -= padding.3;
                     adjusted.state.position.y -= padding.0 - viewport.y0;
-                    id.request_active();
+                    id.request_focus();
                     id.request_focus();
                     doc_signal.get_untracked().pointer_down(&adjusted);
                     last_cursor_action.set(Instant::now());
@@ -466,7 +466,7 @@ impl View for TextArea {
         Some(
             Style::new()
                 .cursor(StyleCursorStyle::Text)
-                .focusable(true)
+                .focusable()
                 .set(floem::style::OverflowX, Overflow::Hidden) // Hidden to enable text wrapping
                 .set(floem::style::OverflowY, Overflow::Scroll)
                 .apply_if(resize_size.get().is_some(), move |s| {

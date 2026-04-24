@@ -105,11 +105,7 @@ impl<V: IntoView + 'static> HasViewId for ToggleGroup<V> {
 
 impl<V: IntoView + 'static> IntoView for ToggleGroup<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let variant = self.variant;
@@ -188,11 +184,7 @@ impl<V: IntoView + 'static> HasViewId for ToggleGroupMultiple<V> {
 
 impl<V: IntoView + 'static> IntoView for ToggleGroupMultiple<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let variant = self.variant;
@@ -264,11 +256,7 @@ impl HasViewId for ToggleGroupItem {
 
 impl IntoView for ToggleGroupItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let value = self.value.clone();
@@ -289,7 +277,7 @@ impl IntoView for ToggleGroupItem {
                     .padding_top(8.0)
                     .padding_bottom(8.0)
                     .font_size(14.0)
-                    .font_weight(floem::text::Weight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default
@@ -367,11 +355,7 @@ impl HasViewId for ToggleGroupItemMultiple {
 
 impl IntoView for ToggleGroupItemMultiple {
     type V = Box<dyn View>;
-    type Intermediate = Self;
 
-    fn into_intermediate(self) -> Self::Intermediate {
-        self
-    }
 
     fn into_view(self) -> Self::V {
         let value = self.value.clone();
@@ -392,7 +376,7 @@ impl IntoView for ToggleGroupItemMultiple {
                     .padding_top(8.0)
                     .padding_bottom(8.0)
                     .font_size(14.0)
-                    .font_weight(floem::text::Weight::MEDIUM)
+                    .font_weight(floem::style::FontFontFontWeight::MEDIUM)
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default

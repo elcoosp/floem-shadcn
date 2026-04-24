@@ -832,7 +832,7 @@ mod test {
         AttrsList::new(
             Attrs::default()
                 .font_size(16.0)
-                .weight(Weight::NORMAL)
+                .weight(FontWeight::NORMAL)
                 .family(&[FamilyOwned::Name("DejaVu".to_string())])
                 .line_height(LineHeightValue::Px(20.0)),
         )
