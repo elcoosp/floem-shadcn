@@ -37,7 +37,6 @@ use floem::view::ParentView;
 use floem::views::{Decorators, Stem};
 use floem::{HasViewId, ViewId};
 
-use crate::text::TextInput;
 use crate::theme::ShadcnThemeExt;
 
 // ============================================================================
@@ -81,6 +80,9 @@ impl HasViewId for Command {
 
 impl IntoView for Command {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -89,10 +91,8 @@ impl IntoView for Command {
         let content_id = self.content_id;
 
         // Search input at the top using floem-shadcn's TextInput
-        let input = TextInput::new()
+        let input = TextInput::new(RwSignal::new(String::new()))
             .placeholder(placeholder)
-            .value(move || search.get())
-            .on_update(move |text| search.set(text.to_string()))
             .style(|s| {
                 s.with_shadcn_theme(move |s, t| {
                     s.width_full()
@@ -167,6 +167,9 @@ impl HasViewId for CommandInput {
 
 impl IntoView for CommandInput {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -174,10 +177,8 @@ impl IntoView for CommandInput {
         let placeholder = self.placeholder;
 
         Box::new(
-            TextInput::new()
+            TextInput::new(RwSignal::new(String::new()))
                 .placeholder(placeholder)
-                .value(move || search.get())
-                .on_update(move |text| search.set(text.to_string()))
                 .style(|s| {
                     s.with_shadcn_theme(move |s, t| {
                         s.width_full()
@@ -228,6 +229,9 @@ impl HasViewId for CommandList {
 
 impl IntoView for CommandList {
     type V = Stem;
+    type Intermediate = Stem;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -275,6 +279,9 @@ impl HasViewId for CommandEmpty {
 
 impl IntoView for CommandEmpty {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -324,6 +331,9 @@ impl HasViewId for CommandGroup {
 
 impl IntoView for CommandGroup {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -338,7 +348,7 @@ impl IntoView for CommandGroup {
                     .padding_top(6.0)
                     .padding_bottom(6.0)
                     .font_size(12.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                    
                     .color(t.muted_foreground)
             })
         });
@@ -401,6 +411,9 @@ impl HasViewId for CommandItem {
 
 impl IntoView for CommandItem {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -488,6 +501,9 @@ impl<V: IntoView + 'static> HasViewId for CommandItemCustom<V> {
 
 impl<V: IntoView + 'static> IntoView for CommandItemCustom<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -560,6 +576,9 @@ impl HasViewId for CommandSeparator {
 
 impl IntoView for CommandSeparator {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -603,6 +622,9 @@ impl HasViewId for CommandShortcut {
 
 impl IntoView for CommandShortcut {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

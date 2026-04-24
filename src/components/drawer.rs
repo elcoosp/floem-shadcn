@@ -84,6 +84,9 @@ impl<V: IntoView + 'static> HasViewId for Drawer<V> {
 
 impl<V: IntoView + 'static> IntoView for Drawer<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -347,6 +350,9 @@ impl HasViewId for DrawerTitle {
 
 impl IntoView for DrawerTitle {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -355,7 +361,7 @@ impl IntoView for DrawerTitle {
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(18.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
+                    
                     .color(t.foreground)
             })
         }))
@@ -390,6 +396,9 @@ impl HasViewId for DrawerDescription {
 
 impl IntoView for DrawerDescription {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

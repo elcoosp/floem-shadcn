@@ -187,6 +187,9 @@ impl<V: IntoView + 'static> HasViewId for DropdownMenuContent<V> {
 
 impl<V: IntoView + 'static> IntoView for DropdownMenuContent<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -251,6 +254,9 @@ impl HasViewId for DropdownMenuItem {
 
 impl IntoView for DropdownMenuItem {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -344,6 +350,9 @@ impl<V: IntoView + 'static> HasViewId for DropdownMenuItemCustom<V> {
 
 impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -411,6 +420,9 @@ impl HasViewId for DropdownMenuSeparator {
 
 impl IntoView for DropdownMenuSeparator {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -454,6 +466,9 @@ impl HasViewId for DropdownMenuLabel {
 
 impl IntoView for DropdownMenuLabel {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -467,7 +482,7 @@ impl IntoView for DropdownMenuLabel {
                     .padding_top(8.0)
                     .padding_bottom(4.0)
                     .font_size(12.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
+                    
                     .color(t.foreground)
             })
         }))
@@ -542,6 +557,9 @@ impl HasViewId for DropdownMenuShortcut {
 
 impl IntoView for DropdownMenuShortcut {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

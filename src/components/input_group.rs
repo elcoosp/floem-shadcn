@@ -61,6 +61,9 @@ impl HasViewId for InputGroup {
 
 impl IntoView for InputGroup {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -96,6 +99,9 @@ impl<V: IntoView + 'static> HasViewId for InputGroupAddon<V> {
 
 impl<V: IntoView + 'static> IntoView for InputGroupAddon<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

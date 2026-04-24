@@ -15,11 +15,11 @@
 //! ```
 
 use floem::prelude::*;
-use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
+use crate::styled::ShadcnStyleExt;
 
 /// A styled avatar builder
 pub struct Avatar {
@@ -58,7 +58,7 @@ impl Avatar {
 
         floem::views::Container::new(floem::views::Label::new(fallback).style(move |s| {
             s.font_size(font_size)
-                .font_weight(FontFontFontWeight::MEDIUM)
+                
                 .text_muted_foreground()
         }))
         .style(move |s| {
@@ -87,6 +87,9 @@ impl HasViewId for Avatar {
 
 impl IntoView for Avatar {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

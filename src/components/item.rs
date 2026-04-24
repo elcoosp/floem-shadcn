@@ -15,12 +15,12 @@
 //! ```
 
 use floem::prelude::*;
-use floem::style::FontWeight;
 use floem::view::ParentView;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
+use crate::styled::ShadcnStyleExt;
 
 /// Main item container – renders as a horizontal row
 pub struct Item {
@@ -48,6 +48,9 @@ impl HasViewId for Item {
 
 impl IntoView for Item {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.display(floem::style::Display::Flex)
@@ -82,6 +85,9 @@ impl HasViewId for ItemContent {
 
 impl IntoView for ItemContent {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.flex_grow(1.0)
@@ -109,10 +115,13 @@ impl HasViewId for ItemTitle { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for ItemTitle {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
-            s.font_size(14.0).font_weight(FontWeight::MEDIUM).text_foreground()
+            s.font_size(14.0).text_foreground()
         }))
     }
 }
@@ -133,6 +142,9 @@ impl HasViewId for ItemDescription { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for ItemDescription {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {

@@ -22,6 +22,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
+use crate::styled::ShadcnStyleExt;
 
 /// A styled skeleton (loading placeholder) builder
 pub struct Skeleton {
@@ -118,6 +119,9 @@ impl HasViewId for Skeleton {
 
 impl IntoView for Skeleton {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

@@ -23,7 +23,6 @@
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
-use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
@@ -181,7 +180,7 @@ impl Tab {
                         .border(1.0) // border
                         .border_color(peniko::Color::TRANSPARENT) // border-transparent
                         .font_size(14.0)
-                        .font_weight(FontFontFontWeight::MEDIUM)
+                        
                         .cursor(CursorStyle::Pointer)
                         .transition(
                             floem::style::Background,
@@ -213,6 +212,9 @@ impl HasViewId for Tab {
 
 impl IntoView for Tab {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -258,6 +260,9 @@ impl<V: IntoView + 'static> HasViewId for TabsContent<V> {
 
 impl<V: IntoView + 'static> IntoView for TabsContent<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

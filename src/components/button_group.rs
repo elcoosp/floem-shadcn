@@ -59,6 +59,9 @@ impl HasViewId for ButtonGroup {
 
 impl IntoView for ButtonGroup {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -98,6 +101,9 @@ impl HasViewId for ButtonGroupSeparator {
 
 impl IntoView for ButtonGroupSeparator {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

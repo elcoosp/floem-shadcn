@@ -17,13 +17,13 @@
 //! ```
 
 use floem::prelude::*;
-use floem::style::FontWeight;
 use floem::view::IntoViewIter;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
+use crate::styled::ShadcnStyleExt;
 
 // ============================================================================
 // Card
@@ -69,6 +69,9 @@ impl<C: IntoViewIter> HasViewId for Card<C> {
 
 impl<C: IntoViewIter> IntoView for Card<C> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -124,6 +127,9 @@ impl HasViewId for CardHeader {
 
 impl IntoView for CardHeader {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -132,7 +138,7 @@ impl IntoView for CardHeader {
         if let Some(title) = self.title {
             children
                 .push(Box::new(Label::derived(move || title.clone()).style(|s| {
-                    s.text_lg().font_weight(FontFontFontWeight::SEMIBOLD).leading_none()
+                    s.text_lg().leading_none()
                 })));
         }
 
@@ -257,7 +263,7 @@ impl<V: IntoView + 'static> IntoView for CardTitle<V> {
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
-                .style(|s| s.text_lg().font_weight(FontFontFontWeight::SEMIBOLD).leading_none()),
+                .style(|s| s.text_lg().leading_none()),
         )
     }
 }

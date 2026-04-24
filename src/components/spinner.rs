@@ -79,6 +79,9 @@ impl HasViewId for Spinner {
 
 impl IntoView for Spinner {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

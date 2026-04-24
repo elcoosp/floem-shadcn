@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem::reactive::RwSignal;
 //! use floem::view::ParentView;
 //! use floem_shadcn::components::combobox::*;
@@ -35,38 +35,15 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
-use crate::text::TextInput;
 use crate::theme::ShadcnThemeExt;
 
-// ============================================================================
-// ComboboxContext - passes signals to children via reactive Context
-// ============================================================================
-
-/// Combobox context that holds the shared signals
-///
-/// This is provided via `Scope::provide_context` and can be accessed by child
-/// components using `Context::get::<ComboboxContext>()`.
 #[derive(Clone, Copy)]
 pub struct ComboboxContext {
     pub selected: RwSignal<Option<String>>,
     pub search: RwSignal<String>,
     pub is_open: RwSignal<bool>,
-    /// Trigger position (window coordinates) - set by ComboboxTrigger
-    pub trigger_origin: RwSignal<floem::kurbo::Point>,
-    /// Trigger size - set by ComboboxTrigger
-    pub trigger_size: RwSignal<floem::kurbo::Size>,
 }
 
-// ============================================================================
-// Combobox
-// ============================================================================
-
-/// Combobox root component that provides context to children
-///
-/// Contains trigger and content. Uses internal state management
-/// that is shared via context with child components.
-///
-/// Implements ParentView so children can be added with `.child()`.
 pub struct Combobox {
     id: ViewId,
     selected: RwSignal<Option<String>>,
@@ -76,788 +53,289 @@ pub struct Combobox {
 }
 
 impl Combobox {
-    /// Create a new combobox with the given selection and search signals
-    ///
-    /// # Example
-    /// ```rust
-    /// Combobox::new(selected, search)
-    ///     .child(ComboboxTrigger::new("Select..."))
-    ///     .child(
-    ///         ComboboxContent::new()
-    ///             .content(ComboboxInput::new())
-    ///             .content(
-    ///                 ComboboxList::new()
-    ///                     .item(ComboboxItem::new("a", "Option A"))
-    ///                     .item(ComboboxItem::new("b", "Option B")),
-    ///             )
-    ///             .content(ComboboxEmpty::new("No results")),
-    ///     )
-    /// ```
     pub fn new(selected: RwSignal<Option<String>>, search: RwSignal<String>) -> Self {
         let is_open = RwSignal::new(false);
-        let trigger_origin = RwSignal::new(floem::kurbo::Point::ZERO);
-        let trigger_size = RwSignal::new(floem::kurbo::Size::ZERO);
         let scope = Scope::current().create_child();
-
-        // Provide the combobox context in the child scope
-        scope.provide_context(ComboboxContext {
-            selected,
-            search,
-            is_open,
-            trigger_origin,
-            trigger_size,
-        });
-
-        Self {
-            id: ViewId::new(),
-            selected,
-            search,
-            is_open,
-            scope,
-        }
+        scope.provide_context(ComboboxContext { selected, search, is_open });
+        Self { id: ViewId::new(), selected, search, is_open, scope }
     }
-
-    /// Get the open signal for external control
-    pub fn is_open_signal(&self) -> RwSignal<bool> {
-        self.is_open
-    }
-
-    /// Get the selected signal
-    pub fn selected_signal(&self) -> RwSignal<Option<String>> {
-        self.selected
-    }
-
-    /// Get the search signal
-    pub fn search_signal(&self) -> RwSignal<String> {
-        self.search
-    }
+    pub fn is_open_signal(&self) -> RwSignal<bool> { self.is_open }
+    pub fn selected_signal(&self) -> RwSignal<Option<String>> { self.selected }
+    pub fn search_signal(&self) -> RwSignal<String> { self.search }
 }
 
-impl HasViewId for Combobox {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+impl HasViewId for Combobox { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for Combobox {
     type V = Container;
-
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
     fn into_view(self) -> Self::V {
         let scope = self.scope;
         let id = self.id;
-
-        // Build the Stem within the combobox's scope so children have access to context
-        // Note: id.set_scope() is not needed here because ParentView::child() handles it
-        // when .child() is called, using ParentView::scope() to get the scope.
-        scope.enter(move || Container::with_id(id), ())
+        scope.enter(move || Container::with_id(id, ()))
     }
 }
-
 impl ParentView for Combobox {
-    fn scope(&self) -> Option<Scope> {
-        Some(self.scope)
-    }
+    fn scope(&self) -> Option<Scope> { Some(self.scope) }
 }
 
-// ============================================================================
-// ComboboxTrigger
-// ============================================================================
-
-/// Trigger button that opens/closes the combobox dropdown
-///
-/// Reads the combobox signals from context and displays the selected value
-/// or placeholder text.
 pub struct ComboboxTrigger {
-    id: ViewId,
-    placeholder: String,
-    items: Vec<(String, String)>, // (value, label) pairs for display
+    id: ViewId, placeholder: String, items: Vec<(String, String)>,
 }
-
 impl ComboboxTrigger {
-    /// Create a new trigger with placeholder text
     pub fn new(placeholder: impl Into<String>) -> Self {
-        Self {
-            id: ViewId::new(),
-            placeholder: placeholder.into(),
-            items: Vec::new(),
-        }
+        Self { id: ViewId::new(), placeholder: placeholder.into(), items: Vec::new() }
     }
-
-    /// Add item mappings for displaying selected label
-    ///
-    /// This is needed so the trigger can show the label for the selected value.
-    pub fn items(
-        mut self,
-        items: impl IntoIterator<Item = (impl Into<String>, impl Into<String>)>,
-    ) -> Self {
-        self.items = items
-            .into_iter()
-            .map(|(v, l)| (v.into(), l.into()))
-            .collect();
+    pub fn items(mut self, items: impl IntoIterator<Item = (impl Into<String>, impl Into<String>)>) -> Self {
+        self.items = items.into_iter().map(|(v, l)| (v.into(), l.into())).collect();
         self
     }
 }
-
-impl HasViewId for ComboboxTrigger {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+impl HasViewId for ComboboxTrigger { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxTrigger {
     type V = Box<dyn View>;
-
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
     fn into_view(self) -> Self::V {
         let ctx = Context::get::<ComboboxContext>();
         let placeholder = self.placeholder;
         let items = self.items;
-
         if let Some(ctx) = ctx {
             let selected = ctx.selected;
             let is_open = ctx.is_open;
-            let trigger_origin = ctx.trigger_origin;
-            let trigger_size = ctx.trigger_size;
             let items_for_label = items.clone();
-
             Box::new(
                 floem::views::Stack::horizontal((
-                    // Selected value or placeholder
                     floem::views::Label::derived(move || {
                         if let Some(val) = selected.get() {
-                            items_for_label
-                                .iter()
-                                .find(|(v, _)| v == &val)
-                                .map(|(_, l)| l.clone())
-                                .unwrap_or(val)
-                        } else {
-                            placeholder.clone()
-                        }
-                    })
-                    .style(move |s| {
+                            items_for_label.iter().find(|(v, _)| v == &val).map(|(_, l)| l.clone()).unwrap_or(val)
+                        } else { placeholder.clone() }
+                    }).style(move |s| {
                         s.with_shadcn_theme(move |s, t| {
                             let has_value = selected.get().is_some();
-                            s.flex_grow(1.0).text_sm().color(if has_value {
-                                t.foreground
-                            } else {
-                                t.muted_foreground
-                            })
+                            s.flex_grow(1.0).text_sm().color(if has_value { t.foreground } else { t.muted_foreground })
                         })
                     }),
-                    // ChevronDown icon
                     floem::views::Label::new("▼").style(|s| {
-                        s.with_shadcn_theme(move |s, t| {
-                            s.font_size(10.0).color(t.muted_foreground).flex_shrink(0.0)
-                        })
+                        s.with_shadcn_theme(move |s, t| s.font_size(10.0).color(t.muted_foreground).flex_shrink(0.0))
                     }),
                 ))
                 .style(|s| {
                     s.with_shadcn_theme(move |s, t| {
-                        s.min_width(200.0)
-                            .h_9()
-                            .px_3()
-                            .py_2()
-                            .gap_2()
-                            .items_center()
-                            .border_1()
-                            .border_color(t.input)
-                            .rounded_md()
-                            .background(t.background)
-                            .shadow_sm()
-                            .cursor(CursorStyle::Pointer)
-                            .hover(|s| s.border_color(t.ring))
+                        s.min_width(200.0).h_9().px_3().py_2().gap_2().items_center()
+                            .border_1().border_color(t.input).rounded_md().background(t.background).shadow_sm()
+                            .cursor(CursorStyle::Pointer).hover(|s| s.border_color(t.ring))
                     })
                 })
-                .on_click_stop(move |_| {
-                    is_open.update(|v| *v = !*v);
-                })
-                .on_move(move |origin| {
-                    trigger_origin.set(origin);
-                })
-                .on_resize(move |rect| {
-                    trigger_size.set(rect.size());
-                }),
+                .on_click_stop(move |_| { is_open.update(|v| *v = !*v); }),
             )
         } else {
-            // No context - render static trigger
             Box::new(floem::views::Label::new(placeholder).style(|s| {
                 s.with_shadcn_theme(move |s, t| {
-                    s.min_width(200.0)
-                        .h_9()
-                        .px_3()
-                        .py_2()
-                        .items_center()
-                        .border_1()
-                        .border_color(t.input)
-                        .rounded_md()
-                        .background(t.background)
-                        .color(t.muted_foreground)
+                    s.min_width(200.0).h_9().px_3().py_2().items_center()
+                        .border_1().border_color(t.input).rounded_md().background(t.background).color(t.muted_foreground)
                 })
             }))
         }
     }
 }
 
-// ============================================================================
-// ComboboxContent
-// ============================================================================
-
-/// Dropdown content container with overlay positioning
-///
-/// Creates an overlay with backdrop for click-outside-to-close behavior.
-/// Use `.child()` to add children. Context is automatically available.
-pub struct ComboboxContent {
-    id: ViewId,
-}
-
-impl ComboboxContent {
-    /// Create new content container
-    pub fn new() -> Self {
-        Self { id: ViewId::new() }
-    }
-}
-
-impl Default for ComboboxContent {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl HasViewId for ComboboxContent {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+pub struct ComboboxContent { id: ViewId }
+impl ComboboxContent { pub fn new() -> Self { Self { id: ViewId::new() } } }
+impl Default for ComboboxContent { fn default() -> Self { Self::new() } }
+impl HasViewId for ComboboxContent { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxContent {
     type V = Box<dyn View>;
-
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
     fn into_view(self) -> Self::V {
         let ctx = Context::get::<ComboboxContext>();
         let id = self.id;
-
-        // Create a Stem that children will be added to via .child()
-        let content_stem = Container::with_id(id).style(|s| s.flex_col().width_full(), ());
-
+        let content_stem = Container::with_id(id, ()).style(|s| s.flex_col().width_full());
         if let Some(ctx) = ctx {
             let is_open = ctx.is_open;
-            let search = ctx.search;
-            let trigger_origin = ctx.trigger_origin;
-            let trigger_size = ctx.trigger_size;
-
             Box::new(
-                floem::views::Overlay::new(
-                    floem::views::Stack::new((
-                        // Backdrop - closes dropdown when clicking outside
-                        floem::views::Empty::new()
-                            .style(move |s| s.absolute().inset_0())
-                            .on_click_stop(move |_| {
-                                is_open.set(false);
-                                search.set(String::new());
-                            }),
-                        // Dropdown content
-                        floem::views::Container::new(content_stem).style(move |s| {
-                            s.with_shadcn_theme(move |s, t| {
-                                let origin = trigger_origin.get();
-                                let size = trigger_size.get();
-                                s.absolute()
-                                    .inset_left(origin.x)
-                                    .inset_top(origin.y + size.height + 6.0)
-                                    .min_width(size.width.max(200.0))
-                                    .flex_col()
-                                    .background(t.popover)
-                                    .color(t.popover_foreground)
-                                    .border_1()
-                                    .border_color(t.border)
-                                    .rounded_md()
-                                    .shadow_lg()
-                                    .z_index(100)
-                            })
-                        }),
-                    ))
-                    .style(move |s| {
-                        let open = is_open.get();
-                        s.fixed()
-                            .inset_0()
-                            .width_full()
-                            .height_full()
-                            .apply_if(!open, |s| s.hide())
-                    }),
-                ),
+                floem::views::Container::new(content_stem).style(move |s| {
+                    s.with_shadcn_theme(move |s, t| {
+                        s.position(floem::style::Position::Absolute)
+                            .inset_top_pct(100.0).inset_left(0.0).inset_right(0.0)
+                            .margin_top(6.0).min_width(200.0).flex_col()
+                            .background(t.popover).color(t.popover_foreground)
+                            .border_1().border_color(t.border).rounded_md().shadow_lg().z_index(100)
+                            .apply_if(!is_open.get(), |s| s.display(floem::style::Display::None))
+                    })
+                })
             )
-        } else {
-            // No context - just render the content
-            Box::new(content_stem)
-        }
+        } else { Box::new(content_stem) }
     }
 }
-
 impl ParentView for ComboboxContent {}
 
-// ============================================================================
-// ComboboxInput
-// ============================================================================
-
-/// Search input for filtering items
-pub struct ComboboxInput {
-    id: ViewId,
-    placeholder: String,
-}
-
+pub struct ComboboxInput { id: ViewId, placeholder: String }
 impl ComboboxInput {
-    /// Create a new search input
-    pub fn new() -> Self {
-        Self {
-            id: ViewId::new(),
-            placeholder: "Search...".to_string(),
-        }
-    }
-
-    /// Set placeholder text
-    pub fn placeholder(mut self, placeholder: impl Into<String>) -> Self {
-        self.placeholder = placeholder.into();
-        self
-    }
+    pub fn new() -> Self { Self { id: ViewId::new(), placeholder: "Search...".to_string() } }
+    pub fn placeholder(mut self, p: impl Into<String>) -> Self { self.placeholder = p.into(); self }
 }
-
-impl Default for ComboboxInput {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl HasViewId for ComboboxInput {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+impl Default for ComboboxInput { fn default() -> Self { Self::new() } }
+impl HasViewId for ComboboxInput { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxInput {
     type V = Box<dyn View>;
-
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
     fn into_view(self) -> Self::V {
-        let ctx = Context::get::<ComboboxContext>();
-        let placeholder = self.placeholder;
-
-        if let Some(ctx) = ctx {
-            let search = ctx.search;
-
-            Box::new(
-                TextInput::new()
-                    .placeholder(placeholder)
-                    .value(move || search.get())
-                    .on_update(move |text| {
-                        search.set(text.to_string());
+        let buffer = RwSignal::new(String::new());
+        Box::new(
+            floem::views::TextInput::new(buffer)
+                .placeholder(self.placeholder)
+                .style(|s| {
+                    s.with_shadcn_theme(move |s, t| {
+                        s.width_full().h_8().px_3().text_sm()
+                            .border(0.0).border_bottom(1.0).border_color(t.border)
+                            .background(floem::peniko::Color::TRANSPARENT).color(t.foreground)
                     })
-                    .style(|s| {
-                        s.with_shadcn_theme(move |s, t| {
-                            s.width_full()
-                                .h_8()
-                                .px_3()
-                                .text_sm()
-                                .border(0.0)
-                                .border_bottom(1.0)
-                                .border_color(t.border)
-                                .background(floem::peniko::Color::TRANSPARENT)
-                                .color(t.foreground)
-                        })
-                    }),
-            )
-        } else {
-            Box::new(TextInput::new().placeholder(placeholder).style(|s| {
-                s.with_shadcn_theme(move |s, t| {
-                    s.width_full()
-                        .h_8()
-                        .px_3()
-                        .text_sm()
-                        .border(0.0)
-                        .border_bottom(1.0)
-                        .border_color(t.border)
-                        .background(floem::peniko::Color::TRANSPARENT)
-                        .color(t.foreground)
-                })
-            }))
-        }
+                }),
+        )
     }
 }
 
-// ============================================================================
-// ComboboxList
-// ============================================================================
-
-/// Scrollable list container for combobox items
-///
-/// Use `.child()` to add items. Context is automatically available to children.
-pub struct ComboboxList {
-    id: ViewId,
-    max_height: f64,
-}
-
+pub struct ComboboxList { id: ViewId, max_height: f64 }
 impl ComboboxList {
-    /// Create a new list container
-    pub fn new() -> Self {
-        Self {
-            id: ViewId::new(),
-            max_height: 300.0,
-        }
-    }
-
-    /// Set maximum height before scrolling
-    pub fn max_height(mut self, height: f64) -> Self {
-        self.max_height = height;
-        self
-    }
+    pub fn new() -> Self { Self { id: ViewId::new(), max_height: 300.0 } }
+    pub fn max_height(mut self, h: f64) -> Self { self.max_height = h; self }
 }
-
-impl Default for ComboboxList {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl HasViewId for ComboboxList {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+impl Default for ComboboxList { fn default() -> Self { Self::new() } }
+impl HasViewId for ComboboxList { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxList {
     type V = floem::views::Scroll;
-
+    type Intermediate = floem::views::Scroll;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
     fn into_view(self) -> Self::V {
         let max_height = self.max_height;
-
-        // Create a Stem that children will be added to via .child()
-        let items_container =
-            Container::with_id(self.id).style(|s| s.flex_col().width_full().p_1(), ());
-
-        // Wrap in Scroll for actual scrolling
-        floem::views::Scroll::new(items_container)
-            .style(move |s| s.max_height(max_height).width_full())
+        let items_container = Container::with_id(self.id, ()).style(|s| s.flex_col().width_full().p_1());
+        floem::views::Scroll::new(items_container).style(move |s| s.max_height(max_height).width_full())
     }
 }
-
 impl ParentView for ComboboxList {}
 
-// ============================================================================
-// ComboboxItem
-// ============================================================================
-
-/// Individual combobox item that reads selection from context
-pub struct ComboboxItem {
-    id: ViewId,
-    value: String,
-    label: String,
-    disabled: bool,
-}
-
+pub struct ComboboxItem { id: ViewId, value: String, label: String, disabled: bool }
 impl ComboboxItem {
-    /// Create a new item
     pub fn new(value: impl Into<String>, label: impl Into<String>) -> Self {
-        Self {
-            id: ViewId::new(),
-            value: value.into(),
-            label: label.into(),
-            disabled: false,
-        }
+        Self { id: ViewId::new(), value: value.into(), label: label.into(), disabled: false }
     }
-
-    /// Set as disabled
-    pub fn disabled(mut self, disabled: bool) -> Self {
-        self.disabled = disabled;
-        self
-    }
+    pub fn disabled(mut self, d: bool) -> Self { self.disabled = d; self }
 }
-
-impl HasViewId for ComboboxItem {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+impl HasViewId for ComboboxItem { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxItem {
     type V = Box<dyn View>;
-
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
     fn into_view(self) -> Self::V {
         let ctx = Context::get::<ComboboxContext>();
-        let value = self.value;
-        let label = self.label;
-        let disabled = self.disabled;
-
-        let value_for_check = value.clone();
-        let value_for_style = value.clone();
-        let value_for_click = value.clone();
-        let label_for_filter = label.clone();
-
+        let value = self.value; let label = self.label; let disabled = self.disabled;
         if let Some(ctx) = ctx {
-            let selected = ctx.selected;
-            let search = ctx.search;
-            let is_open = ctx.is_open;
-
+            let selected = ctx.selected; let is_open = ctx.is_open;
+            let v_click = value.clone();
+            let v_check = value.clone();
+            let v_style = value.clone();
             Box::new(
                 floem::views::Container::new(
                     floem::views::Stack::horizontal((
-                        // Label text
                         floem::views::Label::new(label).style(|s| s.text_sm().flex_grow(1.0)),
-                        // Check icon (visible when selected)
                         floem::views::Label::new("✓").style(move |s| {
-                            let val = value_for_check.clone();
+                            let v = v_check.clone();
                             s.with_shadcn_theme(move |s, t| {
-                                let is_selected = selected.get() == Some(val.clone());
-                                s.size_4()
-                                    .text_sm()
-                                    .color(t.foreground)
-                                    .items_center()
-                                    .justify_center()
-                                    .flex_shrink(0.0)
-                                    .apply_if(!is_selected, |s| {
-                                        s.display(floem::style::Display::None)
-                                    })
+                                let is_selected = selected.get() == Some(v.clone());
+                                s.size_4().text_sm().color(t.foreground).items_center().justify_center().flex_shrink(0.0)
+                                    .apply_if(!is_selected, |s| s.display(floem::style::Display::None))
                             })
                         }),
-                    ))
-                    .style(|s| s.width_full().items_center().gap_2()),
+                    )).style(|s| s.width_full().items_center().gap_2()),
                 )
                 .style(move |s| {
-                    let val = value_for_style.clone();
-                    let lbl = label_for_filter.clone();
+                    let v = v_style.clone();
                     s.with_shadcn_theme(move |s, t| {
-                        let search_val = search.get();
-                        let matches_search = search_val.is_empty()
-                            || lbl.to_lowercase().contains(&search_val.to_lowercase());
-                        let is_selected = selected.get() == Some(val.clone());
-
-                        let base = s
-                            .width_full()
-                            .padding_top(6.0)
-                            .padding_bottom(6.0)
-                            .padding_left(8.0)
-                            .padding_right(8.0)
-                            .items_center()
-                            .rounded_sm()
-                            .cursor(if disabled {
-                                CursorStyle::Default
-                            } else {
-                                CursorStyle::Pointer
-                            });
-
-                        if !matches_search {
-                            base.display(floem::style::Display::None)
-                        } else if is_selected {
-                            base.background(t.accent).color(t.accent_foreground)
-                        } else if disabled {
-                            base.color(t.muted_foreground).opacity_50()
-                        } else {
-                            base.color(t.foreground)
-                                .hover(|s| s.background(t.accent).color(t.accent_foreground))
-                        }
+                        let is_sel = selected.get() == Some(v.clone());
+                        let base = s.width_full().padding_top(6.0).padding_bottom(6.0).padding_left(8.0).padding_right(8.0)
+                            .items_center().rounded_sm().cursor(if disabled { CursorStyle::Default } else { CursorStyle::Pointer });
+                        if is_sel { base.background(t.accent).color(t.accent_foreground) }
+                        else if disabled { base.color(t.muted_foreground).opacity_50() }
+                        else { base.color(t.foreground).hover(|s| s.background(t.accent).color(t.accent_foreground)) }
                     })
                 })
                 .on_click_stop(move |_| {
-                    if !disabled {
-                        selected.set(Some(value_for_click.clone()));
-                        is_open.set(false);
-                        search.set(String::new());
-                    }
+                    if !disabled { selected.set(Some(v_click.clone())); is_open.set(false); }
                 }),
             )
         } else {
-            // No context - render static item
             Box::new(floem::views::Label::new(label).style(|s| {
-                s.with_shadcn_theme(move |s, t| {
-                    s.width_full().padding(6.0).text_sm().color(t.foreground)
-                })
+                s.with_shadcn_theme(move |s, t| { s.width_full().padding(6.0).text_sm().color(t.foreground) })
             }))
         }
     }
 }
 
-// ============================================================================
-// ComboboxEmpty
-// ============================================================================
-
-/// Empty state shown when no items match the search
-pub struct ComboboxEmpty {
-    id: ViewId,
-    text: String,
-}
-
-impl ComboboxEmpty {
-    /// Create a new empty state
-    pub fn new(text: impl Into<String>) -> Self {
-        Self {
-            id: ViewId::new(),
-            text: text.into(),
-        }
-    }
-}
-
-impl Default for ComboboxEmpty {
-    fn default() -> Self {
-        Self::new("No results found.")
-    }
-}
-
-impl HasViewId for ComboboxEmpty {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+pub struct ComboboxEmpty { id: ViewId, text: String }
+impl ComboboxEmpty { pub fn new(text: impl Into<String>) -> Self { Self { id: ViewId::new(), text: text.into() } } }
+impl Default for ComboboxEmpty { fn default() -> Self { Self::new("No results found.") } }
+impl HasViewId for ComboboxEmpty { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxEmpty {
     type V = Box<dyn View>;
-
-
-    fn into_view(self) -> Self::V {
-        let text = self.text;
-
-        // Note: visibility based on whether items are filtered is handled
-        // by the parent - this just provides the empty state view
-        Box::new(floem::views::Label::new(text).style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.width_full()
-                    .padding_top(8.0)
-                    .padding_bottom(8.0)
-                    .text_sm()
-                    .color(t.muted_foreground)
-                    .justify_center()
-            })
-        }))
-    }
-}
-
-// ============================================================================
-// ComboboxGroup
-// ============================================================================
-
-/// Group of related combobox items with a label
-///
-/// Note: Since Stem doesn't support prepending a label, use ComboboxLabel
-/// before the group's items instead.
-pub struct ComboboxGroup {
-    id: ViewId,
-}
-
-impl ComboboxGroup {
-    /// Create a new group container
-    pub fn new() -> Self {
-        Self { id: ViewId::new() }
-    }
-}
-
-impl Default for ComboboxGroup {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl HasViewId for ComboboxGroup {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
-impl IntoView for ComboboxGroup {
-    type V = Container;
-
-
-    fn into_view(self) -> Self::V {
-        Container::with_id(self.id).style(|s| s.flex_col().width_full(), ())
-    }
-}
-
-impl ParentView for ComboboxGroup {}
-
-// ============================================================================
-// ComboboxLabel
-// ============================================================================
-
-/// Label for a combobox group
-pub struct ComboboxLabel {
-    id: ViewId,
-    text: String,
-}
-
-impl ComboboxLabel {
-    /// Create a new group label
-    pub fn new(text: impl Into<String>) -> Self {
-        Self {
-            id: ViewId::new(),
-            text: text.into(),
-        }
-    }
-}
-
-impl HasViewId for ComboboxLabel {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
-impl IntoView for ComboboxLabel {
-    type V = Box<dyn View>;
-
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Label::new(self.text).style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.px_2()
-                    .padding_top(6.0)
-                    .padding_bottom(6.0)
-                    .text_xs()
-                    .font_medium()
-                    .color(t.muted_foreground)
-            })
+            s.with_shadcn_theme(move |s, t| { s.width_full().padding_top(8.0).padding_bottom(8.0).text_sm().color(t.muted_foreground).justify_center() })
         }))
     }
 }
 
-// ============================================================================
-// ComboboxSeparator
-// ============================================================================
+pub struct ComboboxGroup { id: ViewId }
+impl ComboboxGroup { pub fn new() -> Self { Self { id: ViewId::new() } } }
+impl Default for ComboboxGroup { fn default() -> Self { Self::new() } }
+impl HasViewId for ComboboxGroup { fn view_id(&self) -> ViewId { self.id } }
+impl IntoView for ComboboxGroup {
+    type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
-/// Separator between combobox items
+    fn into_view(self) -> Self::V { Container::with_id(self.id, ()).style(|s| s.flex_col().width_full()) }
+}
+impl ParentView for ComboboxGroup {}
+
+pub struct ComboboxLabel { id: ViewId, text: String }
+impl ComboboxLabel { pub fn new(text: impl Into<String>) -> Self { Self { id: ViewId::new(), text: text.into() } } }
+impl HasViewId for ComboboxLabel { fn view_id(&self) -> ViewId { self.id } }
+impl IntoView for ComboboxLabel {
+    type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
+    fn into_view(self) -> Self::V {
+        Box::new(floem::views::Label::new(self.text).style(|s| {
+            s.with_shadcn_theme(move |s, t| { s.px_2().padding_top(6.0).padding_bottom(6.0).text_xs().font_medium().color(t.muted_foreground) })
+        }))
+    }
+}
+
 pub struct ComboboxSeparator;
-
-impl ComboboxSeparator {
-    /// Create a new separator
-    pub fn new() -> Self {
-        Self
-    }
-}
-
-impl Default for ComboboxSeparator {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl HasViewId for ComboboxSeparator {
-    fn view_id(&self) -> ViewId {
-        ViewId::new()
-    }
-}
-
+impl ComboboxSeparator { pub fn new() -> Self { Self } }
+impl Default for ComboboxSeparator { fn default() -> Self { Self::new() } }
+impl HasViewId for ComboboxSeparator { fn view_id(&self) -> ViewId { ViewId::new() } }
 impl IntoView for ComboboxSeparator {
     type V = Box<dyn View>;
-
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Empty::new().style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.width_full()
-                    .height(1.0)
-                    .background(t.border)
-                    .margin_left(-4.0)
-                    .margin_right(-4.0)
-                    .margin_top(4.0)
-                    .margin_bottom(4.0)
-            })
+            s.with_shadcn_theme(move |s, t| { s.width_full().height(1.0).background(t.border).margin_left(-4.0).margin_right(-4.0).margin_top(4.0).margin_bottom(4.0) })
         }))
     }
 }

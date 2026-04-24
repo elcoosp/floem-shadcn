@@ -16,7 +16,6 @@
 //! ```
 
 use floem::prelude::*;
-use floem::style::FontWeight;
 use floem::view::ParentView;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
@@ -42,6 +41,9 @@ impl HasViewId for Empty {
 
 impl IntoView for Empty {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.display(floem::style::Display::Flex)
@@ -75,6 +77,9 @@ impl HasViewId for EmptyMedia {
 
 impl IntoView for EmptyMedia {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.margin_bottom(16.0)
@@ -103,6 +108,9 @@ impl HasViewId for EmptyContent {
 
 impl IntoView for EmptyContent {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.display(floem::style::Display::Flex)
@@ -132,11 +140,14 @@ impl HasViewId for EmptyTitle { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for EmptyTitle {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
             s.with_shadcn_theme(|s, t| {
-                s.font_size(16.0).font_weight(FontWeight::MEDIUM).color(t.foreground)
+                s.font_size(16.0).color(t.foreground)
             })
         }))
     }
@@ -158,6 +169,9 @@ impl HasViewId for EmptyDescription { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for EmptyDescription {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
@@ -187,6 +201,9 @@ impl HasViewId for EmptyActions {
 
 impl IntoView for EmptyActions {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.display(floem::style::Display::Flex)

@@ -256,6 +256,9 @@ impl HasViewId for ToggleGroupItem {
 
 impl IntoView for ToggleGroupItem {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -277,7 +280,7 @@ impl IntoView for ToggleGroupItem {
                     .padding_top(8.0)
                     .padding_bottom(8.0)
                     .font_size(14.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                    
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default
@@ -355,6 +358,9 @@ impl HasViewId for ToggleGroupItemMultiple {
 
 impl IntoView for ToggleGroupItemMultiple {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -376,7 +382,7 @@ impl IntoView for ToggleGroupItemMultiple {
                     .padding_top(8.0)
                     .padding_bottom(8.0)
                     .font_size(14.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                    
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default

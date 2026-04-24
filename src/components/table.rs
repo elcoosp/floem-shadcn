@@ -71,6 +71,9 @@ impl HasViewId for Table {
 
 impl IntoView for Table {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -114,6 +117,9 @@ impl HasViewId for TableHeader {
 
 impl IntoView for TableHeader {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -148,6 +154,9 @@ impl HasViewId for TableBody {
 
 impl IntoView for TableBody {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -182,6 +191,9 @@ impl HasViewId for TableFooter {
 
 impl IntoView for TableFooter {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -189,7 +201,7 @@ impl IntoView for TableFooter {
             s.with_shadcn_theme(|s, t| {
                 s.width_full()
                     .grid()
-                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                    
                     .background(t.muted.with_alpha(0.5))
                     .border_top(1.0)
                     .border_color(t.border)
@@ -224,6 +236,9 @@ impl HasViewId for TableRow {
 
 impl IntoView for TableRow {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -286,6 +301,9 @@ impl HasViewId for TableHead {
 
 impl IntoView for TableHead {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -298,7 +316,7 @@ impl IntoView for TableHead {
                     .height(40.0) // h-10
                     .padding_horiz(8.0) // px-2
                     .font_size(14.0) // text-sm
-                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM) // font-medium
+                     // font-medium
                     .color(t.foreground) // text-foreground
                     .items_center(); // align-middle vertically
                 if let Some(w) = width {
@@ -359,7 +377,7 @@ impl<V: IntoView + 'static> IntoView for TableHeadCustom<V> {
                         .height(40.0) // h-10
                         .padding_horiz(8.0) // px-2
                         .font_size(14.0) // text-sm
-                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM) // font-medium
+                         // font-medium
                         .color(t.foreground) // text-foreground
                         .items_center(); // align-middle vertically
                     if let Some(w) = width {
@@ -409,6 +427,9 @@ impl HasViewId for TableCell {
 
 impl IntoView for TableCell {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -520,6 +541,9 @@ impl HasViewId for TableCaption {
 
 impl IntoView for TableCaption {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

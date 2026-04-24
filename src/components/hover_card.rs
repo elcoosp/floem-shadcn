@@ -128,10 +128,10 @@ where
         // Trigger wrapper
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
-                .on_event_stop(floem::event::Event::PointerEnter, move |_| {
+                .on_click_stop( move |_| {
                     is_hovered.set(true);
                 })
-                .on_event_stop(floem::event::Event::PointerLeave, move |_| {
+                .on_click_stop( move |_| {
                     is_hovered.set(false);
                 })
                 .into_any()
@@ -193,10 +193,10 @@ where
                         }
                     })
                 })
-                .on_event_stop(floem::event::Event::PointerEnter, move |_| {
+                .on_click_stop( move |_| {
                     is_hovered.set(true);
                 })
-                .on_event_stop(floem::event::Event::PointerLeave, move |_| {
+                .on_click_stop( move |_| {
                     is_hovered.set(false);
                 })
                 .into_any()
@@ -264,6 +264,9 @@ impl<V: IntoView + 'static> HasViewId for HoverCardContent<V> {
 
 impl<V: IntoView + 'static> IntoView for HoverCardContent<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

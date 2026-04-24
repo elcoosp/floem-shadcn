@@ -108,6 +108,9 @@ impl HasViewId for AlertDialog {
 
 impl IntoView for AlertDialog {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -129,7 +132,7 @@ impl IntoView for AlertDialog {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                        
                         .background(t.primary)
                         .color(t.primary_foreground)
                         .border_radius(t.radius)
@@ -168,7 +171,7 @@ impl IntoView for AlertDialog {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                        
                         .background(t.secondary)
                         .color(t.secondary_foreground)
                         .border_radius(t.radius)
@@ -200,7 +203,7 @@ impl IntoView for AlertDialog {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                        
                         .background(bg)
                         .color(fg)
                         .border_radius(t.radius)
@@ -507,6 +510,9 @@ impl HasViewId for AlertDialogTitle {
 
 impl IntoView for AlertDialogTitle {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -515,7 +521,7 @@ impl IntoView for AlertDialogTitle {
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(18.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
+                    
                     .color(t.foreground)
             })
         }))
@@ -550,6 +556,9 @@ impl HasViewId for AlertDialogDescription {
 
 impl IntoView for AlertDialogDescription {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -615,6 +624,9 @@ impl HasViewId for AlertDialogAction {
 
 impl IntoView for AlertDialogAction {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -643,7 +655,7 @@ impl IntoView for AlertDialogAction {
                             .padding_top(8.0)
                             .padding_bottom(8.0)
                             .font_size(14.0)
-                            .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                            
                             .background(bg)
                             .color(fg)
                             .border_radius(t.radius)
@@ -699,6 +711,9 @@ impl HasViewId for AlertDialogCancel {
 
 impl IntoView for AlertDialogCancel {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -714,7 +729,7 @@ impl IntoView for AlertDialogCancel {
                             .padding_top(8.0)
                             .padding_bottom(8.0)
                             .font_size(14.0)
-                            .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                            
                             .background(t.secondary)
                             .color(t.secondary_foreground)
                             .border_radius(t.radius)

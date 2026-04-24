@@ -19,7 +19,6 @@
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
-use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
@@ -118,7 +117,7 @@ impl AccordionItem {
                 floem::views::Label::new(title).style(|s| {
                     s.with_shadcn_theme(|s, t| {
                         s.font_size(14.0)
-                            .font_weight(FontFontFontWeight::MEDIUM)
+                            
                             .color(t.foreground)
                             .flex_grow(1.0)
                     })
@@ -198,6 +197,9 @@ impl HasViewId for AccordionItem {
 
 impl IntoView for AccordionItem {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

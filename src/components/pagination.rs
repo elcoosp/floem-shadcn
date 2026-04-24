@@ -68,6 +68,9 @@ impl HasViewId for Pagination {
 
 impl IntoView for Pagination {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -300,6 +303,9 @@ impl<V: IntoView + 'static> HasViewId for PaginationContent<V> {
 
 impl<V: IntoView + 'static> IntoView for PaginationContent<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -387,6 +393,9 @@ impl HasViewId for PaginationLink {
 
 impl IntoView for PaginationLink {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -465,6 +474,9 @@ impl HasViewId for PaginationPrevious {
 
 impl IntoView for PaginationPrevious {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -552,6 +564,9 @@ impl HasViewId for PaginationNext {
 
 impl IntoView for PaginationNext {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -630,6 +645,9 @@ impl HasViewId for PaginationEllipsis {
 
 impl IntoView for PaginationEllipsis {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

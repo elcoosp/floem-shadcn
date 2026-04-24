@@ -66,6 +66,9 @@ impl HasViewId for DatePicker {
 
 impl IntoView for DatePicker {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -254,7 +257,7 @@ fn create_calendar_content(
             s.with_shadcn_theme(move |s, t| {
                 s.flex_grow(1.0)
                     .font_size(14.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
+                    
                     .color(t.foreground)
                     .justify_center()
             })
@@ -515,6 +518,9 @@ impl HasViewId for DateRangePicker {
 
 impl IntoView for DateRangePicker {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

@@ -20,11 +20,11 @@
 //! ```
 
 use floem::prelude::*;
-use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
+use crate::styled::ShadcnStyleExt;
 
 /// Alert variants
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -103,7 +103,7 @@ impl Alert {
         if let Some(title) = self.title {
             content_children.push(Box::new(floem::views::Label::new(title).style(move |s| {
                 s.font_size(14.0)
-                    .font_weight(FontFontFontWeight::MEDIUM)
+                    
                     .line_height(1.0)
                     .with_shadcn_theme(move |s, t| {
                         let color = match variant {
@@ -170,6 +170,9 @@ impl HasViewId for Alert {
 
 impl IntoView for Alert {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

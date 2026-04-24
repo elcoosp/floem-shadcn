@@ -58,6 +58,9 @@ impl HasViewId for InputOTP {
 
 impl IntoView for InputOTP {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -120,7 +123,7 @@ fn create_otp_slot(value: RwSignal<String>, index: usize, mask: bool) -> impl In
                 .width(40.0)
                 .height(48.0)
                 .font_size(20.0)
-                .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                
                 .color(t.foreground)
                 .background(t.background)
                 .border(1.0)
@@ -166,6 +169,9 @@ impl<V: IntoView + 'static> HasViewId for InputOTPGroup<V> {
 
 impl<V: IntoView + 'static> IntoView for InputOTPGroup<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -217,6 +223,9 @@ impl HasViewId for InputOTPSlot {
 
 impl IntoView for InputOTPSlot {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -247,7 +256,7 @@ impl IntoView for InputOTPSlot {
                         .width(40.0)
                         .height(48.0)
                         .font_size(20.0)
-                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                        
                         .color(t.foreground)
                         .background(t.background)
                         .border(1.0)
@@ -295,6 +304,9 @@ impl HasViewId for InputOTPSeparator {
 
 impl IntoView for InputOTPSeparator {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -347,6 +359,9 @@ impl HasViewId for PinInput {
 
 impl IntoView for PinInput {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

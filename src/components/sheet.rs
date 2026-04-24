@@ -261,6 +261,9 @@ impl HasViewId for SheetTitle {
 
 impl IntoView for SheetTitle {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -268,7 +271,7 @@ impl IntoView for SheetTitle {
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(18.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
+                    
                     .color(t.foreground)
             })
         }))
@@ -303,6 +306,9 @@ impl HasViewId for SheetDescription {
 
 impl IntoView for SheetDescription {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

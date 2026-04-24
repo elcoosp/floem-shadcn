@@ -217,6 +217,9 @@ impl<V: IntoView + 'static> HasViewId for ContextMenuContent<V> {
 
 impl<V: IntoView + 'static> IntoView for ContextMenuContent<V> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -289,6 +292,9 @@ impl HasViewId for ContextMenuItem {
 
 impl IntoView for ContextMenuItem {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -388,6 +394,9 @@ impl HasViewId for ContextMenuSeparator {
 
 impl IntoView for ContextMenuSeparator {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -431,6 +440,9 @@ impl HasViewId for ContextMenuLabel {
 
 impl IntoView for ContextMenuLabel {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -444,7 +456,7 @@ impl IntoView for ContextMenuLabel {
                     .padding_top(8.0)
                     .padding_bottom(4.0)
                     .font_size(12.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::SEMIBOLD)
+                    
                     .color(t.foreground)
             })
         }))

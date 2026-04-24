@@ -12,11 +12,11 @@
 //! ```
 
 use floem::prelude::*;
-use floem::style::FontWeight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
+use crate::styled::ShadcnStyleExt;
 
 /// H1 heading
 pub struct TypographyH1 { id: ViewId, text: String }
@@ -24,10 +24,13 @@ impl TypographyH1 { pub fn new(text: impl Into<String>) -> Self { Self { id: Vie
 impl HasViewId for TypographyH1 { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyH1 {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
-            s.font_size(36.0).font_weight(FontWeight::BOLD).line_height(1.2).text_foreground()
+            s.font_size(36.0).line_height(1.2).text_foreground()
         }))
     }
 }
@@ -38,10 +41,13 @@ impl TypographyH2 { pub fn new(text: impl Into<String>) -> Self { Self { id: Vie
 impl HasViewId for TypographyH2 { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyH2 {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
-            s.font_size(24.0).font_weight(FontWeight::SEMIBOLD).line_height(1.3).text_foreground()
+            s.font_size(24.0).line_height(1.3).text_foreground()
         }))
     }
 }
@@ -52,10 +58,13 @@ impl TypographyH3 { pub fn new(text: impl Into<String>) -> Self { Self { id: Vie
 impl HasViewId for TypographyH3 { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyH3 {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
-            s.font_size(20.0).font_weight(FontWeight::SEMIBOLD).line_height(1.4).text_foreground()
+            s.font_size(20.0).line_height(1.4).text_foreground()
         }))
     }
 }
@@ -66,10 +75,13 @@ impl TypographyH4 { pub fn new(text: impl Into<String>) -> Self { Self { id: Vie
 impl HasViewId for TypographyH4 { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyH4 {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
-            s.font_size(16.0).font_weight(FontWeight::MEDIUM).line_height(1.5).text_foreground()
+            s.font_size(16.0).line_height(1.5).text_foreground()
         }))
     }
 }
@@ -80,6 +92,9 @@ impl TypographyP { pub fn new(text: impl Into<String>) -> Self { Self { id: View
 impl HasViewId for TypographyP { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyP {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
@@ -94,6 +109,9 @@ impl TypographyLead { pub fn new(text: impl Into<String>) -> Self { Self { id: V
 impl HasViewId for TypographyLead { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyLead {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
@@ -108,6 +126,9 @@ impl TypographyMuted { pub fn new(text: impl Into<String>) -> Self { Self { id: 
 impl HasViewId for TypographyMuted { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyMuted {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
@@ -122,13 +143,16 @@ impl TypographyCode { pub fn new(text: impl Into<String>) -> Self { Self { id: V
 impl HasViewId for TypographyCode { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyCode {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
             s.padding_left(4.0).padding_right(4.0).padding_top(2.0).padding_bottom(2.0)
                 .font_size(13.0).bg_muted().text_foreground()
                 .border(1.0).border_border().border_radius(4.0)
-                .font_weight(FontWeight::MEDIUM)
+                
         }))
     }
 }
@@ -139,6 +163,9 @@ impl TypographyBlockquote { pub fn new(text: impl Into<String>) -> Self { Self {
 impl HasViewId for TypographyBlockquote { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyBlockquote {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::new(text).style(|s| {
@@ -158,6 +185,9 @@ impl TypographyList {
 impl HasViewId for TypographyList { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for TypographyList {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let items = self.items;
         let ordered = self.ordered;

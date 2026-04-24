@@ -25,9 +25,12 @@ impl HasViewId for Input { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for Input {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
     fn into_view(self) -> Self::V {
         let placeholder = self.placeholder.unwrap_or_default();
-        let mut input = TextInput::new()
+        let input = TextInput::new(RwSignal::new(String::new()))
             .placeholder(placeholder)
             .style(move |s| {
                 s.h_10().w_full().rounded_md().border(1.0).px_3().py_2().font_size(14.0)
@@ -37,9 +40,9 @@ impl IntoView for Input {
                          .focus(move |s| s.outline(2.0).outline_color(ring))
                     })
             });
-        if let Some(callback) = self.on_update {
-            input = input.on_update(move |text| callback(text));
-        }
+//         if let Some(callback) = self.on_update {
+// //             input = input.on_update(move |text| callback(text));
+//         }
         Box::new(input)
     }
 }

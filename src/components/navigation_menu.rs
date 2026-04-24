@@ -159,6 +159,9 @@ impl<C: IntoView + 'static> HasViewId for NavigationMenuItem<C> {
 
 impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -174,14 +177,14 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                        
                         .color(t.foreground)
                         .border_radius(t.radius)
                         .cursor(CursorStyle::Pointer)
                         .hover(|s| s.background(t.accent).color(t.accent_foreground))
                 })
             })
-            .on_event_stop(floem::event::Event::PointerEnter, move |_| {
+            .on_click_stop( move |_| {
                 is_open.set(true);
             });
 
@@ -215,7 +218,7 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
                         }
                     })
                 })
-                .on_event_stop(floem::event::Event::PointerEnter, move |_| {
+                .on_click_stop( move |_| {
                     is_open.set(true);
                 })
                 .into_any()
@@ -226,7 +229,7 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
         Box::new(
             floem::views::Container::new(floem::views::Stack::new((trigger, dropdown)))
                 .style(|s| s.position(floem::style::Position::Relative))
-                .on_event_stop(floem::event::Event::PointerLeave, move |_| {
+                .on_click_stop( move |_| {
                     is_open.set(false);
                 }),
         )
@@ -261,6 +264,9 @@ impl HasViewId for NavigationMenuTrigger {
 
 impl IntoView for NavigationMenuTrigger {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -274,7 +280,7 @@ impl IntoView for NavigationMenuTrigger {
                         .padding_top(8.0)
                         .padding_bottom(8.0)
                         .font_size(14.0)
-                        .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                        
                         .color(t.foreground)
                         .border_radius(t.radius)
                         .cursor(CursorStyle::Pointer)
@@ -384,6 +390,9 @@ impl HasViewId for NavigationMenuLink {
 
 impl IntoView for NavigationMenuLink {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -395,7 +404,7 @@ impl IntoView for NavigationMenuLink {
         let title = floem::views::Label::new(label).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.font_size(14.0)
-                    .font_weight(floem::style::FontFontFontFontWeight::MEDIUM)
+                    
                     .color(t.foreground)
             })
         });
@@ -458,6 +467,9 @@ impl HasViewId for NavigationMenuIndicator {
 
 impl IntoView for NavigationMenuIndicator {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {

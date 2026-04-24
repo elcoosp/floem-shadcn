@@ -54,7 +54,6 @@ use std::rc::Rc;
 use floem::prelude::*;
 use floem::views::Scroll;
 use floem::style::CursorStyle;
-use floem::style::FontWeight;
 use floem::view::ParentView;
 use floem::{HasViewId, ViewId};
 
@@ -132,6 +131,9 @@ impl HasViewId for Sidebar {
 
 impl IntoView for Sidebar {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -191,6 +193,9 @@ impl HasViewId for SidebarHeader {
 
 impl IntoView for SidebarHeader {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -237,6 +242,9 @@ impl HasViewId for SidebarContent {
 
 impl IntoView for SidebarContent {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -290,6 +298,9 @@ impl HasViewId for SidebarFooter {
 
 impl IntoView for SidebarFooter {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -336,6 +347,9 @@ impl HasViewId for SidebarGroup {
 
 impl IntoView for SidebarGroup {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -377,6 +391,9 @@ impl HasViewId for SidebarGroupLabel {
 
 impl IntoView for SidebarGroupLabel {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -385,7 +402,7 @@ impl IntoView for SidebarGroupLabel {
             floem::views::Label::derived(move || text.clone()).style(|s| {
                 s.with_shadcn_theme(|s, t| {
                     s.font_size(11.0)
-                        .font_weight(FontFontFontWeight::SEMIBOLD)
+                        
                         .color(t.muted_foreground)
                         .padding_left(8.0)
                         .padding_right(8.0)
@@ -427,6 +444,9 @@ impl HasViewId for SidebarGroupContent {
 
 impl IntoView for SidebarGroupContent {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -469,6 +489,9 @@ impl HasViewId for SidebarGroupAction {
 
 impl IntoView for SidebarGroupAction {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -515,6 +538,9 @@ impl HasViewId for SidebarMenu {
 
 impl IntoView for SidebarMenu {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -558,10 +584,13 @@ impl HasViewId for SidebarMenuItem {
 
 impl IntoView for SidebarMenuItem {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
-        Container::with_id(self.id).style(|s| s.width_full(), ())
+        Container::with_id(self.id, ()).style(|s| s.width_full())
     }
 }
 
@@ -664,6 +693,9 @@ impl HasViewId for SidebarMenuButton {
 
 impl IntoView for SidebarMenuButton {
     type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -692,7 +724,7 @@ impl IntoView for SidebarMenuButton {
                 if active {
                     base.background(t.accent)
                         .color(t.accent_foreground)
-                        .font_weight(FontFontFontWeight::MEDIUM)
+                        
                 } else {
                     base.background(peniko::Color::TRANSPARENT).color(t.foreground)
                 }
@@ -733,6 +765,9 @@ impl HasViewId for SidebarMenuButtonWithLabel {
 
 impl IntoView for SidebarMenuButtonWithLabel {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
@@ -766,7 +801,7 @@ impl IntoView for SidebarMenuButtonWithLabel {
                     if active {
                         base.background(t.accent)
                             .color(t.accent_foreground)
-                            .font_weight(FontFontFontWeight::MEDIUM)
+                            
                     } else {
                         base.background(peniko::Color::TRANSPARENT)
                             .color(t.foreground)
@@ -805,6 +840,9 @@ impl HasViewId for SidebarSeparator {
 
 impl IntoView for SidebarSeparator {
     type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
 
     fn into_view(self) -> Self::V {
