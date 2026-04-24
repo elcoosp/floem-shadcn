@@ -14,7 +14,6 @@ use peniko::color::{AlphaColor, Oklch, Srgb};
     pub accent: Color, pub accent_foreground: Color, pub destructive: Color, pub destructive_foreground: Color,
     pub border: Color, pub input: Color, pub ring: Color, pub radius: f32, pub radius_sm: f32, pub radius_md: f32, pub radius_lg: f32,
 }
-
 thread_local! { static THEME: RwSignal<ShadcnTheme> = RwSignal::new(ShadcnTheme::light()); }
 pub fn current_theme() -> ShadcnTheme { THEME.with(|t| t.get()) }
 pub fn set_theme(t: ShadcnTheme) { THEME.with(|s| s.set(t)); }
@@ -54,8 +53,7 @@ fn lerp_f32(a: f32, b: f32, t: f32) -> f32 { a+(b-a)*t }
 impl floem::style::StylePropValue for ShadcnTheme {
     fn interpolate(&self, o: &Self, val: f64) -> Option<Self> {
         let t = val as f32;
-        Some(Self {
-            mode: if t<0.5 { self.mode } else { o.mode },
+        Some(Self { mode: if t<0.5 { self.mode } else { o.mode },
             background: self.background.lerp(o.background,t,Default::default()),
             foreground: self.foreground.lerp(o.foreground,t,Default::default()),
             card: self.card.lerp(o.card,t,Default::default()), card_foreground: self.card_foreground.lerp(o.card_foreground,t,Default::default()),

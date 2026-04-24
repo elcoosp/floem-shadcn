@@ -349,6 +349,9 @@ impl<V: IntoView + 'static> HasViewId for PaginationItem<V> {
 impl<V: IntoView + 'static> IntoView for PaginationItem<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Container::with_id(self.id, self.child))

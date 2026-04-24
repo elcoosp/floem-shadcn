@@ -108,8 +108,6 @@ pub mod prelude {
         ScrollArea, ScrollAreaWithBar, ScrollOrientation, VirtualScrollArea,
     };
     pub use crate::components::select::{
-        Select, SelectContent, SelectGroup, SelectItem, SelectItemData, SelectLabel,
-        SelectSeparator, SelectTrigger,
     };
     pub use crate::components::separator::{Separator, SeparatorOrientation};
     pub use crate::components::sheet::{

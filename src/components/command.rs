@@ -86,7 +86,7 @@ impl IntoView for Command {
 
 
     fn into_view(self) -> Self::V {
-        let search = self.search;
+        let _search = self.search;
         let placeholder = self.placeholder;
         let content_id = self.content_id;
 
@@ -173,7 +173,7 @@ impl IntoView for CommandInput {
 
 
     fn into_view(self) -> Self::V {
-        let search = self.search;
+        let _search = self.search;
         let placeholder = self.placeholder;
 
         Box::new(

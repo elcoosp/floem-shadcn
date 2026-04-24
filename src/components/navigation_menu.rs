@@ -59,6 +59,9 @@ impl<V: IntoView + 'static> HasViewId for NavigationMenu<V> {
 impl<V: IntoView + 'static> IntoView for NavigationMenu<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -104,6 +107,9 @@ impl<V: IntoView + 'static> HasViewId for NavigationMenuList<V> {
 
 impl<V: IntoView + 'static> IntoView for NavigationMenuList<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {
@@ -320,6 +326,9 @@ impl<V: IntoView + 'static> HasViewId for NavigationMenuContent<V> {
 impl<V: IntoView + 'static> IntoView for NavigationMenuContent<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -512,6 +521,9 @@ impl<V: IntoView + 'static> HasViewId for NavigationMenuViewport<V> {
 
 impl<V: IntoView + 'static> IntoView for NavigationMenuViewport<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

@@ -52,6 +52,9 @@ impl<V: IntoView + 'static> HasViewId for Breadcrumb<V> {
 impl<V: IntoView + 'static> IntoView for Breadcrumb<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -94,6 +97,9 @@ impl<V: IntoView + 'static> HasViewId for BreadcrumbList<V> {
 
 impl<V: IntoView + 'static> IntoView for BreadcrumbList<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

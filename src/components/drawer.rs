@@ -223,6 +223,9 @@ impl<V: IntoView + 'static> HasViewId for DrawerTrigger<V> {
 impl<V: IntoView + 'static> IntoView for DrawerTrigger<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -266,6 +269,9 @@ impl<V: IntoView + 'static> HasViewId for DrawerContent<V> {
 impl<V: IntoView + 'static> IntoView for DrawerContent<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -307,6 +313,9 @@ impl<V: IntoView + 'static> HasViewId for DrawerHeader<V> {
 
 impl<V: IntoView + 'static> IntoView for DrawerHeader<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {
@@ -441,6 +450,9 @@ impl<V: IntoView + 'static> HasViewId for DrawerFooter<V> {
 impl<V: IntoView + 'static> IntoView for DrawerFooter<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -485,6 +497,9 @@ impl<V: IntoView + 'static> HasViewId for DrawerClose<V> {
 
 impl<V: IntoView + 'static> IntoView for DrawerClose<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

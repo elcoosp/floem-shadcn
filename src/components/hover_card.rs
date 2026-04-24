@@ -230,6 +230,9 @@ where
 {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -308,6 +311,9 @@ impl<V: IntoView + 'static> HasViewId for HoverCardTrigger<V> {
 
 impl<V: IntoView + 'static> IntoView for HoverCardTrigger<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

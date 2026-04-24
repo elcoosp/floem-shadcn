@@ -85,6 +85,9 @@ impl<V: IntoView + 'static> HasViewId for ResizablePanel<V> {
 impl<V: IntoView + 'static> IntoView for ResizablePanelGroup<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         let direction = self.direction;
@@ -163,6 +166,9 @@ impl<V: IntoView + 'static> ResizablePanel<V> {
 
 impl<V: IntoView + 'static> IntoView for ResizablePanel<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

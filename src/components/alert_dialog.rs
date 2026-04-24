@@ -301,6 +301,9 @@ impl<V: IntoView + 'static> HasViewId for AlertDialogTrigger<V> {
 impl<V: IntoView + 'static> IntoView for AlertDialogTrigger<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -345,6 +348,9 @@ impl<V: IntoView + 'static> HasViewId for AlertDialogContent<V> {
 
 impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {
@@ -428,6 +434,9 @@ impl<V: IntoView + 'static> HasViewId for AlertDialogHeader<V> {
 impl<V: IntoView + 'static> IntoView for AlertDialogHeader<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -468,6 +477,9 @@ impl<V: IntoView + 'static> HasViewId for AlertDialogFooter<V> {
 
 impl<V: IntoView + 'static> IntoView for AlertDialogFooter<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

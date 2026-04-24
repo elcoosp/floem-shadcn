@@ -106,6 +106,9 @@ impl<V: IntoView + 'static> HasViewId for ToggleGroup<V> {
 impl<V: IntoView + 'static> IntoView for ToggleGroup<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         let variant = self.variant;
@@ -184,6 +187,9 @@ impl<V: IntoView + 'static> HasViewId for ToggleGroupMultiple<V> {
 
 impl<V: IntoView + 'static> IntoView for ToggleGroupMultiple<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

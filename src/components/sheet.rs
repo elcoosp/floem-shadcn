@@ -68,6 +68,9 @@ impl<V: IntoView + 'static> HasViewId for Sheet<V> {
 impl<V: IntoView + 'static> IntoView for Sheet<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         let open = self.open;
@@ -143,6 +146,9 @@ impl<V: IntoView + 'static> HasViewId for SheetContent<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetContent<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {
@@ -220,6 +226,9 @@ impl<V: IntoView + 'static> HasViewId for SheetHeader<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetHeader<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {
@@ -348,6 +357,9 @@ impl<V: IntoView + 'static> HasViewId for SheetFooter<V> {
 impl<V: IntoView + 'static> IntoView for SheetFooter<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -392,6 +404,9 @@ impl<V: IntoView + 'static> HasViewId for SheetClose<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetClose<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

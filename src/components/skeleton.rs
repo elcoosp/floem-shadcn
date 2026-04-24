@@ -21,7 +21,6 @@ use floem::prelude::*;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
-use crate::theme::ShadcnThemeExt;
 use crate::styled::ShadcnStyleExt;
 
 /// A styled skeleton (loading placeholder) builder

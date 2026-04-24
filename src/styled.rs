@@ -15,7 +15,6 @@ pub trait ShadcnStyleExt: Sized {
     fn outline_ring(self) -> Self; fn outline_primary(self) -> Self; fn outline_destructive(self) -> Self;
     fn rounded_radius(self) -> Self; fn rounded_radius_sm(self) -> Self; fn rounded_radius_md(self) -> Self; fn rounded_radius_lg(self) -> Self;
 }
-
 macro_rules! bg { ($n:ident,$f:ident) => { fn $n(self) -> Self { let t = current_theme(); self.background(t.$f) } } }
 macro_rules! txt { ($n:ident,$f:ident) => { fn $n(self) -> Self { let t = current_theme(); self.color(t.$f) } } }
 macro_rules! brd { ($n:ident,$f:ident) => { fn $n(self) -> Self { let t = current_theme(); self.border_color(t.$f) } } }

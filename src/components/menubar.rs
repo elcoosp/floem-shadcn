@@ -60,6 +60,9 @@ impl<V: IntoView + 'static> HasViewId for Menubar<V> {
 impl<V: IntoView + 'static> IntoView for Menubar<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -299,6 +302,9 @@ impl<V: IntoView + 'static> HasViewId for MenubarContent<V> {
 
 impl<V: IntoView + 'static> IntoView for MenubarContent<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

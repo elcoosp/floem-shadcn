@@ -22,7 +22,6 @@ use floem::reactive::{RwSignal, SignalGet};
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
-use crate::theme::ShadcnThemeExt;
 use crate::styled::ShadcnStyleExt;
 
 /// A styled progress bar builder

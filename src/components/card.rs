@@ -185,6 +185,9 @@ impl<V: IntoView + 'static> HasViewId for CardContent<V> {
 impl<V: IntoView + 'static> IntoView for CardContent<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.px_6()))
@@ -219,6 +222,9 @@ impl<V: IntoView + 'static> HasViewId for CardFooter<V> {
 
 impl<V: IntoView + 'static> IntoView for CardFooter<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {
@@ -259,6 +265,9 @@ impl<V: IntoView + 'static> HasViewId for CardTitle<V> {
 impl<V: IntoView + 'static> IntoView for CardTitle<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -296,6 +305,9 @@ impl<V: IntoView + 'static> HasViewId for CardDescription<V> {
 
 impl<V: IntoView + 'static> IntoView for CardDescription<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

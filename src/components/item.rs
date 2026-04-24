@@ -19,7 +19,6 @@ use floem::view::ParentView;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
-use crate::theme::ShadcnThemeExt;
 use crate::styled::ShadcnStyleExt;
 
 /// Main item container – renders as a horizontal row

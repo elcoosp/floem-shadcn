@@ -61,6 +61,9 @@ impl<V: floem::view::IntoViewIter + 'static> HasViewId for Tabs<V> {
 impl<V: floem::view::IntoViewIter + 'static> IntoView for Tabs<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         Box::new(
@@ -100,6 +103,9 @@ impl<V: floem::view::IntoViewIter + 'static> HasViewId for TabsList<V> {
 
 impl<V: floem::view::IntoViewIter + 'static> IntoView for TabsList<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {

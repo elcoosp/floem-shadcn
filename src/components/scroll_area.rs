@@ -108,6 +108,9 @@ impl<V: IntoView + 'static> HasViewId for ScrollArea<V> {
 impl<V: IntoView + 'static> IntoView for ScrollArea<V> {
     type V = Box<dyn View>;
 
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+
 
     fn into_view(self) -> Self::V {
         let orientation = self.orientation;
@@ -216,6 +219,9 @@ impl<V: IntoView + 'static> HasViewId for ScrollAreaWithBar<V> {
 
 impl<V: IntoView + 'static> IntoView for ScrollAreaWithBar<V> {
     type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
 
 
     fn into_view(self) -> Self::V {
