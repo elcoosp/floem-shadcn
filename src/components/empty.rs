@@ -42,6 +42,15 @@ impl HasViewId for Empty {
 
 impl IntoView for Empty {
     type V = Container;
+    fn into_view(self) -> Self::V {
+        Container::with_id(self.id, ()).style(|s| {
+            s.display(floem::style::Display::Flex)
+                .flex_direction(floem::style::FlexDirection::Column)
+                .items_center()
+                .justify_center()
+                .width_full()
+                .padding_top(24.0).padding_bottom(24.0)
+        })
     }
 }
 
@@ -66,6 +75,10 @@ impl HasViewId for EmptyMedia {
 
 impl IntoView for EmptyMedia {
     type V = Container;
+    fn into_view(self) -> Self::V {
+        Container::with_id(self.id, ()).style(|s| {
+            s.margin_bottom(16.0)
+        })
     }
 }
 
@@ -90,6 +103,14 @@ impl HasViewId for EmptyContent {
 
 impl IntoView for EmptyContent {
     type V = Container;
+    fn into_view(self) -> Self::V {
+        Container::with_id(self.id, ()).style(|s| {
+            s.display(floem::style::Display::Flex)
+                .flex_direction(floem::style::FlexDirection::Column)
+                .items_center()
+                .max_width(420.0)
+                .gap(4.0)
+        })
     }
 }
 
@@ -111,6 +132,12 @@ impl HasViewId for EmptyTitle { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for EmptyTitle {
     type V = Box<dyn View>;
+    fn into_view(self) -> Self::V {
+        let text = self.text;
+        Box::new(floem::views::Label::new(text).style(|s| {
+            s.with_shadcn_theme(|s, t| {
+                s.font_size(16.0).font_weight(FontWeight::MEDIUM).color(t.foreground)
+            })
         }))
     }
 }
@@ -131,6 +158,12 @@ impl HasViewId for EmptyDescription { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for EmptyDescription {
     type V = Box<dyn View>;
+    fn into_view(self) -> Self::V {
+        let text = self.text;
+        Box::new(floem::views::Label::new(text).style(|s| {
+            s.with_shadcn_theme(|s, t| {
+                s.font_size(14.0).color(t.muted_foreground)
+            })
         }))
     }
 }
@@ -154,6 +187,13 @@ impl HasViewId for EmptyActions {
 
 impl IntoView for EmptyActions {
     type V = Container;
+    fn into_view(self) -> Self::V {
+        Container::with_id(self.id, ()).style(|s| {
+            s.display(floem::style::Display::Flex)
+                .flex_direction(floem::style::FlexDirection::Row)
+                .gap(8.0)
+                .margin_top(8.0)
+        })
     }
 }
 

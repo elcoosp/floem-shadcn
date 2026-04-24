@@ -48,8 +48,6 @@ impl HasViewId for Item {
 
 impl IntoView for Item {
     type V = Container;
-
-
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.display(floem::style::Display::Flex)
@@ -84,7 +82,12 @@ impl HasViewId for ItemContent {
 
 impl IntoView for ItemContent {
     type V = Container;
-
+    fn into_view(self) -> Self::V {
+        Container::with_id(self.id, ()).style(|s| {
+            s.flex_grow(1.0)
+                .flex_direction(floem::style::FlexDirection::Column)
+                .gap(2.0)
+        })
     }
 }
 
@@ -106,6 +109,10 @@ impl HasViewId for ItemTitle { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for ItemTitle {
     type V = Box<dyn View>;
+    fn into_view(self) -> Self::V {
+        let text = self.text;
+        Box::new(floem::views::Label::new(text).style(|s| {
+            s.font_size(14.0).font_weight(FontWeight::MEDIUM).text_foreground()
         }))
     }
 }
@@ -126,6 +133,10 @@ impl HasViewId for ItemDescription { fn view_id(&self) -> ViewId { self.id } }
 
 impl IntoView for ItemDescription {
     type V = Box<dyn View>;
+    fn into_view(self) -> Self::V {
+        let text = self.text;
+        Box::new(floem::views::Label::new(text).style(|s| {
+            s.font_size(13.0).text_muted_foreground()
         }))
     }
 }
