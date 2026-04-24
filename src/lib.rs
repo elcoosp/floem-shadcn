@@ -107,8 +107,6 @@ pub mod prelude {
     pub use crate::components::scroll_area::{
         ScrollArea, ScrollAreaWithBar, ScrollOrientation, VirtualScrollArea,
     };
-    pub use crate::components::select::{
-    };
     pub use crate::components::separator::{Separator, SeparatorOrientation};
     pub use crate::components::sheet::{
         Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetSide,

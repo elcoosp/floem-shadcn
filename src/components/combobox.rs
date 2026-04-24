@@ -14,7 +14,10 @@ impl Combobox {
     pub fn is_open_signal(&self) -> RwSignal<bool> { self.is_open } pub fn selected_signal(&self) -> RwSignal<Option<String>> { self.selected } pub fn search_signal(&self) -> RwSignal<String> { self.search }
 }
 impl HasViewId for Combobox { fn view_id(&self) -> ViewId { self.id } }
-impl IntoView for Combobox { type V = Container; fn into_view(self) -> Self::V { let scope = self.scope; let id = self.id; scope.enter(move || Container::with_id(id, ())) } }
+impl IntoView for Combobox { type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { let scope = self.scope; let id = self.id; scope.enter(move || Container::with_id(id, ())) } }
 impl ParentView for Combobox { fn scope(&self) -> Option<Scope> { Some(self.scope) } }
 
 pub struct ComboboxTrigger { id: ViewId, placeholder: String, items: Vec<(String, String)> }
@@ -73,7 +76,10 @@ pub struct ComboboxList { id: ViewId, max_height: f64 }
 impl ComboboxList { pub fn new() -> Self { Self{id:ViewId::new(),max_height:300.0} } pub fn max_height(mut self, h: f64) -> Self { self.max_height=h; self } }
 impl Default for ComboboxList { fn default() -> Self { Self::new() } }
 impl HasViewId for ComboboxList { fn view_id(&self) -> ViewId { self.id } }
-impl IntoView for ComboboxList { type V = floem::views::Scroll; fn into_view(self) -> Self::V { let mh=self.max_height; let c=Container::with_id(self.id,()).style(|s|s.flex_col().width_full().p_1()); floem::views::Scroll::new(c).style(move |s|s.max_height(mh).width_full()) } }
+impl IntoView for ComboboxList { type V = floem::views::Scroll;
+    type Intermediate = floem::views::Scroll;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { let mh=self.max_height; let c=Container::with_id(self.id,()).style(|s|s.flex_col().width_full().p_1()); floem::views::Scroll::new(c).style(move |s|s.max_height(mh).width_full()) } }
 impl ParentView for ComboboxList {}
 
 pub struct ComboboxItem { id: ViewId, value: String, label: String, disabled: bool }
@@ -108,22 +114,34 @@ pub struct ComboboxEmpty { id: ViewId, text: String }
 impl ComboboxEmpty { pub fn new(t: impl Into<String>) -> Self { Self{id:ViewId::new(),text:t.into()} } }
 impl Default for ComboboxEmpty { fn default() -> Self { Self::new("No results found.") } }
 impl HasViewId for ComboboxEmpty { fn view_id(&self) -> ViewId { self.id } }
-impl IntoView for ComboboxEmpty { type V = Box<dyn View>; fn into_view(self) -> Self::V { Box::new(floem::views::Label::new(self.text).style(|s|s.with_shadcn_theme(move |s,t|s.width_full().padding_top(8.0).padding_bottom(8.0).text_sm().color(t.muted_foreground).justify_center()))) } }
+impl IntoView for ComboboxEmpty { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Label::new(self.text).style(|s|s.with_shadcn_theme(move |s,t|s.width_full().padding_top(8.0).padding_bottom(8.0).text_sm().color(t.muted_foreground).justify_center()))) } }
 
 pub struct ComboboxGroup { id: ViewId }
 impl ComboboxGroup { pub fn new() -> Self { Self{id:ViewId::new()} } }
 impl Default for ComboboxGroup { fn default() -> Self { Self::new() } }
 impl HasViewId for ComboboxGroup { fn view_id(&self) -> ViewId { self.id } }
-impl IntoView for ComboboxGroup { type V = Container; fn into_view(self) -> Self::V { Container::with_id(self.id,()).style(|s|s.flex_col().width_full()) } }
+impl IntoView for ComboboxGroup { type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Container::with_id(self.id,()).style(|s|s.flex_col().width_full()) } }
 impl ParentView for ComboboxGroup {}
 
 pub struct ComboboxLabel { id: ViewId, text: String }
 impl ComboboxLabel { pub fn new(t: impl Into<String>) -> Self { Self{id:ViewId::new(),text:t.into()} } }
 impl HasViewId for ComboboxLabel { fn view_id(&self) -> ViewId { self.id } }
-impl IntoView for ComboboxLabel { type V = Box<dyn View>; fn into_view(self) -> Self::V { Box::new(floem::views::Label::new(self.text).style(|s|s.with_shadcn_theme(move |s,t|s.px_2().padding_top(6.0).padding_bottom(6.0).text_xs().font_medium().color(t.muted_foreground)))) } }
+impl IntoView for ComboboxLabel { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Label::new(self.text).style(|s|s.with_shadcn_theme(move |s,t|s.px_2().padding_top(6.0).padding_bottom(6.0).text_xs().font_medium().color(t.muted_foreground)))) } }
 
 pub struct ComboboxSeparator;
 impl ComboboxSeparator { pub fn new() -> Self { Self } }
 impl Default for ComboboxSeparator { fn default() -> Self { Self::new() } }
 impl HasViewId for ComboboxSeparator { fn view_id(&self) -> ViewId { ViewId::new() } }
-impl IntoView for ComboboxSeparator { type V = Box<dyn View>; fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new().style(|s|s.with_shadcn_theme(move |s,t|s.width_full().height(1.0).background(t.border).margin_left(-4.0).margin_right(-4.0).margin_top(4.0).margin_bottom(4.0)))) } }
+impl IntoView for ComboboxSeparator { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new().style(|s|s.with_shadcn_theme(move |s,t|s.width_full().height(1.0).background(t.border).margin_left(-4.0).margin_right(-4.0).margin_top(4.0).margin_bottom(4.0)))) } }

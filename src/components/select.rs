@@ -47,12 +47,18 @@ impl IntoView for Select {
 pub struct SelectTrigger<V> { id: ViewId, child: V, is_open: RwSignal<bool> }
 impl<V: IntoView+'static> SelectTrigger<V> { pub fn new(c: V, io: RwSignal<bool>) -> Self { Self{id:ViewId::new(),child:c,is_open:io} } }
 impl<V: IntoView+'static> HasViewId for SelectTrigger<V> { fn view_id(&self) -> ViewId { self.id } }
-impl<V: IntoView+'static> IntoView for SelectTrigger<V> { type V = Box<dyn View>; fn into_view(self) -> Self::V { let io = self.is_open; Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.with_shadcn_theme(move |s,t| s.h_9().px_3().py_2().gap_2().items_center().border_1().border_color(t.input).rounded_md().background(t.background).shadow_sm().cursor(CursorStyle::Pointer).hover(|s|s.border_color(t.ring)))).on_click_stop(move |_|{io.update(|v|*v=!*v);})) } }
+impl<V: IntoView+'static> IntoView for SelectTrigger<V> { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { let io = self.is_open; Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.with_shadcn_theme(move |s,t| s.h_9().px_3().py_2().gap_2().items_center().border_1().border_color(t.input).rounded_md().background(t.background).shadow_sm().cursor(CursorStyle::Pointer).hover(|s|s.border_color(t.ring)))).on_click_stop(move |_|{io.update(|v|*v=!*v);})) } }
 
 pub struct SelectContent<V> { id: ViewId, child: V, is_open: RwSignal<bool> }
 impl<V: IntoView+'static> SelectContent<V> { pub fn new(c: V, io: RwSignal<bool>) -> Self { Self{id:ViewId::new(),child:c,is_open:io} } }
 impl<V: IntoView+'static> HasViewId for SelectContent<V> { fn view_id(&self) -> ViewId { self.id } }
-impl<V: IntoView+'static> IntoView for SelectContent<V> { type V = Box<dyn View>; fn into_view(self) -> Self::V { let io = self.is_open; Box::new(floem::views::Container::with_id(self.id, self.child).style(move |s| s.with_shadcn_theme(move |s,t|{ let base = s.position(floem::style::Position::Absolute).inset_top_pct(100.0).inset_left(0.0).inset_right(0.0).margin_top(6.0).p_1().background(t.popover).color(t.popover_foreground).border_1().border_color(t.border).rounded_md().shadow_md().z_index(100).flex_direction(floem::style::FlexDirection::Column); if io.get() { base } else { base.display(floem::style::Display::None) } }))) } }
+impl<V: IntoView+'static> IntoView for SelectContent<V> { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { let io = self.is_open; Box::new(floem::views::Container::with_id(self.id, self.child).style(move |s| s.with_shadcn_theme(move |s,t|{ let base = s.position(floem::style::Position::Absolute).inset_top_pct(100.0).inset_left(0.0).inset_right(0.0).margin_top(6.0).p_1().background(t.popover).color(t.popover_foreground).border_1().border_color(t.border).rounded_md().shadow_md().z_index(100).flex_direction(floem::style::FlexDirection::Column); if io.get() { base } else { base.display(floem::style::Display::None) } }))) } }
 
 // Re-export stubs that lib.rs expects
 pub struct SelectItem;
@@ -63,24 +69,36 @@ impl SelectItem {
     #[allow(dead_code)] pub fn auto_close(self, _: RwSignal<bool>) -> Self { self }
 }
 impl HasViewId for SelectItem { fn view_id(&self) -> ViewId { ViewId::new() } }
-impl IntoView for SelectItem { type V = Box<dyn View>; fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new()) } }
+impl IntoView for SelectItem { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new()) } }
 
 pub struct SelectLabel;
 impl SelectLabel {
     #[allow(dead_code)] pub fn new(_: impl Into<String>) -> Self { Self }
 }
 impl HasViewId for SelectLabel { fn view_id(&self) -> ViewId { ViewId::new() } }
-impl IntoView for SelectLabel { type V = Box<dyn View>; fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new()) } }
+impl IntoView for SelectLabel { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new()) } }
 
 pub struct SelectSeparator;
 impl SelectSeparator { pub fn new() -> Self { Self } }
 impl Default for SelectSeparator { fn default() -> Self { Self::new() } }
 impl HasViewId for SelectSeparator { fn view_id(&self) -> ViewId { ViewId::new() } }
-impl IntoView for SelectSeparator { type V = Box<dyn View>; fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new()) } }
+impl IntoView for SelectSeparator { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new()) } }
 
 pub struct SelectGroup<V> { id: ViewId, child: V }
 impl<V: IntoView+'static> SelectGroup<V> {
     pub fn new(_: impl Into<String>, child: V) -> Self { Self { id: ViewId::new(), child } }
 }
 impl<V: IntoView+'static> HasViewId for SelectGroup<V> { fn view_id(&self) -> ViewId { self.id } }
-impl<V: IntoView+'static> IntoView for SelectGroup<V> { type V = Box<dyn View>; fn into_view(self) -> Self::V { Box::new(self.child.into_view()) } }
+impl<V: IntoView+'static> IntoView for SelectGroup<V> { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(self.child.into_view()) } }

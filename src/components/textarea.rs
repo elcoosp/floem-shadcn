@@ -7,4 +7,7 @@ use crate::theme::ShadcnThemeExt;
 pub struct Textarea { id: ViewId }
 impl Textarea { pub fn new(_: impl Into<String>) -> Self { Self{id:ViewId::new()} } pub fn rows(self, _: u32) -> Self { self } pub fn placeholder(self, _: impl Into<String>) -> Self { self } pub fn on_change(self, _: impl Fn(&str)+'static) -> Self { self } pub fn resizable(self, _: bool) -> Self { self } pub fn on_update(self, _: impl Fn(&str)+'static) -> Self { self } }
 impl HasViewId for Textarea { fn view_id(&self) -> ViewId { self.id } }
-impl IntoView for Textarea { type V = Box<dyn View>; fn into_view(self) -> Self::V { Box::new(floem::views::TextInput::new(RwSignal::new(String::new())).style(|s| s.w_full().rounded_md().border_1().px_3().py_2().text_sm().with_shadcn_theme(|s,t|{ let ring=t.ring; s.border_color(t.input).background(t.background).color(t.foreground).focus(move |s| s.outline(2.0).outline_color(ring)) }))) } }
+impl IntoView for Textarea { type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(floem::views::TextInput::new(RwSignal::new(String::new())).style(|s| s.w_full().rounded_md().border_1().px_3().py_2().text_sm().with_shadcn_theme(|s,t|{ let ring=t.ring; s.border_color(t.input).background(t.background).color(t.foreground).focus(move |s| s.outline(2.0).outline_color(ring)) }))) } }
