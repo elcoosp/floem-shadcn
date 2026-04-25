@@ -16,7 +16,7 @@
 //!             .description("This action cannot be undone."),
 //!         DialogFooter::new((
 //!             DialogClose::new(Button::new("Cancel").outline()),
-//!             Button::new("Continue").on_click_stop(move |_| {
+//!             Button::new("Continue").on_event_stop(floem::event::EventListener::Click, move |_| {
 //!                 // do something
 //!             }),
 //!         )),
@@ -48,7 +48,6 @@ use floem::reactive::{Context, RwSignal, Scope, SignalGet, SignalUpdate};
 use floem::views::Decorators;
 use floem::views::Overlay;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -182,7 +181,7 @@ impl<V: IntoView + 'static> IntoView for DialogTrigger<V> {
         let ctx = Context::get::<DialogContext>();
 
         Box::new(
-            floem::views::Container::with_id(self.id, self.child).on_click_stop(move |_| {
+            floem::views::Container::with_id(self.id, self.child).on_event_stop(floem::event::EventListener::Click, move |_| {
                 if let Some(ctx) = ctx {
                     ctx.open.set(true);
                 }
@@ -231,7 +230,7 @@ impl<V: IntoView + 'static> IntoView for DialogClose<V> {
         let ctx = Context::get::<DialogContext>();
 
         Box::new(
-            floem::views::Container::with_id(self.id, self.child).on_click_stop(move |_| {
+            floem::views::Container::with_id(self.id, self.child).on_event_stop(floem::event::EventListener::Click, move |_| {
                 if let Some(ctx) = ctx {
                     ctx.open.set(false);
                 }
@@ -309,37 +308,35 @@ impl IntoView for DialogContent {
                         floem::views::Empty::new()
                             .style(move |s| {
                                 s.absolute()
-                                    .inset_0()
+                                    .inset(0.0)
                                     .background(peniko::Color::from_rgba8(0, 0, 0, 128))
                             })
-                            .on_click_stop(move |_| {
+                            .on_event_stop(floem::event::EventListener::Click, move |_| {
                                 open.set(false);
                             }),
                         // Content wrapper - centered modal with vertical stack for children
                         floem::views::Stack::vertical_from_iter(children)
                             .style(move |s| {
                                 s.absolute()
-                                    .left_1_2()
-                                    .top_1_2()
-                                    .translate_x_neg_1_2()
-                                    .translate_y_neg_1_2()
+                                    .inset_left_pct(50.0)
+                                    .inset_top_pct(50.0)
                                     .z_index(10)
-                                    .max_w_lg()
-                                    .rounded_lg()
+                                    .max_width(512.0)
+                                    .border_radius(8.0)
                                     .p_6()
                                     .gap_4()
-                                    .shadow_lg()
+                                    .box_shadow_blur(8.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,60))
                             })
                             .style(move |s| {
                                 s.with_shadcn_theme(move |s, t| {
-                                    s.background(t.background).border_1().border_color(t.border)
+                                    s.background(t.background).border(1.0).border_color(t.border)
                                 })
                             }),
                     ))
                     .style(move |s| {
                         let is_open = open.get();
                         s.fixed()
-                            .inset_0()
+                            .inset(0.0)
                             .width_full()
                             .height_full()
                             .apply_if(!is_open, |s| s.hide())
@@ -348,7 +345,7 @@ impl IntoView for DialogContent {
             )
         } else {
             // No dialog context - just render the content (for use outside Dialog)
-            Box::new(floem::views::Stack::vertical_from_iter(children).style(|s| s.w_full()))
+            Box::new(floem::views::Stack::vertical_from_iter(children).style(|s| s.width_full()))
         }
     }
 }
@@ -414,9 +411,9 @@ impl IntoView for DialogHeader {
             // shadcn/ui DialogTitle: text-lg leading-none font-semibold
             children.push(Box::new(floem::views::Label::new(title).style(|s| {
                 s.with_shadcn_theme(|s, t| {
-                    s.text_lg() // text-lg = 18px
-                        .leading_none() // leading-none
-                        .font_semibold() // font-semibold
+                    s.font_size(18.0) // text-lg = 18px
+                        .line_height(1.0) // leading-none
+                         // font-semibold
                         .color(t.foreground)
                 })
             })));
@@ -426,13 +423,13 @@ impl IntoView for DialogHeader {
             // shadcn/ui DialogDescription: text-muted-foreground text-sm
             children.push(Box::new(floem::views::Label::new(description).style(|s| {
                 s.with_shadcn_theme(|s, t| {
-                    s.text_sm() // text-sm = 14px
+                    s.font_size(14.0) // text-sm = 14px
                         .color(t.muted_foreground) // text-muted-foreground
                 })
             })));
         }
 
-        Box::new(floem::views::Stack::vertical_from_iter(children).style(|s| s.gap_2())) // gap-2 = 8px
+        Box::new(floem::views::Stack::vertical_from_iter(children).style(|s| s.gap(8.0))) // gap-2 = 8px
     }
 }
 
@@ -473,7 +470,7 @@ impl<V: IntoView + 'static> IntoView for DialogFooter<V> {
         // shadcn/ui: flex flex-col-reverse gap-2 sm:flex-row sm:justify-end
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
-                .style(|s| s.flex().flex_row().justify_end().gap_2()),
+                .style(|s| s.flex().flex_row().justify_end().gap(8.0)),
         )
     }
 }
@@ -514,7 +511,7 @@ impl<V: IntoView + 'static> IntoView for DialogTitle<V> {
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.with_shadcn_theme(|s, t| s.text_lg().font_semibold().color(t.foreground))
+                s.with_shadcn_theme(|s, t| s.font_size(18.0).color(t.foreground))
             }),
         )
     }
@@ -556,7 +553,7 @@ impl<V: IntoView + 'static> IntoView for DialogDescription<V> {
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
-                .style(|s| s.with_shadcn_theme(|s, t| s.text_sm().color(t.muted_foreground))),
+                .style(|s| s.with_shadcn_theme(|s, t| s.font_size(14.0).color(t.muted_foreground))),
         )
     }
 }

@@ -4,7 +4,6 @@ use floem::style::CursorStyle;
 use floem::view::ParentView;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 use crate::theme::ShadcnThemeExt;
 
 #[derive(Clone, Copy)] pub struct ComboboxContext { pub selected: RwSignal<Option<String>>, pub search: RwSignal<String>, pub is_open: RwSignal<bool> }
@@ -36,10 +35,10 @@ impl IntoView for ComboboxTrigger {
         if let Some(ctx) = ctx {
             let selected = ctx.selected; let is_open = ctx.is_open; let items = self.items.clone();
             Box::new(floem::views::Stack::horizontal((
-                floem::views::Label::derived(move || if let Some(v)=selected.get(){items.iter().find(|(x,_)|x==&v).map(|(_,l)|l.clone()).unwrap_or(v)}else{self.placeholder.clone()}).style(move |s| s.with_shadcn_theme(move |s,t|{let hv=selected.get().is_some();s.flex_grow(1.0).text_sm().color(if hv{t.foreground}else{t.muted_foreground})})),
+                floem::views::Label::derived(move || if let Some(v)=selected.get(){items.iter().find(|(x,_)|x==&v).map(|(_,l)|l.clone()).unwrap_or(v)}else{self.placeholder.clone()}).style(move |s| s.with_shadcn_theme(move |s,t|{let hv=selected.get().is_some();s.flex_grow(1.0).font_size(14.0).color(if hv{t.foreground}else{t.muted_foreground})})),
                 floem::views::Label::new("▼").style(|s| s.with_shadcn_theme(move |s,t| s.font_size(10.0).color(t.muted_foreground).flex_shrink(0.0))),
-            )).style(|s| s.with_shadcn_theme(move |s,t| s.min_width(200.0).h_9().px_3().py_2().gap_2().items_center().border_1().border_color(t.input).rounded_md().background(t.background).shadow_sm().cursor(CursorStyle::Pointer).hover(|s|s.border_color(t.ring)))).on_click_stop(move |_|{is_open.update(|v|*v=!*v);}))
-        } else { Box::new(floem::views::Label::new(self.placeholder).style(|s| s.with_shadcn_theme(move |s,t| s.min_width(200.0).h_9().px_3().py_2().items_center().border_1().border_color(t.input).rounded_md().background(t.background).color(t.muted_foreground)))) }
+            )).style(|s| s.with_shadcn_theme(move |s,t| s.min_width(200.0).height(36.0).padding_left(12.0).padding_right(12.0).padding_top(8.0).padding_bottom(8.0).gap(8.0).items_center().border(1.0).border_color(t.input).border_radius(6.0).background(t.background).box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)).cursor(CursorStyle::Pointer).hover(|s|s.border_color(t.ring)))).on_event_stop(floem::event::EventListener::Click, move |_|{is_open.update(|v|*v=!*v);}))
+        } else { Box::new(floem::views::Label::new(self.placeholder).style(|s| s.with_shadcn_theme(move |s,t| s.min_width(200.0).height(36.0).padding_left(12.0).padding_right(12.0).padding_top(8.0).padding_bottom(8.0).items_center().border(1.0).border_color(t.input).border_radius(6.0).background(t.background).color(t.muted_foreground)))) }
     }
 }
 
@@ -55,7 +54,7 @@ impl IntoView for ComboboxContent {
     fn into_view(self) -> Self::V {
         let ctx = Context::get::<ComboboxContext>();
         let stem = Container::with_id(self.id, ()).style(|s| s.flex_col().width_full());
-        if let Some(ctx) = ctx { Box::new(floem::views::Container::new(stem).style(move |s| s.with_shadcn_theme(move |s,t|{s.position(floem::style::Position::Absolute).inset_top_pct(100.0).inset_left(0.0).inset_right(0.0).margin_top(6.0).min_width(200.0).flex_col().background(t.popover).color(t.popover_foreground).border_1().border_color(t.border).rounded_md().shadow_lg().z_index(100).apply_if(!ctx.is_open.get(),|s|s.display(floem::style::Display::None))}))) } else { Box::new(stem) }
+        if let Some(ctx) = ctx { Box::new(floem::views::Container::new(stem).style(move |s| s.with_shadcn_theme(move |s,t|{s.position(floem::style::Position::Absolute).inset_top_pct(100.0).inset_left(0.0).inset_right(0.0).margin_top(6.0).min_width(200.0).flex_col().background(t.popover).color(t.popover_foreground).border(1.0).border_color(t.border).border_radius(6.0).box_shadow_blur(8.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,60)).z_index(100).apply_if(!ctx.is_open.get(),|s|s.display(floem::style::Display::None))}))) } else { Box::new(stem) }
     }
 }
 impl ParentView for ComboboxContent {}
@@ -69,7 +68,7 @@ impl IntoView for ComboboxInput {
 
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-    fn into_view(self) -> Self::V { Box::new(floem::views::TextInput::new(RwSignal::new(String::new())).placeholder(self.placeholder).style(|s| s.with_shadcn_theme(move |s,t| s.width_full().h_8().px_3().text_sm().border(0.0).border_bottom(1.0).border_color(t.border).background(floem::peniko::Color::TRANSPARENT).color(t.foreground)))) }
+    fn into_view(self) -> Self::V { Box::new(floem::views::TextInput::new(RwSignal::new(String::new())).placeholder(self.placeholder).style(|s| s.with_shadcn_theme(move |s,t| s.width_full().height(32.0).padding_left(12.0).padding_right(12.0).font_size(14.0).border(0.0).border_bottom(1.0).border_color(t.border).background(floem::peniko::Color::TRANSPARENT).color(t.foreground)))) }
 }
 
 pub struct ComboboxList { id: ViewId, max_height: f64 }
@@ -79,7 +78,7 @@ impl HasViewId for ComboboxList { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxList { type V = floem::views::Scroll;
     type Intermediate = floem::views::Scroll;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-    fn into_view(self) -> Self::V { let mh=self.max_height; let c=Container::with_id(self.id,()).style(|s|s.flex_col().width_full().p_1()); floem::views::Scroll::new(c).style(move |s|s.max_height(mh).width_full()) } }
+    fn into_view(self) -> Self::V { let mh=self.max_height; let c=Container::with_id(self.id,()).style(|s|s.flex_col().width_full().padding(4.0)); floem::views::Scroll::new(c).style(move |s|s.max_height(mh).width_full()) } }
 impl ParentView for ComboboxList {}
 
 pub struct ComboboxItem { id: ViewId, value: String, label: String, disabled: bool }
@@ -98,14 +97,14 @@ impl IntoView for ComboboxItem {
             let v0 = value.clone(); let v1 = value.clone(); let v2 = value.clone();
             Box::new(
                 floem::views::Container::new(floem::views::Stack::horizontal((
-                    floem::views::Label::new(label).style(|s|s.text_sm().flex_grow(1.0)),
-                    floem::views::Label::new("✓").style(move |s| { let v = v0.clone(); s.with_shadcn_theme(move |s,t| { let is_sel = selected.get() == Some(v.clone()); s.size_4().text_sm().color(t.foreground).items_center().justify_center().flex_shrink(0.0).apply_if(!is_sel,|s|s.display(floem::style::Display::None)) }) }),
-                )).style(|s|s.width_full().items_center().gap_2()))
-                .style(move |s| { let v = v1.clone(); s.with_shadcn_theme(move |s,t| { let is_sel = selected.get() == Some(v.clone()); let base = s.width_full().padding_top(6.0).padding_bottom(6.0).padding_left(8.0).padding_right(8.0).items_center().rounded_sm().cursor(if disabled{CursorStyle::Default}else{CursorStyle::Pointer}); if is_sel { base.background(t.accent).color(t.accent_foreground) } else if disabled { base.color(t.muted_foreground).opacity_50() } else { base.color(t.foreground).hover(|s|s.background(t.accent).color(t.accent_foreground)) } }) })
-                .on_click_stop(move |_| { if !disabled { selected.set(Some(v2.clone())); is_open.set(false); } })
+                    floem::views::Label::new(label).style(|s|s.font_size(14.0).flex_grow(1.0)),
+                    floem::views::Label::new("✓").style(move |s| { let v = v0.clone(); s.with_shadcn_theme(move |s,t| { let is_sel = selected.get() == Some(v.clone()); s.size(16.0, 16.0).font_size(14.0).color(t.foreground).items_center().justify_center().flex_shrink(0.0).apply_if(!is_sel,|s|s.display(floem::style::Display::None)) }) }),
+                )).style(|s|s.width_full().items_center().gap(8.0)))
+                .style(move |s| { let v = v1.clone(); s.with_shadcn_theme(move |s,t| { let is_sel = selected.get() == Some(v.clone()); let base = s.width_full().padding_top(6.0).padding_bottom(6.0).padding_left(8.0).padding_right(8.0).items_center().border_radius(3.0).cursor(if disabled{CursorStyle::Default}else{CursorStyle::Pointer}); if is_sel { base.background(t.accent).color(t.accent_foreground) } else if disabled { base.color(t.muted_foreground).opacity(0.5) } else { base.color(t.foreground).hover(|s|s.background(t.accent).color(t.accent_foreground)) } }) })
+                .on_event_stop(floem::event::EventListener::Click, move |_| { if !disabled { selected.set(Some(v2.clone())); is_open.set(false); } })
             )
         } else {
-            Box::new(floem::views::Label::new(self.label).style(|s|s.with_shadcn_theme(move |s,t|s.width_full().padding(6.0).text_sm().color(t.foreground))))
+            Box::new(floem::views::Label::new(self.label).style(|s|s.with_shadcn_theme(move |s,t|s.width_full().padding(6.0).font_size(14.0).color(t.foreground))))
         }
     }
 }
@@ -117,7 +116,7 @@ impl HasViewId for ComboboxEmpty { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxEmpty { type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-    fn into_view(self) -> Self::V { Box::new(floem::views::Label::new(self.text).style(|s|s.with_shadcn_theme(move |s,t|s.width_full().padding_top(8.0).padding_bottom(8.0).text_sm().color(t.muted_foreground).justify_center()))) } }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Label::new(self.text).style(|s|s.with_shadcn_theme(move |s,t|s.width_full().padding_top(8.0).padding_bottom(8.0).font_size(14.0).color(t.muted_foreground).justify_center()))) } }
 
 pub struct ComboboxGroup { id: ViewId }
 impl ComboboxGroup { pub fn new() -> Self { Self{id:ViewId::new()} } }
@@ -135,7 +134,7 @@ impl HasViewId for ComboboxLabel { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for ComboboxLabel { type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-    fn into_view(self) -> Self::V { Box::new(floem::views::Label::new(self.text).style(|s|s.with_shadcn_theme(move |s,t|s.px_2().padding_top(6.0).padding_bottom(6.0).text_xs().font_medium().color(t.muted_foreground)))) } }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Label::new(self.text).style(|s|s.with_shadcn_theme(move |s,t|s.padding_left(8.0).padding_right(8.0).padding_top(6.0).padding_bottom(6.0).font_size(12.0).color(t.muted_foreground)))) } }
 
 pub struct ComboboxSeparator;
 impl ComboboxSeparator { pub fn new() -> Self { Self } }

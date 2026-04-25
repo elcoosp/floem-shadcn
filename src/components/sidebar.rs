@@ -29,14 +29,14 @@
 //!                                 SidebarMenuItem::new().child(
 //!                                     SidebarMenuButton::new("Buttons")
 //!                                         .is_active(move || active.get() == "buttons")
-//!                                         .on_click_stop(move |_| active.set("buttons"))
+//!                                         .on_event_stop(floem::event::EventListener::Click, move |_| active.set("buttons"))
 //!                                 )
 //!                             )
 //!                             .child(
 //!                                 SidebarMenuItem::new().child(
 //!                                     SidebarMenuButton::new("Cards")
 //!                                         .is_active(move || active.get() == "cards")
-//!                                         .on_click_stop(move |_| active.set("cards"))
+//!                                         .on_event_stop(floem::event::EventListener::Click, move |_| active.set("cards"))
 //!                                 )
 //!                             )
 //!                     )
@@ -636,7 +636,7 @@ impl SidebarMenuButtonSize {
 ///
 /// SidebarMenuButton::new("Buttons")
 ///     .is_active(move || active.get() == "buttons")
-///     .on_click_stop(move |_| active.set("buttons"))
+///     .on_event_stop(floem::event::EventListener::Click, move |_| active.set("buttons"))
 /// ```
 ///
 /// # Example with children

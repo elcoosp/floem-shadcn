@@ -441,7 +441,7 @@ impl IntoView for NavigationMenuLink {
         });
 
         if let Some(handler) = on_click {
-            Box::new(container.on_click_stop(move |_| handler()))
+            Box::new(container.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
         } else {
             Box::new(container)
         }

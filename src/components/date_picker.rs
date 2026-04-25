@@ -132,7 +132,7 @@ impl IntoView for DatePicker {
             trigger.into_any()
         } else {
             trigger
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     is_open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -192,7 +192,7 @@ impl IntoView for DatePicker {
                     base.display(floem::style::Display::None)
                 }
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 is_open.set(false);
             });
 
@@ -223,7 +223,7 @@ fn create_calendar_content(
                         .hover(|s| s.background(t.accent))
                 })
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 let m = view_month.get();
                 if m == 1 {
                     view_month.set(12);
@@ -274,7 +274,7 @@ fn create_calendar_content(
                         .hover(|s| s.background(t.accent))
                 })
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 let m = view_month.get();
                 if m == 12 {
                     view_month.set(1);
@@ -402,7 +402,7 @@ fn create_picker_day(
             }
         })
     })
-    .on_click_stop(move |_| {
+    .on_event_stop(floem::event::EventListener::Click, move |_| {
         let year = view_year.get();
         let month = view_month.get();
         let day = get_day_for_cell(year, month, cell_index);
@@ -588,7 +588,7 @@ impl IntoView for DateRangePicker {
             trigger.into_any()
         } else {
             trigger
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     is_open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -639,7 +639,7 @@ impl IntoView for DateRangePicker {
                     base.display(floem::style::Display::None)
                 }
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 is_open.set(false);
             });
 

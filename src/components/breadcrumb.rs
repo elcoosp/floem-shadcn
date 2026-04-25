@@ -196,7 +196,7 @@ impl IntoView for BreadcrumbItem {
         });
 
         if let Some(handler) = on_click {
-            Box::new(label.on_click_stop(move |_| {
+            Box::new(label.on_event_stop(floem::event::EventListener::Click, move |_| {
                 handler();
             }))
         } else {
@@ -258,7 +258,7 @@ impl<V: IntoView + 'static> IntoView for BreadcrumbLink<V> {
         });
 
         if let Some(handler) = on_click {
-            Box::new(container.on_click_stop(move |_| {
+            Box::new(container.on_event_stop(floem::event::EventListener::Click, move |_| {
                 handler();
             }))
         } else {

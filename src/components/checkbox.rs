@@ -22,7 +22,6 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -86,11 +85,11 @@ impl Checkbox {
             s.with_shadcn_theme(move |s, t| {
                 let is_checked = checked.get();
                 // size-4 = 16px, rounded-[4px] = 4px, border = 1px
-                s.size_4() // size-4 = 16px
+                s.size(16.0, 16.0) // size-4 = 16px
                     .flex_shrink(0.0) // shrink-0
                     .border_radius(4.0) // rounded-[4px] = 4px border radius
-                    .border_1() // border
-                    .shadow_sm() // shadow-xs (using shadow_sm as equivalent)
+                    .border(1.0) // border
+                    .box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)) // shadow-xs (using shadow_sm as equivalent)
                     .flex()
                     .items_center()
                     .justify_center()
@@ -110,7 +109,7 @@ impl Checkbox {
 
         let checkbox_box = if !disabled {
             checkbox_box
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     checked.update(|c| *c = !*c);
                 })
                 .into_any()
@@ -122,9 +121,9 @@ impl Checkbox {
         if let Some(label_text) = self.label_text {
             let label_view = floem::views::Label::new(label_text).style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
-                    s.text_sm() // 14px
-                        .font_medium()
-                        .leading_none()
+                    s.font_size(14.0) // 14px
+                        
+                        .line_height(1.0)
                         .color(if disabled {
                             t.muted_foreground
                         } else {
@@ -137,7 +136,7 @@ impl Checkbox {
 
             let label_view = if !disabled {
                 label_view
-                    .on_click_stop(move |_| {
+                    .on_event_stop(floem::event::EventListener::Click, move |_| {
                         checked.update(|c| *c = !*c);
                     })
                     .into_any()
@@ -146,7 +145,7 @@ impl Checkbox {
             };
 
             floem::views::Stack::horizontal((checkbox_box, label_view))
-                .style(|s| s.gap_2().items_center()) // gap-2 = 8px
+                .style(|s| s.gap(8.0).items_center()) // gap-2 = 8px
                 .into_any()
         } else {
             checkbox_box

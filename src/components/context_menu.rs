@@ -93,7 +93,7 @@ where
         // Trigger wrapper - handles right-click
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
-                .on_secondary_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::SecondaryClick, move |_| {
                     open.set(true);
                 })
                 .into_any()
@@ -151,7 +151,7 @@ where
                     base.display(floem::style::Display::None)
                 }
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 open.set(false);
             });
 
@@ -359,7 +359,7 @@ impl IntoView for ContextMenuItem {
 
         if let Some(handler) = on_click {
             if !disabled {
-                Box::new(row.on_click_stop(move |_| handler()))
+                Box::new(row.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
             } else {
                 Box::new(row)
             }

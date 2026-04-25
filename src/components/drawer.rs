@@ -20,7 +20,6 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::{Decorators, Overlay};
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -167,10 +166,10 @@ impl<V: IntoView + 'static> IntoView for Drawer<V> {
         let backdrop = floem::views::Empty::new()
             .style(move |s| {
                 s.absolute()
-                    .inset_0()
+                    .inset(0.0)
                     .background(floem::peniko::Color::from_rgba8(0, 0, 0, 128))
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 is_open.set(false);
             });
 
@@ -182,7 +181,7 @@ impl<V: IntoView + 'static> IntoView for Drawer<V> {
             .style(move |s| {
                 let open = is_open.get();
                 s.fixed()
-                    .inset_0()
+                    .inset(0.0)
                     .width_full()
                     .height_full()
                     .apply_if(!open, |s| s.hide())
@@ -233,7 +232,7 @@ impl<V: IntoView + 'static> IntoView for DrawerTrigger<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     is_open.set(true);
                 }),
         )
@@ -508,7 +507,7 @@ impl<V: IntoView + 'static> IntoView for DrawerClose<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     is_open.set(false);
                 }),
         )

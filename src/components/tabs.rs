@@ -25,7 +25,6 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -69,7 +68,7 @@ impl<V: floem::view::IntoViewIter + 'static> IntoView for Tabs<V> {
         Box::new(
             floem::views::Stack::with_id(self.id, self.child).style(|s| {
                 s.flex_direction(floem::style::FlexDirection::Column)
-                    .gap_2()
+                    .gap(8.0)
             }),
         )
     }
@@ -118,7 +117,7 @@ impl<V: floem::view::IntoViewIter + 'static> IntoView for TabsList<V> {
                         // Users can add .style(|s| s.width_full()) to TabsList if needed
                         .background(t.muted)
                         .border_radius(8.0) // rounded-lg
-                        .h_9() // h-9 = 36px
+                        .height(36.0) // h-9 = 36px
                         .padding(3.0) // p-[3px]
                         .gap(3.0) // Small gap between tabs
                 })
@@ -178,8 +177,8 @@ impl Tab {
                         .flex_basis(0.0) // Start from 0 width, grow from there
                         .min_width(0.0) // Allow shrinking below content width
                         .height(29.0) // h-[calc(100%-1px)] ≈ 36px - 6px padding - 1px = 29px
-                        .px_2() // px-2 = 8px
-                        .py_1() // py-1 = 4px
+                        .padding_left(8.0).padding_right(8.0) // px-2 = 8px
+                        .padding_top(4.0).padding_bottom(4.0) // py-1 = 4px
                         .items_center() // Center content vertically
                         .justify_center() // Center content horizontally
                         .border_radius(6.0) // rounded-md
@@ -195,14 +194,14 @@ impl Tab {
                     if is_active {
                         base.background(t.background)
                             .color(t.foreground)
-                            .shadow_sm() // shadow-sm for active state
+                            .box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)) // shadow-sm for active state
                     } else {
                         base.background(peniko::Color::TRANSPARENT)
                             .color(t.muted_foreground)
                     }
                 })
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 if let Some(signal) = active_signal {
                     signal.set(item_id_click.clone());
                 }

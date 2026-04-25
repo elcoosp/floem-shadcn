@@ -309,7 +309,7 @@ impl IntoView for ToggleGroupItem {
         if disabled {
             Box::new(label)
         } else if let Some(signal) = selected_signal {
-            Box::new(label.on_click_stop(move |_| {
+            Box::new(label.on_event_stop(floem::event::EventListener::Click, move |_| {
                 signal.update(|v| *v = Some(value_for_click.clone()));
             }))
         } else {
@@ -411,7 +411,7 @@ impl IntoView for ToggleGroupItemMultiple {
         if disabled {
             Box::new(label)
         } else if let Some(signal) = selected_signal {
-            Box::new(label.on_click_stop(move |_| {
+            Box::new(label.on_event_stop(floem::event::EventListener::Click, move |_| {
                 signal.update(|v| {
                     if v.contains(&value_for_click) {
                         v.retain(|x| x != &value_for_click);

@@ -154,7 +154,7 @@ impl AccordionItem {
                     .hover(|s| s.background(t.muted))
             })
         })
-        .on_click_stop(move |_| {
+        .on_event_stop(floem::event::EventListener::Click, move |_| {
             if let Some(signal) = expanded_signal {
                 signal.update(|current| {
                     if *current == Some(item_id_click.clone()) {

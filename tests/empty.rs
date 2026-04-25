@@ -1,3 +1,7 @@
+use floem::views::Decorators;
+use floem::reactive::SignalGet;
+use floem::reactive::SignalUpdate;
+use floem_test::TestRoot;
 //! Tests for Empty component
 
 use floem::prelude::*;
@@ -14,7 +18,7 @@ fn test_empty_renders_with_title() {
     let id = empty.view_id();
 
     let container = Stack::new((empty,)).style(|s| s.size(400.0, 300.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 300.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  300.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Empty layout should exist");
@@ -31,7 +35,7 @@ fn test_empty_with_actions() {
     let id = empty.view_id();
 
     let container = Stack::new((empty,)).style(|s| s.size(400.0, 300.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 300.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  300.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");

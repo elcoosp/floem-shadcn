@@ -1,3 +1,4 @@
+use floem_test::TestRoot;
 //! Tests for Button component layout and sizing
 //!
 //! These tests verify that buttons have correct dimensions based on their size variant.
@@ -22,7 +23,7 @@ fn test_button_default_height() {
 
     let container = Stack::new((button,)).style(|s| s.size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Button layout should exist");
@@ -47,7 +48,7 @@ fn test_button_sm_height() {
 
     let container = Stack::new((button,)).style(|s| s.size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Button layout should exist");
@@ -72,7 +73,7 @@ fn test_button_lg_height() {
 
     let container = Stack::new((button,)).style(|s| s.size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Button layout should exist");
@@ -97,7 +98,7 @@ fn test_button_icon_size() {
 
     let container = Stack::new((button,)).style(|s| s.size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Button layout should exist");
@@ -133,7 +134,7 @@ fn test_button_sm_has_minimum_width_from_padding() {
 
     let container = Stack::new((button,)).style(|s| s.size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Button layout should exist");
@@ -158,7 +159,7 @@ fn test_button_default_has_minimum_width_from_padding() {
 
     let container = Stack::new((button,)).style(|s| s.size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Button layout should exist");
@@ -182,7 +183,7 @@ fn test_button_lg_has_minimum_width_from_padding() {
 
     let container = Stack::new((button,)).style(|s| s.size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Button layout should exist");
@@ -210,7 +211,7 @@ fn test_buttons_in_horizontal_stack_with_gap() {
 
     let container = Stack::horizontal((btn1, btn2)).style(|s| s.gap(8.0).size(400.0, 200.0)); // gap_2 = 8px
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout1 = btn1_id.get_layout().expect("Button 1 layout should exist");
@@ -254,7 +255,7 @@ fn test_buttons_centered_in_horizontal_stack() {
     let container =
         Stack::horizontal((btn1, btn2)).style(|s| s.gap(8.0).items_center().size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout1 = btn1_id
@@ -302,7 +303,7 @@ fn test_button_sizes_are_ordered_horizontal() {
 
     let container = Stack::horizontal((sm, default, lg)).style(|s| s.gap(8.0).size(600.0, 100.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 600.0, 100.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  600.0,  100.0);
     harness.rebuild();
 
     let sm_layout = sm_id
@@ -369,7 +370,7 @@ fn test_button_does_not_stretch_in_vertical_stack() {
     // In a vertical stack with 400px width, button should NOT stretch
     let container = Stack::vertical((button,)).style(|s| s.size(400.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Button layout should exist");
@@ -413,7 +414,7 @@ fn test_showcase_demo_section_layout() {
     // Outer vertical stack (simulating demo_section)
     let container = Stack::vertical((button_row,)).style(|s| s.gap(16.0).size(600.0, 400.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 600.0, 400.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  600.0,  400.0);
     harness.rebuild();
 
     let layout1 = btn1_id.get_layout().expect("Button 1 layout should exist");
@@ -490,7 +491,7 @@ fn test_exact_showcase_structure() {
     // Container
     let container = Stack::new((demo_section,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  800.0,  600.0);
     harness.rebuild();
 
     let layout1 = btn1_id.get_layout().expect("Button 1 layout should exist");
@@ -554,7 +555,7 @@ fn test_showcase_with_scroll() {
     // Container (simulating the horizontal layout with sidebar)
     let container = Stack::horizontal((scroll_content,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  800.0,  600.0);
     harness.rebuild();
 
     let layout1 = btn1_id.get_layout().expect("Button 1 layout should exist");
@@ -598,7 +599,7 @@ fn test_button_height_in_nested_layout() {
 
     let outer = Stack::vertical((inner,)).style(|s| s.gap(32.0).size(600.0, 400.0));
 
-    let mut harness = HeadlessHarness::new_with_size(outer, 600.0, 400.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), outer,  600.0,  400.0);
     harness.rebuild();
 
     let sm_layout = sm_id.get_layout().expect("Small layout");
@@ -650,7 +651,7 @@ fn test_all_variants_have_same_dimensions() {
     let container = Stack::vertical((default_btn, secondary, destructive, outline, ghost, link))
         .style(|s| s.gap(8.0).size(400.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  600.0);
     harness.rebuild();
 
     let default_layout = default_id.get_layout().expect("Layout should exist");
@@ -752,7 +753,7 @@ fn test_showcase_variants_layout() {
             .size(800.0, 200.0)
     });
 
-    let mut harness = HeadlessHarness::new_with_size(container, 800.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  800.0,  200.0);
     harness.rebuild();
 
     let layouts = [
@@ -835,7 +836,7 @@ fn test_showcase_sizes_layout() {
     let container = Stack::horizontal((sm, default, lg))
         .style(|s| s.gap(8.0).items_center().size(600.0, 200.0));
 
-    let mut harness = HeadlessHarness::new_with_size(container, 600.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  600.0,  200.0);
     harness.rebuild();
 
     let sm_layout = sm_id.get_layout().expect("Small layout should exist");

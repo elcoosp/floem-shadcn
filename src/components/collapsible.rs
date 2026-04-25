@@ -112,7 +112,7 @@ where
             if disabled {
                 view.into_any()
             } else {
-                view.on_click_stop(move |_| {
+                view.on_event_stop(floem::event::EventListener::Click, move |_| {
                     open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -230,7 +230,7 @@ impl<V: IntoView + 'static> IntoView for CollapsibleTrigger<V> {
         });
 
         if let Some(signal) = open {
-            Box::new(container.on_click_stop(move |_| {
+            Box::new(container.on_event_stop(floem::event::EventListener::Click, move |_| {
                 signal.update(|v| *v = !*v);
             }))
         } else {

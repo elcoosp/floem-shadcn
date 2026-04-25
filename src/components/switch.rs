@@ -22,7 +22,6 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -77,8 +76,8 @@ impl Switch {
                 // Checked: translate-x-[calc(100%-2px)] = 32 - 16 - 2 = 14px
                 // Unchecked: translate-x-0 = 0px
                 let translate_x = if is_checked { 14.0 } else { 0.0 };
-                s.size_4() // size-4 = 16px
-                    .rounded_full() // rounded-full
+                s.size(16.0, 16.0) // size-4 = 16px
+                    .border_radius(9999.0) // rounded-full
                     .background(t.background) // bg-background
                     .position(floem::style::Position::Absolute)
                     .inset_left(translate_x)
@@ -95,12 +94,12 @@ impl Switch {
             s.with_shadcn_theme(move |s, t| {
                 let is_checked = checked.get();
                 s.height(18.0) // h-[1.15rem] ≈ 18px
-                    .w_8() // w-8 = 32px
+                    .width(32.0) // w-8 = 32px
                     .flex_shrink(0.0) // shrink-0
-                    .rounded_full() // rounded-full
-                    .border_1() // border
+                    .border_radius(9999.0) // rounded-full
+                    .border(1.0) // border
                     .border_color(peniko::Color::TRANSPARENT) // border-transparent
-                    .shadow_sm() // shadow-xs
+                    .box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)) // shadow-xs
                     .position(floem::style::Position::Relative)
                     .transition(
                         floem::style::Background,
@@ -117,7 +116,7 @@ impl Switch {
 
         let track = if !disabled {
             track
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     checked.update(|c| *c = !*c);
                 })
                 .into_any()
@@ -130,9 +129,9 @@ impl Switch {
             let label_view = floem::views::Label::new(label_text).style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
                     // Label: text-sm font-medium leading-none
-                    s.text_sm()
-                        .font_medium()
-                        .leading_none()
+                    s.font_size(14.0)
+                        
+                        .line_height(1.0)
                         .color(if disabled {
                             t.muted_foreground
                         } else {
@@ -148,7 +147,7 @@ impl Switch {
 
             let label_view = if !disabled {
                 label_view
-                    .on_click_stop(move |_| {
+                    .on_event_stop(floem::event::EventListener::Click, move |_| {
                         checked.update(|c| *c = !*c);
                     })
                     .into_any()
@@ -157,7 +156,7 @@ impl Switch {
             };
 
             floem::views::Stack::horizontal((track, label_view))
-                .style(|s| s.gap_2().items_center()) // gap-2 = 8px
+                .style(|s| s.gap(8.0).items_center()) // gap-2 = 8px
                 .into_any()
         } else {
             track

@@ -19,7 +19,6 @@
 use floem::prelude::*;
 use floem::style::Style;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::{ShadcnTheme, ShadcnThemeExt};
 
@@ -109,12 +108,12 @@ fn build_badge_style(s: Style, variant: BadgeVariant) -> Style {
     let s = s
         .flex()
         .items_center()
-        .rounded_full() // 12px radius for pill shape
-        .border_1()
-        .px_2() // 8px horizontal padding
-        .py_0p5() // 2px vertical padding
-        .text_xs() // 12px font size
-        .font_medium()
+        .border_radius(9999.0) // 12px radius for pill shape
+        .border(1.0)
+        .padding_left(8.0).padding_right(8.0) // 8px horizontal padding
+        .padding_top(2.0).padding_bottom(2.0) // 2px vertical padding
+        .font_size(12.0) // 12px font size
+        
         .transition(
             floem::style::Background,
             floem::style::Transition::linear(millis(100)),

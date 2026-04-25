@@ -182,7 +182,7 @@ impl<V: IntoView + 'static> IntoView for ResizablePanel<V> {
                 let size = size_signal.map(|sig| sig.get()).unwrap_or(default_size);
 
                 let base = s
-                    .flex_basis(floem::unit::PxPctAuto::Pct(size))
+                    .flex_basis(floem::unit::LengthAuto::Pct(size))
                     .flex_grow(0.0)
                     .flex_shrink(0.0);
 

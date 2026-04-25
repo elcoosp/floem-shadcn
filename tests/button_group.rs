@@ -1,3 +1,7 @@
+use floem::views::Decorators;
+use floem::reactive::SignalGet;
+use floem::reactive::SignalUpdate;
+use floem_test::TestRoot;
 //! Tests for Button Group component
 
 use floem::prelude::*;
@@ -18,7 +22,7 @@ fn test_button_group_renders_three_buttons() {
     let id = group.view_id();
 
     let container = Stack::new((group,)).style(|s| s.size(500.0, 100.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 500.0, 100.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  500.0,  100.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("ButtonGroup layout should exist");
@@ -37,7 +41,7 @@ fn test_button_group_with_separator() {
     let id = group.view_id();
 
     let container = Stack::new((group,)).style(|s| s.size(400.0, 100.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 100.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  100.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");

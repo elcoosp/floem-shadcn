@@ -1,3 +1,7 @@
+use floem::views::Overlay;
+use floem::reactive::SignalUpdate;
+use floem::reactive::SignalGet;
+use floem::views::Decorators;
 //! Showcase example for floem-shadcn components
 //!
 //! Run with: cargo run --example showcase
@@ -31,7 +35,7 @@ fn app_view() -> impl IntoView {
                         Button::new("Toggle Theme")
                             .outline()
                             .sm()
-                            .on_click_stop(move |_| {
+                            .on_event_stop(floem::event::EventListener::Click, move |_| {
                                 theme_mode.update(|m| {
                                     *m = match m {
                                         ThemeMode::Light => ThemeMode::Dark,
@@ -552,10 +556,10 @@ fn progress_demo() -> impl IntoView {
             Stack::vertical((
                 Progress::new(progress_value),
                 Stack::horizontal((
-                    Button::new("-10").sm().outline().on_click_stop(move |_| {
+                    Button::new("-10").sm().outline().on_event_stop(floem::event::EventListener::Click, move |_| {
                         progress_value.update(|v| *v = (*v - 10.0).max(0.0))
                     }),
-                    Button::new("+10").sm().outline().on_click_stop(move |_| {
+                    Button::new("+10").sm().outline().on_event_stop(floem::event::EventListener::Click, move |_| {
                         progress_value.update(|v| *v = (*v + 10.0).min(100.0))
                     }),
                 ))
@@ -761,7 +765,7 @@ fn sheet_demo() -> impl IntoView {
             subsection(
                 "Right Sheet",
                 Stack::vertical((
-                    Button::new("Open Sheet").on_click_stop(move |_| sheet_open.set(true)),
+                    Button::new("Open Sheet").on_event_stop(floem::event::EventListener::Click, move |_| sheet_open.set(true)),
                     Sheet::new(sheet_open, SheetContent::new(
                         Stack::vertical((
                             SheetHeader::new(Stack::vertical((
@@ -776,7 +780,7 @@ fn sheet_demo() -> impl IntoView {
                                 }),
                             )).style(|s| s.gap_2()),
                             SheetFooter::new(
-                                Button::new("Save changes").on_click_stop(move |_| sheet_open.set(false))
+                                Button::new("Save changes").on_event_stop(floem::event::EventListener::Click, move |_| sheet_open.set(false))
                             ),
                         )).style(|s| s.gap_4())
                     ).side(SheetSide::Right)),
@@ -786,7 +790,7 @@ fn sheet_demo() -> impl IntoView {
             subsection(
                 "Left Sheet",
                 Stack::vertical((
-                    Button::new("Open Left Sheet").outline().on_click_stop(move |_| sheet_left_open.set(true)),
+                    Button::new("Open Left Sheet").outline().on_event_stop(floem::event::EventListener::Click, move |_| sheet_left_open.set(true)),
                     Sheet::new(sheet_left_open, SheetContent::new(
                         Stack::vertical((
                             SheetHeader::new(Stack::vertical((
@@ -921,19 +925,19 @@ fn toast_demo() -> impl IntoView {
             subsection(
                 "Trigger Toasts",
                 Stack::horizontal((
-                    Button::new("Default Toast").on_click_stop(move |_| {
+                    Button::new("Default Toast").on_event_stop(floem::event::EventListener::Click, move |_| {
                         push_toast(
                             toasts,
                             ToastData::new("Scheduled", "Your meeting has been scheduled."),
                         );
                     }),
-                    Button::new("Success").outline().on_click_stop(move |_| {
+                    Button::new("Success").outline().on_event_stop(floem::event::EventListener::Click, move |_| {
                         push_toast(
                             toasts,
                             ToastData::new("Success!", "Your changes have been saved.").success(),
                         );
                     }),
-                    Button::new("Error").destructive().on_click_stop(move |_| {
+                    Button::new("Error").destructive().on_event_stop(floem::event::EventListener::Click, move |_| {
                         push_toast(
                             toasts,
                             ToastData::new("Error", "Something went wrong.").destructive(),
@@ -1394,7 +1398,7 @@ fn drawer_demo() -> impl IntoView {
             subsection(
                 "Bottom Drawer",
                 Stack::vertical((
-                    Button::new("Open Bottom Drawer").on_click_stop(move |_| drawer_open.set(true)),
+                    Button::new("Open Bottom Drawer").on_event_stop(floem::event::EventListener::Click, move |_| drawer_open.set(true)),
                     Drawer::new(drawer_open)
                         .side(DrawerSide::Bottom)
                         .content(Stack::vertical((
@@ -1404,7 +1408,7 @@ fn drawer_demo() -> impl IntoView {
                             ))),
                             DrawerFooter::new(
                                 Button::new("Save changes")
-                                    .on_click_stop(move |_| drawer_open.set(false)),
+                                    .on_event_stop(floem::event::EventListener::Click, move |_| drawer_open.set(false)),
                             ),
                         ))),
                 ))
@@ -1415,7 +1419,7 @@ fn drawer_demo() -> impl IntoView {
                 Stack::vertical((
                     Button::new("Open Right Drawer")
                         .outline()
-                        .on_click_stop(move |_| drawer_right.set(true)),
+                        .on_event_stop(floem::event::EventListener::Click, move |_| drawer_right.set(true)),
                     Drawer::new(drawer_right)
                         .side(DrawerSide::Right)
                         .content(Stack::vertical((
@@ -1426,7 +1430,7 @@ fn drawer_demo() -> impl IntoView {
                             DrawerFooter::new(
                                 Button::new("Close")
                                     .outline()
-                                    .on_click_stop(move |_| drawer_right.set(false)),
+                                    .on_event_stop(floem::event::EventListener::Click, move |_| drawer_right.set(false)),
                             ),
                         ))),
                 ))
@@ -1789,6 +1793,6 @@ fn sidebar_button(label: &'static str, active_section: RwSignal<String>) -> impl
     SidebarMenuItem::new().child(
         SidebarMenuButton::new(label)
             .is_active(move || active_section.get() == id_for_active)
-            .on_click_stop(move |_| active_section.set(id_for_click.clone())),
+            .on_event_stop(floem::event::EventListener::Click, move |_| active_section.set(id_for_click.clone())),
     )
 }

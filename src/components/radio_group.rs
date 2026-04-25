@@ -22,7 +22,6 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -68,7 +67,7 @@ impl<V: IntoView + 'static> IntoView for RadioGroup<V> {
             floem::views::Container::with_id(self.id, self.child).style(|s| {
                 s.width_full()
                     .flex_direction(floem::style::FlexDirection::Column)
-                    .gap_3() // gap-3 = 12px
+                    .gap(12.0) // gap-3 = 12px
             }),
         )
     }
@@ -134,8 +133,8 @@ impl RadioGroupItem {
                     let is_selected = selected_signal
                         .map(|sig| sig.get() == val.clone())
                         .unwrap_or(false);
-                    s.size_2() // size-2 = 8px
-                        .rounded_full()
+                    s.size(8.0, 8.0) // size-2 = 8px
+                        .border_radius(9999.0)
                         .background(t.primary) // fill-primary
                         .apply_if(!is_selected, |s| s.display(floem::style::Display::None))
                 })
@@ -148,12 +147,12 @@ impl RadioGroupItem {
                     .map(|sig| sig.get() == val.clone())
                     .unwrap_or(false);
                 // size-4 = 16px, rounded-full, border border-input, shadow-xs
-                s.size_4() // size-4 = 16px
+                s.size(16.0, 16.0) // size-4 = 16px
                     .flex_shrink(0.0) // shrink-0
-                    .rounded_full() // rounded-full
-                    .border_1() // border (1px)
+                    .border_radius(9999.0) // rounded-full
+                    .border(1.0) // border (1px)
                     .border_color(t.input) // border-input (same for both states)
-                    .shadow_sm() // shadow-xs
+                    .box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)) // shadow-xs
                     .flex()
                     .items_center()
                     .justify_center()
@@ -166,9 +165,9 @@ impl RadioGroupItem {
         // Label
         let label_view = floem::views::Label::new(label).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
-                s.text_sm() // 14px
-                    .font_medium()
-                    .leading_none()
+                s.font_size(14.0) // 14px
+                    
+                    .line_height(1.0)
                     .color(if disabled {
                         t.muted_foreground
                     } else {
@@ -181,11 +180,11 @@ impl RadioGroupItem {
 
         // Container
         let container = floem::views::Stack::horizontal((radio_circle, label_view))
-            .style(|s| s.gap_2().items_center());
+            .style(|s| s.gap(8.0).items_center());
 
         if !disabled {
             container
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     if let Some(signal) = selected_signal {
                         signal.update(|v| *v = item_value_click.clone());
                     }

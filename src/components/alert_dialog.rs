@@ -25,7 +25,6 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::{Decorators, Overlay};
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -140,13 +139,13 @@ impl IntoView for AlertDialog {
                         .hover(|s| s.background(t.primary.with_alpha(0.9)))
                 })
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 is_open.set(true);
             });
 
         // Title
         let title_view = floem::views::Label::new(title).style(|s| {
-            s.with_shadcn_theme(move |s, t| s.text_lg().font_semibold().color(t.foreground))
+            s.with_shadcn_theme(move |s, t| s.font_size(18.0).color(t.foreground))
         });
 
         // Description
@@ -154,7 +153,7 @@ impl IntoView for AlertDialog {
             floem::views::Label::new(description)
                 .style(|s| {
                     s.with_shadcn_theme(move |s, t| {
-                        s.text_sm().color(t.muted_foreground).margin_top(8.0)
+                        s.font_size(14.0).color(t.muted_foreground).margin_top(8.0)
                     })
                 })
                 .into_any()
@@ -179,7 +178,7 @@ impl IntoView for AlertDialog {
                         .hover(|s| s.background(t.secondary.with_alpha(0.8)))
                 })
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 is_open.set(false);
             });
 
@@ -211,7 +210,7 @@ impl IntoView for AlertDialog {
                         .hover(|s| s.background(bg.with_alpha(0.9)))
                 })
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 if let Some(ref handler) = on_action {
                     handler();
                 }
@@ -229,37 +228,35 @@ impl IntoView for AlertDialog {
                 floem::views::Empty::new()
                     .style(move |s| {
                         s.absolute()
-                            .inset_0()
+                            .inset(0.0)
                             .background(peniko::Color::from_rgba8(0, 0, 0, 128))
                     })
-                    .on_click_stop(move |_| {
+                    .on_event_stop(floem::event::EventListener::Click, move |_| {
                         // Don't close on backdrop click for alert dialogs
                     }),
                 // Content wrapper - centered modal
                 floem::views::Stack::vertical((title_view, desc_view, footer))
                     .style(move |s| {
                         s.absolute()
-                            .left_1_2()
-                            .top_1_2()
-                            .translate_x_neg_1_2()
-                            .translate_y_neg_1_2()
+                            .inset_left_pct(50.0)
+                            .inset_top_pct(50.0)
                             .z_index(10)
-                            .max_w_lg()
-                            .rounded_lg()
+                            .max_width(512.0)
+                            .border_radius(8.0)
                             .p_6()
                             .gap_4()
-                            .shadow_lg()
+                            .box_shadow_blur(8.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,60))
                     })
                     .style(move |s| {
                         s.with_shadcn_theme(move |s, t| {
-                            s.background(t.background).border_1().border_color(t.border)
+                            s.background(t.background).border(1.0).border_color(t.border)
                         })
                     }),
             ))
             .style(move |s| {
                 let open = is_open.get();
                 s.fixed()
-                    .inset_0()
+                    .inset(0.0)
                     .width_full()
                     .height_full()
                     .apply_if(!open, |s| s.hide())
@@ -311,7 +308,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogTrigger<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     is_open.set(true);
                 }),
         )
@@ -365,37 +362,35 @@ impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
                     floem::views::Empty::new()
                         .style(move |s| {
                             s.absolute()
-                                .inset_0()
+                                .inset(0.0)
                                 .background(peniko::Color::from_rgba8(0, 0, 0, 128))
                         })
-                        .on_click_stop(move |_| {
+                        .on_event_stop(floem::event::EventListener::Click, move |_| {
                             // Don't close on backdrop click for alert dialogs
                         }),
                     // Content wrapper - centered modal
                     floem::views::Container::new(child)
                         .style(move |s| {
                             s.absolute()
-                                .left_1_2()
-                                .top_1_2()
-                                .translate_x_neg_1_2()
-                                .translate_y_neg_1_2()
+                                .inset_left_pct(50.0)
+                                .inset_top_pct(50.0)
                                 .z_index(10)
-                                .max_w_lg()
-                                .rounded_lg()
+                                .max_width(512.0)
+                                .border_radius(8.0)
                                 .p_6()
                                 .gap_4()
-                                .shadow_lg()
+                                .box_shadow_blur(8.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,60))
                         })
                         .style(move |s| {
                             s.with_shadcn_theme(move |s, t| {
-                                s.background(t.background).border_1().border_color(t.border)
+                                s.background(t.background).border(1.0).border_color(t.border)
                             })
                         }),
                 ))
                 .style(move |s| {
                     let open = is_open.get();
                     s.fixed()
-                        .inset_0()
+                        .inset(0.0)
                         .width_full()
                         .height_full()
                         .apply_if(!open, |s| s.hide())
@@ -675,7 +670,7 @@ impl IntoView for AlertDialogAction {
                             .hover(|s| s.background(bg.with_alpha(0.9)))
                     })
                 })
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     if let Some(ref handler) = on_click {
                         handler();
                     }
@@ -749,7 +744,7 @@ impl IntoView for AlertDialogCancel {
                             .hover(|s| s.background(t.secondary.with_alpha(0.8)))
                     })
                 })
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     if let Some(signal) = is_open {
                         signal.set(false);
                     }

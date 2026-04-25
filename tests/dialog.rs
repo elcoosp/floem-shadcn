@@ -1,3 +1,8 @@
+use floem::IntoView;
+use floem::reactive::SignalUpdate;
+use floem::reactive::SignalGet;
+use floem::views::Decorators;
+use floem_test::TestRoot;
 //! Tests for the Dialog component
 //!
 //! The Dialog component uses context-based state management with DialogTrigger,
@@ -34,7 +39,7 @@ fn test_dialog_opens_via_trigger() {
 
     let view = v_stack((dialog,));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Dialog Open via Trigger Test ===");
     eprintln!("Initial open state: {}", open.get());
@@ -68,7 +73,7 @@ fn test_dialog_closes_via_close_button() {
 
     let view = floem::views::stack((dialog,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Dialog Close via Close Button Test ===");
 
@@ -99,7 +104,7 @@ fn test_dialog_backdrop_click_closes() {
 
     let view = floem::views::stack((dialog,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Dialog Backdrop Click Test ===");
 
@@ -150,7 +155,7 @@ fn test_dialog_reactivity() {
 
     let view = floem::views::stack((dialog,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Dialog Reactivity Test ===");
     eprintln!("Initial effect count: {}", effect_count.borrow());
@@ -198,7 +203,7 @@ fn test_dialog_with_paint_cycle() {
 
     let view = floem::views::stack((dialog,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Dialog Paint Cycle Test ===");
 
@@ -254,7 +259,7 @@ fn test_dialog_inside_scroll() {
 
     let view = Scroll::new(v_stack((dialog,)));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Dialog Inside Scroll Test ===");
     eprintln!("Initial open state: {}", open.get());
@@ -306,7 +311,7 @@ fn test_dialog_with_dyn_container_in_scroll() {
         },
     ));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== DynContainer Dialog Test ===");
 
@@ -341,7 +346,7 @@ fn test_dialog_centering() {
 
     let view = floem::views::stack((dialog,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     // Open the dialog
     open.set(true);
@@ -354,12 +359,12 @@ fn test_dialog_centering() {
     fn print_tree(id: floem::ViewId, depth: usize) {
         let indent = "  ".repeat(depth);
         if let Some(layout) = id.get_layout() {
-            let transform = id.get_transform();
-            let coeffs = transform.as_coeffs();
-            let has_transform = coeffs[4].abs() > 0.1 || coeffs[5].abs() > 0.1;
-
-            eprintln!(
-                "{}ViewId({:?}): pos=({:.1}, {:.1}), size={:.1}x{:.1}{}",
+////             let transform = id//* unavailable: .get_transform();
+//            let coeffs = transform.as_coeffs();
+//            let has_transform = coeffs[4].abs() > 0.1 || coeffs[5].abs() > 0.1;
+//
+//            eprintln!(
+//                "{}ViewId({:?}): pos=({:.1}, {:.1}), size={:.1}x{:.1}{}",
                 indent,
                 id,
                 layout.location.x,
@@ -402,7 +407,7 @@ fn test_multiple_dialogs() {
 
     let view = v_stack((dialog1, dialog2));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Multiple Dialogs Test ===");
 
@@ -451,7 +456,7 @@ fn test_clicking_dialog_content_does_not_close() {
             DialogHeader::new()
                 .title("Test Dialog")
                 .description("Click on me, I should not close!"),
-            DialogFooter::new(Button::new("Stay Open").on_click_stop(move |_| {
+            DialogFooter::new(Button::new("Stay Open").on_event_stop(floem::event::EventListener::Click, move |_| {
                 eprintln!("Button inside dialog clicked");
             })),
         )),
@@ -461,7 +466,7 @@ fn test_clicking_dialog_content_does_not_close() {
 
     let view = floem::views::stack((dialog,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Click Dialog Content Test ===");
 
@@ -479,7 +484,7 @@ fn test_clicking_dialog_content_does_not_close() {
             let grandchildren = child.children();
             if grandchildren.len() >= 2 {
                 let content = grandchildren[1]; // Content is second child
-                let rect = content.get_layout_rect();
+                let rect = content//* unavailable: .get_layout_rect();
                 return Some((rect.x0, rect.y0, rect.x1, rect.y1));
             }
             // Recurse
@@ -531,7 +536,7 @@ fn test_clicking_backdrop_closes_dialog() {
 
     let view = floem::views::stack((dialog,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Click Backdrop Test ===");
 
@@ -580,7 +585,7 @@ fn test_dialog_context_access() {
 
     let view = floem::views::stack((dialog,)).style(|s| s.size(800.0, 600.0));
 
-    let mut harness = HeadlessHarness::new_with_size(view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), TestRoot::new(),  view,  800.0, 600.0);
 
     eprintln!("=== Dialog Context Access Test ===");
 

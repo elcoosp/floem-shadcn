@@ -1,3 +1,4 @@
+use floem_test::TestRoot;
 //! Tests for Typography components
 
 use floem::prelude::*;
@@ -10,7 +11,7 @@ fn test_h1_has_large_font_size() {
     let id = h1.view_id();
 
     let container = Stack::new((h1,)).style(|s| s.size(400.0, 100.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 100.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  100.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");
@@ -24,7 +25,7 @@ fn test_muted_has_muted_color() {
     let id = muted.view_id();
 
     let container = Stack::new((muted,)).style(|s| s.size(400.0, 100.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 100.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  100.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");
@@ -38,7 +39,7 @@ fn test_list_renders() {
     let id = list.view_id();
 
     let container = Stack::new((list,)).style(|s| s.size(400.0, 200.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 400.0, 200.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  400.0,  200.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");

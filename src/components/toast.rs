@@ -23,7 +23,6 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::{Decorators, Overlay};
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -170,7 +169,7 @@ impl IntoView for ToastContainer {
         Box::new(Overlay::new(toast_list).style(move |s| {
             let has_toasts = !toasts.get().is_empty();
             s.fixed()
-                .inset_0()
+                .inset(0.0)
                 .width_full()
                 .height_full()
                 .pointer_events_none()
@@ -265,7 +264,7 @@ impl IntoView for Toast {
         });
 
         let close_btn = if let Some(handler) = on_close {
-            close_btn.on_click_stop(move |_| handler()).into_any()
+            close_btn.on_event_stop(floem::event::EventListener::Click, move |_| handler()).into_any()
         } else {
             close_btn.into_any()
         };
@@ -365,7 +364,7 @@ impl IntoView for ToastAction {
         });
 
         if let Some(handler) = on_click {
-            Box::new(btn.on_click_stop(move |_| handler()))
+            Box::new(btn.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
         } else {
             Box::new(btn)
         }

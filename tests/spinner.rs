@@ -1,3 +1,4 @@
+use floem_test::TestRoot;
 //! Tests for Spinner component
 
 use floem::prelude::*;
@@ -10,7 +11,7 @@ fn test_spinner_default_md_size() {
     let id = spinner.view_id();
 
     let container = Stack::new((spinner,)).style(|s| s.size(100.0, 100.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 100.0, 100.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  100.0,  100.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Spinner layout should exist");
@@ -25,7 +26,7 @@ fn test_spinner_sm_size() {
     let id = spinner.view_id();
 
     let container = Stack::new((spinner,)).style(|s| s.size(100.0, 100.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 100.0, 100.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  100.0,  100.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");
@@ -38,7 +39,7 @@ fn test_spinner_lg_size() {
     let id = spinner.view_id();
 
     let container = Stack::new((spinner,)).style(|s| s.size(100.0, 100.0));
-    let mut harness = HeadlessHarness::new_with_size(container, 100.0, 100.0);
+    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), container,  100.0,  100.0);
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");

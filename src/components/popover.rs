@@ -119,7 +119,7 @@ where
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -258,7 +258,7 @@ impl<V: IntoView + 'static> IntoView for PopoverTrigger<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     open.update(|v| *v = !*v);
                 }),
         )

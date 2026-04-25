@@ -23,7 +23,6 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::{Decorators, Overlay};
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -80,11 +79,11 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
             .style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
                     s.absolute()
-                        .inset_0()
+                        .inset(0.0)
                         .background(t.foreground.with_alpha(0.5))
                 })
             })
-            .on_click_stop(move |_| {
+            .on_event_stop(floem::event::EventListener::Click, move |_| {
                 open.update(|v| *v = false);
             });
 
@@ -99,7 +98,7 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
             .style(move |s| {
                 let is_open = open.get();
                 s.fixed()
-                    .inset_0()
+                    .inset(0.0)
                     .width_full()
                     .height_full()
                     .z_index(50)
@@ -414,7 +413,7 @@ impl<V: IntoView + 'static> IntoView for SheetClose<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::EventListener::Click, move |_| {
                     open.update(|v| *v = false);
                 }),
         )

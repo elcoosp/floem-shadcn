@@ -19,7 +19,6 @@
 use floem::prelude::*;
 use floem::style::Style;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
 
 use crate::theme::{ShadcnTheme, ShadcnThemeExt};
 
@@ -167,10 +166,10 @@ fn build_button_style(s: Style, size: ButtonSize, variant: ButtonVariant) -> Sty
         // Prevent button from stretching:
         // - self_center: prevents cross-axis stretching (e.g., width in vertical Stack)
         // - flex_grow(0): prevents main-axis stretching (e.g., width in horizontal Stack with wrap)
-        .self_center()
+        
         .flex_grow(0.0)
-        .cursor_pointer()
-        .font_medium()
+        .cursor(floem::style::CursorStyle::Pointer)
+        
         .transition(
             floem::style::Background,
             floem::style::Transition::linear(millis(100)),
@@ -182,10 +181,10 @@ fn build_button_style(s: Style, size: ButtonSize, variant: ButtonVariant) -> Sty
 
     // Size styles using floem-tailwind
     let s = match size {
-        ButtonSize::Sm => s.h_9().px_3().rounded_md().text_xs(),
-        ButtonSize::Default => s.h_10().px_4().py_2().rounded_md().text_sm(),
-        ButtonSize::Lg => s.h_11().px_8().rounded_md().text_sm(),
-        ButtonSize::Icon => s.h_10().w_10().rounded_md(),
+        ButtonSize::Sm => s.height(36.0).padding_left(12.0).padding_right(12.0).border_radius(6.0).font_size(12.0),
+        ButtonSize::Default => s.height(40.0).padding_left(16.0).padding_right(16.0).padding_top(8.0).padding_bottom(8.0).border_radius(6.0).font_size(14.0),
+        ButtonSize::Lg => s.height(44.0).padding_left(32.0).padding_right(32.0).border_radius(6.0).font_size(14.0),
+        ButtonSize::Icon => s.height(40.0).width(40.0).border_radius(6.0),
     };
 
     // Theme-dependent styles (variant colors + hover + active)
@@ -203,32 +202,32 @@ fn apply_variant_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Sty
         ButtonVariant::Default => s
             .background(t.primary)
             .color(t.primary_foreground)
-            .border_1()
+            .border(1.0)
             .border_color(peniko::Color::TRANSPARENT),
         ButtonVariant::Destructive => s
             .background(t.destructive)
             .color(t.destructive_foreground)
-            .border_1()
+            .border(1.0)
             .border_color(peniko::Color::TRANSPARENT),
         ButtonVariant::Outline => s
             .background(t.background)
             .color(t.foreground)
-            .border_1()
+            .border(1.0)
             .border_color(t.input),
         ButtonVariant::Secondary => s
             .background(t.secondary)
             .color(t.secondary_foreground)
-            .border_1()
+            .border(1.0)
             .border_color(peniko::Color::TRANSPARENT),
         ButtonVariant::Ghost => s
             .background(peniko::Color::TRANSPARENT)
             .color(t.foreground)
-            .border_1()
+            .border(1.0)
             .border_color(peniko::Color::TRANSPARENT),
         ButtonVariant::Link => s
             .background(peniko::Color::TRANSPARENT)
             .color(t.primary)
-            .border_1()
+            .border(1.0)
             .border_color(peniko::Color::TRANSPARENT),
     }
 }
