@@ -138,7 +138,7 @@ impl<I: IntoView + 'static> IntoView for Carousel<I> {
                         .hover(|s| s.background(t.accent))
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 current.update(|c| {
                     if *c > 0 {
                         *c -= 1;
@@ -175,7 +175,7 @@ impl<I: IntoView + 'static> IntoView for Carousel<I> {
                         .hover(|s| s.background(t.accent))
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 current.update(|c| {
                     if *c < total.saturating_sub(1) {
                         *c += 1;
@@ -349,7 +349,7 @@ impl IntoView for CarouselPrevious {
                             .hover(|s| s.background(t.accent))
                     })
                 })
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     current.update(|c| {
                         if *c > 0 {
                             *c -= 1;
@@ -425,7 +425,7 @@ impl IntoView for CarouselNext {
                             .hover(|s| s.background(t.accent))
                     })
                 })
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     current.update(|c| {
                         if *c < total.saturating_sub(1) {
                             *c += 1;

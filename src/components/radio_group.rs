@@ -184,7 +184,7 @@ impl RadioGroupItem {
 
         if !disabled {
             container
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     if let Some(signal) = selected_signal {
                         signal.update(|v| *v = item_value_click.clone());
                     }

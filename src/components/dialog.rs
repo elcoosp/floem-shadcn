@@ -16,7 +16,7 @@
 //!             .description("This action cannot be undone."),
 //!         DialogFooter::new((
 //!             DialogClose::new(Button::new("Cancel").outline()),
-//!             Button::new("Continue").on_event_stop(floem::event::EventListener::Click, move |_| {
+//!             Button::new("Continue").on_event_stop(floem::event::listener::Click, move |_, _| {
 //!                 // do something
 //!             }),
 //!         )),
@@ -50,6 +50,7 @@ use floem::views::Overlay;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
+use floem_tailwind::TailwindExt;
 
 // ============================================================================
 // Dialog Context - passes open signal to children via reactive Context
@@ -181,7 +182,7 @@ impl<V: IntoView + 'static> IntoView for DialogTrigger<V> {
         let ctx = Context::get::<DialogContext>();
 
         Box::new(
-            floem::views::Container::with_id(self.id, self.child).on_event_stop(floem::event::EventListener::Click, move |_| {
+            floem::views::Container::with_id(self.id, self.child).on_event_stop(floem::event::listener::Click, move |_, _| {
                 if let Some(ctx) = ctx {
                     ctx.open.set(true);
                 }
@@ -230,7 +231,7 @@ impl<V: IntoView + 'static> IntoView for DialogClose<V> {
         let ctx = Context::get::<DialogContext>();
 
         Box::new(
-            floem::views::Container::with_id(self.id, self.child).on_event_stop(floem::event::EventListener::Click, move |_| {
+            floem::views::Container::with_id(self.id, self.child).on_event_stop(floem::event::listener::Click, move |_, _| {
                 if let Some(ctx) = ctx {
                     ctx.open.set(false);
                 }
@@ -311,7 +312,7 @@ impl IntoView for DialogContent {
                                     .inset(0.0)
                                     .background(peniko::Color::from_rgba8(0, 0, 0, 128))
                             })
-                            .on_event_stop(floem::event::EventListener::Click, move |_| {
+                            .on_event_stop(floem::event::listener::Click, move |_, _| {
                                 open.set(false);
                             }),
                         // Content wrapper - centered modal with vertical stack for children

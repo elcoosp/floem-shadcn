@@ -128,10 +128,10 @@ where
         // Trigger wrapper
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
-                .on_click_stop( move |_| {
+                .on_event_stop(floem::event::listener::Click,  move |_, _| {
                     is_hovered.set(true);
                 })
-                .on_click_stop( move |_| {
+                .on_event_stop(floem::event::listener::Click,  move |_, _| {
                     is_hovered.set(false);
                 })
                 .into_any()
@@ -193,10 +193,10 @@ where
                         }
                     })
                 })
-                .on_click_stop( move |_| {
+                .on_event_stop(floem::event::listener::Click,  move |_, _| {
                     is_hovered.set(true);
                 })
-                .on_click_stop( move |_| {
+                .on_event_stop(floem::event::listener::Click,  move |_, _| {
                     is_hovered.set(false);
                 })
                 .into_any()

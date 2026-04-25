@@ -116,7 +116,7 @@ impl Switch {
 
         let track = if !disabled {
             track
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     checked.update(|c| *c = !*c);
                 })
                 .into_any()
@@ -147,7 +147,7 @@ impl Switch {
 
             let label_view = if !disabled {
                 label_view
-                    .on_event_stop(floem::event::EventListener::Click, move |_| {
+                    .on_event_stop(floem::event::listener::Click, move |_, _| {
                         checked.update(|c| *c = !*c);
                     })
                     .into_any()

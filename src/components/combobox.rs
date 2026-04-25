@@ -37,7 +37,7 @@ impl IntoView for ComboboxTrigger {
             Box::new(floem::views::Stack::horizontal((
                 floem::views::Label::derived(move || if let Some(v)=selected.get(){items.iter().find(|(x,_)|x==&v).map(|(_,l)|l.clone()).unwrap_or(v)}else{self.placeholder.clone()}).style(move |s| s.with_shadcn_theme(move |s,t|{let hv=selected.get().is_some();s.flex_grow(1.0).font_size(14.0).color(if hv{t.foreground}else{t.muted_foreground})})),
                 floem::views::Label::new("▼").style(|s| s.with_shadcn_theme(move |s,t| s.font_size(10.0).color(t.muted_foreground).flex_shrink(0.0))),
-            )).style(|s| s.with_shadcn_theme(move |s,t| s.min_width(200.0).height(36.0).padding_left(12.0).padding_right(12.0).padding_top(8.0).padding_bottom(8.0).gap(8.0).items_center().border(1.0).border_color(t.input).border_radius(6.0).background(t.background).box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)).cursor(CursorStyle::Pointer).hover(|s|s.border_color(t.ring)))).on_event_stop(floem::event::EventListener::Click, move |_|{is_open.update(|v|*v=!*v);}))
+            )).style(|s| s.with_shadcn_theme(move |s,t| s.min_width(200.0).height(36.0).padding_left(12.0).padding_right(12.0).padding_top(8.0).padding_bottom(8.0).gap(8.0).items_center().border(1.0).border_color(t.input).border_radius(6.0).background(t.background).box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)).cursor(CursorStyle::Pointer).hover(|s|s.border_color(t.ring)))).on_event_stop(floem::event::listener::Click, move |_, _|{is_open.update(|v|*v=!*v);}))
         } else { Box::new(floem::views::Label::new(self.placeholder).style(|s| s.with_shadcn_theme(move |s,t| s.min_width(200.0).height(36.0).padding_left(12.0).padding_right(12.0).padding_top(8.0).padding_bottom(8.0).items_center().border(1.0).border_color(t.input).border_radius(6.0).background(t.background).color(t.muted_foreground)))) }
     }
 }
@@ -101,7 +101,7 @@ impl IntoView for ComboboxItem {
                     floem::views::Label::new("✓").style(move |s| { let v = v0.clone(); s.with_shadcn_theme(move |s,t| { let is_sel = selected.get() == Some(v.clone()); s.size(16.0, 16.0).font_size(14.0).color(t.foreground).items_center().justify_center().flex_shrink(0.0).apply_if(!is_sel,|s|s.display(floem::style::Display::None)) }) }),
                 )).style(|s|s.width_full().items_center().gap(8.0)))
                 .style(move |s| { let v = v1.clone(); s.with_shadcn_theme(move |s,t| { let is_sel = selected.get() == Some(v.clone()); let base = s.width_full().padding_top(6.0).padding_bottom(6.0).padding_left(8.0).padding_right(8.0).items_center().border_radius(3.0).cursor(if disabled{CursorStyle::Default}else{CursorStyle::Pointer}); if is_sel { base.background(t.accent).color(t.accent_foreground) } else if disabled { base.color(t.muted_foreground).opacity(0.5) } else { base.color(t.foreground).hover(|s|s.background(t.accent).color(t.accent_foreground)) } }) })
-                .on_event_stop(floem::event::EventListener::Click, move |_| { if !disabled { selected.set(Some(v2.clone())); is_open.set(false); } })
+                .on_event_stop(floem::event::listener::Click, move |_, _| { if !disabled { selected.set(Some(v2.clone())); is_open.set(false); } })
             )
         } else {
             Box::new(floem::views::Label::new(self.label).style(|s|s.with_shadcn_theme(move |s,t|s.width_full().padding(6.0).font_size(14.0).color(t.foreground))))

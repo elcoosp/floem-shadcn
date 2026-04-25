@@ -201,7 +201,7 @@ impl Tab {
                     }
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 if let Some(signal) = active_signal {
                     signal.set(item_id_click.clone());
                 }

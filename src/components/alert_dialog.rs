@@ -27,6 +27,7 @@ use floem::views::{Decorators, Overlay};
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
+use floem_tailwind::TailwindExt;
 
 // ============================================================================
 // AlertDialog
@@ -139,7 +140,7 @@ impl IntoView for AlertDialog {
                         .hover(|s| s.background(t.primary.with_alpha(0.9)))
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 is_open.set(true);
             });
 
@@ -178,7 +179,7 @@ impl IntoView for AlertDialog {
                         .hover(|s| s.background(t.secondary.with_alpha(0.8)))
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 is_open.set(false);
             });
 
@@ -210,7 +211,7 @@ impl IntoView for AlertDialog {
                         .hover(|s| s.background(bg.with_alpha(0.9)))
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 if let Some(ref handler) = on_action {
                     handler();
                 }
@@ -231,7 +232,7 @@ impl IntoView for AlertDialog {
                             .inset(0.0)
                             .background(peniko::Color::from_rgba8(0, 0, 0, 128))
                     })
-                    .on_event_stop(floem::event::EventListener::Click, move |_| {
+                    .on_event_stop(floem::event::listener::Click, move |_, _| {
                         // Don't close on backdrop click for alert dialogs
                     }),
                 // Content wrapper - centered modal
@@ -308,7 +309,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogTrigger<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     is_open.set(true);
                 }),
         )
@@ -365,7 +366,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
                                 .inset(0.0)
                                 .background(peniko::Color::from_rgba8(0, 0, 0, 128))
                         })
-                        .on_event_stop(floem::event::EventListener::Click, move |_| {
+                        .on_event_stop(floem::event::listener::Click, move |_, _| {
                             // Don't close on backdrop click for alert dialogs
                         }),
                     // Content wrapper - centered modal
@@ -670,7 +671,7 @@ impl IntoView for AlertDialogAction {
                             .hover(|s| s.background(bg.with_alpha(0.9)))
                     })
                 })
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     if let Some(ref handler) = on_click {
                         handler();
                     }
@@ -744,7 +745,7 @@ impl IntoView for AlertDialogCancel {
                             .hover(|s| s.background(t.secondary.with_alpha(0.8)))
                     })
                 })
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     if let Some(signal) = is_open {
                         signal.set(false);
                     }

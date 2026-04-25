@@ -447,7 +447,7 @@ impl IntoView for CommandItem {
 
         if let Some(handler) = on_select {
             if !disabled {
-                Box::new(label.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
+                Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
             } else {
                 Box::new(label)
             }
@@ -538,7 +538,7 @@ impl<V: IntoView + 'static> IntoView for CommandItemCustom<V> {
 
         if let Some(handler) = on_select {
             if !disabled {
-                Box::new(container.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
+                Box::new(container.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
             } else {
                 Box::new(container)
             }

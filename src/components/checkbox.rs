@@ -109,7 +109,7 @@ impl Checkbox {
 
         let checkbox_box = if !disabled {
             checkbox_box
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     checked.update(|c| *c = !*c);
                 })
                 .into_any()
@@ -136,7 +136,7 @@ impl Checkbox {
 
             let label_view = if !disabled {
                 label_view
-                    .on_event_stop(floem::event::EventListener::Click, move |_| {
+                    .on_event_stop(floem::event::listener::Click, move |_, _| {
                         checked.update(|c| *c = !*c);
                     })
                     .into_any()

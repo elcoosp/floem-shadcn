@@ -83,7 +83,7 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
                         .background(t.foreground.with_alpha(0.5))
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 open.update(|v| *v = false);
             });
 
@@ -413,7 +413,7 @@ impl<V: IntoView + 'static> IntoView for SheetClose<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     open.update(|v| *v = false);
                 }),
         )

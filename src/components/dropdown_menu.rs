@@ -86,7 +86,7 @@ where
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -299,7 +299,7 @@ impl IntoView for DropdownMenuItem {
 
         if let Some(handler) = on_click {
             if !disabled {
-                Box::new(label.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
+                Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
             } else {
                 Box::new(label)
             }
@@ -385,7 +385,7 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
 
         if let Some(handler) = on_click {
             if !disabled {
-                Box::new(container.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
+                Box::new(container.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
             } else {
                 Box::new(container)
             }

@@ -190,7 +190,7 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
                         .hover(|s| s.background(t.accent).color(t.accent_foreground))
                 })
             })
-            .on_click_stop( move |_| {
+            .on_event_stop(floem::event::listener::Click,  move |_, _| {
                 is_open.set(true);
             });
 
@@ -224,7 +224,7 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
                         }
                     })
                 })
-                .on_click_stop( move |_| {
+                .on_event_stop(floem::event::listener::Click,  move |_, _| {
                     is_open.set(true);
                 })
                 .into_any()
@@ -235,7 +235,7 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
         Box::new(
             floem::views::Container::new(floem::views::Stack::new((trigger, dropdown)))
                 .style(|s| s.position(floem::style::Position::Relative))
-                .on_click_stop( move |_| {
+                .on_event_stop(floem::event::listener::Click,  move |_, _| {
                     is_open.set(false);
                 }),
         )
@@ -441,7 +441,7 @@ impl IntoView for NavigationMenuLink {
         });
 
         if let Some(handler) = on_click {
-            Box::new(container.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
+            Box::new(container.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
         } else {
             Box::new(container)
         }

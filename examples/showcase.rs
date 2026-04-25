@@ -1,15 +1,12 @@
 use floem::views::Overlay;
-use floem::reactive::SignalUpdate;
-use floem::reactive::SignalGet;
-use floem::views::Decorators;
-//! Showcase example for floem-shadcn components
+// Showcase example for floem-shadcn components
 //!
-//! Run with: cargo run --example showcase
+// Run with: cargo run --example showcase
 
 use floem::IntoView;
-use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
-use floem::text::Weight;
-use floem::views::{Decorators, Label, Stack};
+use floem::reactive::RwSignal;
+use floem::text::FontWeight;
+use floem::views::{Label, Stack};
 use floem_shadcn::prelude::*;
 use floem_shadcn::theme::{ShadcnTheme, ShadcnThemeExt, ThemeMode};
 use floem_tailwind::TailwindExt;
@@ -31,11 +28,11 @@ fn app_view() -> impl IntoView {
                 SidebarHeader::new().child(
                     Stack::vertical((
                         Label::derived(|| "floem-shadcn")
-                            .style(|s| s.font_size(18.0).font_weight(Weight::BOLD)),
+                            .style(|s| s.font_size(18.0).font_weight(FontWeight::BOLD)),
                         Button::new("Toggle Theme")
                             .outline()
                             .sm()
-                            .on_event_stop(floem::event::EventListener::Click, move |_| {
+                            .on_event_stop(floem::event::listener::Click, move |_, _| {
                                 theme_mode.update(|m| {
                                     *m = match m {
                                         ThemeMode::Light => ThemeMode::Dark,
@@ -205,7 +202,7 @@ fn app_view() -> impl IntoView {
             ThemeMode::Light => ShadcnTheme::light(),
             ThemeMode::Dark => ShadcnTheme::dark(),
         };
-        s.shadcn_theme(theme)
+        s.with_shadcn_theme(theme)
             .w_full()
             .h_full()
             .bg_background()
@@ -280,7 +277,7 @@ fn cards_demo() -> impl IntoView {
             CardContent::new(
                 Stack::vertical((
                     Label::derived(|| "Name")
-                        .style(|s| s.font_size(14.0).font_weight(Weight::MEDIUM).mb_2()),
+                        .style(|s| s.font_size(14.0).font_weight(FontWeight::MEDIUM).mb_2()),
                     Input::new()
                         .placeholder("Name of your project")
                         .value(move || project_name.get())
@@ -556,10 +553,10 @@ fn progress_demo() -> impl IntoView {
             Stack::vertical((
                 Progress::new(progress_value),
                 Stack::horizontal((
-                    Button::new("-10").sm().outline().on_event_stop(floem::event::EventListener::Click, move |_| {
+                    Button::new("-10").sm().outline().on_event_stop(floem::event::listener::Click, move |_, _| {
                         progress_value.update(|v| *v = (*v - 10.0).max(0.0))
                     }),
-                    Button::new("+10").sm().outline().on_event_stop(floem::event::EventListener::Click, move |_| {
+                    Button::new("+10").sm().outline().on_event_stop(floem::event::listener::Click, move |_, _| {
                         progress_value.update(|v| *v = (*v + 10.0).min(100.0))
                     }),
                 ))
@@ -741,7 +738,7 @@ fn popover_demo() -> impl IntoView {
                 .content(|| {
                     Stack::vertical((
                         Label::derived(|| "Dimensions")
-                            .style(|s| s.font_size(14.0).font_weight(Weight::MEDIUM)),
+                            .style(|s| s.font_size(14.0).font_weight(FontWeight::MEDIUM)),
                         Label::derived(|| "Set the dimensions for the layer.").style(|s| {
                             s.font_size(12.0)
                                 .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
@@ -765,7 +762,7 @@ fn sheet_demo() -> impl IntoView {
             subsection(
                 "Right Sheet",
                 Stack::vertical((
-                    Button::new("Open Sheet").on_event_stop(floem::event::EventListener::Click, move |_| sheet_open.set(true)),
+                    Button::new("Open Sheet").on_event_stop(floem::event::listener::Click, move |_, _| sheet_open.set(true)),
                     Sheet::new(sheet_open, SheetContent::new(
                         Stack::vertical((
                             SheetHeader::new(Stack::vertical((
@@ -774,13 +771,13 @@ fn sheet_demo() -> impl IntoView {
                             ))),
                             // Some content
                             Stack::vertical((
-                                Label::derived(|| "Name").style(|s| s.font_size(14.0).font_weight(Weight::MEDIUM)),
+                                Label::derived(|| "Name").style(|s| s.font_size(14.0).font_weight(FontWeight::MEDIUM)),
                                 Label::derived(|| "Enter your name here...").style(|s| {
                                     s.font_size(14.0).with_shadcn_theme(|s, t| s.color(t.muted_foreground))
                                 }),
                             )).style(|s| s.gap_2()),
                             SheetFooter::new(
-                                Button::new("Save changes").on_event_stop(floem::event::EventListener::Click, move |_| sheet_open.set(false))
+                                Button::new("Save changes").on_event_stop(floem::event::listener::Click, move |_, _| sheet_open.set(false))
                             ),
                         )).style(|s| s.gap_4())
                     ).side(SheetSide::Right)),
@@ -790,7 +787,7 @@ fn sheet_demo() -> impl IntoView {
             subsection(
                 "Left Sheet",
                 Stack::vertical((
-                    Button::new("Open Left Sheet").outline().on_event_stop(floem::event::EventListener::Click, move |_| sheet_left_open.set(true)),
+                    Button::new("Open Left Sheet").outline().on_event_stop(floem::event::listener::Click, move |_, _| sheet_left_open.set(true)),
                     Sheet::new(sheet_left_open, SheetContent::new(
                         Stack::vertical((
                             SheetHeader::new(Stack::vertical((
@@ -925,19 +922,19 @@ fn toast_demo() -> impl IntoView {
             subsection(
                 "Trigger Toasts",
                 Stack::horizontal((
-                    Button::new("Default Toast").on_event_stop(floem::event::EventListener::Click, move |_| {
+                    Button::new("Default Toast").on_event_stop(floem::event::listener::Click, move |_, _| {
                         push_toast(
                             toasts,
                             ToastData::new("Scheduled", "Your meeting has been scheduled."),
                         );
                     }),
-                    Button::new("Success").outline().on_event_stop(floem::event::EventListener::Click, move |_| {
+                    Button::new("Success").outline().on_event_stop(floem::event::listener::Click, move |_, _| {
                         push_toast(
                             toasts,
                             ToastData::new("Success!", "Your changes have been saved.").success(),
                         );
                     }),
-                    Button::new("Error").destructive().on_event_stop(floem::event::EventListener::Click, move |_| {
+                    Button::new("Error").destructive().on_event_stop(floem::event::listener::Click, move |_, _| {
                         push_toast(
                             toasts,
                             ToastData::new("Error", "Something went wrong.").destructive(),
@@ -1053,7 +1050,7 @@ fn hover_card_demo() -> impl IntoView {
             HoverCard::new()
                 .trigger(|| {
                     floem::views::Label::new("@floem").style(move |s| {
-                        s.font_weight(Weight::MEDIUM)
+                        s.font_weight(FontWeight::MEDIUM)
                             .cursor(floem::style::CursorStyle::Pointer)
                             .with_shadcn_theme(|s, t| s.color(t.primary))
                     })
@@ -1061,7 +1058,7 @@ fn hover_card_demo() -> impl IntoView {
                 .content(|| {
                     Stack::vertical((
                         Label::derived(|| "Floem")
-                            .style(|s| s.font_size(16.0).font_weight(Weight::SEMIBOLD)),
+                            .style(|s| s.font_size(16.0).font_weight(FontWeight::SEMI_BOLD)),
                         Label::derived(|| "A native Rust UI library with fine-grained reactivity.")
                             .style(|s| {
                                 s.font_size(14.0)
@@ -1398,7 +1395,7 @@ fn drawer_demo() -> impl IntoView {
             subsection(
                 "Bottom Drawer",
                 Stack::vertical((
-                    Button::new("Open Bottom Drawer").on_event_stop(floem::event::EventListener::Click, move |_| drawer_open.set(true)),
+                    Button::new("Open Bottom Drawer").on_event_stop(floem::event::listener::Click, move |_, _| drawer_open.set(true)),
                     Drawer::new(drawer_open)
                         .side(DrawerSide::Bottom)
                         .content(Stack::vertical((
@@ -1408,7 +1405,7 @@ fn drawer_demo() -> impl IntoView {
                             ))),
                             DrawerFooter::new(
                                 Button::new("Save changes")
-                                    .on_event_stop(floem::event::EventListener::Click, move |_| drawer_open.set(false)),
+                                    .on_event_stop(floem::event::listener::Click, move |_, _| drawer_open.set(false)),
                             ),
                         ))),
                 ))
@@ -1419,7 +1416,7 @@ fn drawer_demo() -> impl IntoView {
                 Stack::vertical((
                     Button::new("Open Right Drawer")
                         .outline()
-                        .on_event_stop(floem::event::EventListener::Click, move |_| drawer_right.set(true)),
+                        .on_event_stop(floem::event::listener::Click, move |_, _| drawer_right.set(true)),
                     Drawer::new(drawer_right)
                         .side(DrawerSide::Right)
                         .content(Stack::vertical((
@@ -1430,7 +1427,7 @@ fn drawer_demo() -> impl IntoView {
                             DrawerFooter::new(
                                 Button::new("Close")
                                     .outline()
-                                    .on_event_stop(floem::event::EventListener::Click, move |_| drawer_right.set(false)),
+                                    .on_event_stop(floem::event::listener::Click, move |_, _| drawer_right.set(false)),
                             ),
                         ))),
                 ))
@@ -1755,7 +1752,7 @@ fn demo_section<V: IntoView + 'static>(
 ) -> impl IntoView {
     Stack::vertical((
         // Title
-        Label::derived(move || title).style(|s| s.font_size(24.0).font_weight(Weight::BOLD).mb_2()),
+        Label::derived(move || title).style(|s| s.font_size(24.0).font_weight(FontWeight::BOLD).mb_2()),
         // Description
         Label::derived(move || description).style(|s| {
             s.font_size(14.0)
@@ -1771,7 +1768,7 @@ fn demo_section<V: IntoView + 'static>(
 fn subsection<V: IntoView + 'static>(title: &'static str, content: V) -> impl IntoView {
     Stack::vertical((
         Label::derived(move || title)
-            .style(|s| s.font_size(14.0).font_weight(Weight::MEDIUM).mb_3()),
+            .style(|s| s.font_size(14.0).font_weight(FontWeight::MEDIUM).mb_3()),
         content,
     ))
 }
@@ -1779,7 +1776,7 @@ fn subsection<V: IntoView + 'static>(title: &'static str, content: V) -> impl In
 fn form_field<V: IntoView + 'static>(label_text: &'static str, input: V) -> impl IntoView {
     Stack::horizontal((
         Label::derived(move || label_text)
-            .style(|s| s.font_size(14.0).font_weight(Weight::MEDIUM).w_24()),
+            .style(|s| s.font_size(14.0).font_weight(FontWeight::MEDIUM).w_24()),
         input,
     ))
     .style(|s| s.gap_4().items_center())
@@ -1793,6 +1790,6 @@ fn sidebar_button(label: &'static str, active_section: RwSignal<String>) -> impl
     SidebarMenuItem::new().child(
         SidebarMenuButton::new(label)
             .is_active(move || active_section.get() == id_for_active)
-            .on_event_stop(floem::event::EventListener::Click, move |_| active_section.set(id_for_click.clone())),
+            .on_event_stop(floem::event::listener::Click, move |_, _| active_section.set(id_for_click.clone())),
     )
 }

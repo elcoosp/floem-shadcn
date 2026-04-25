@@ -264,7 +264,7 @@ impl IntoView for Toast {
         });
 
         let close_btn = if let Some(handler) = on_close {
-            close_btn.on_event_stop(floem::event::EventListener::Click, move |_| handler()).into_any()
+            close_btn.on_event_stop(floem::event::listener::Click, move |_, _| handler()).into_any()
         } else {
             close_btn.into_any()
         };
@@ -364,7 +364,7 @@ impl IntoView for ToastAction {
         });
 
         if let Some(handler) = on_click {
-            Box::new(btn.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
+            Box::new(btn.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
         } else {
             Box::new(btn)
         }

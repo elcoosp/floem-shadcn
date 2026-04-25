@@ -153,7 +153,7 @@ impl<C: IntoView + 'static> IntoView for MenubarMenu<C> {
                     }
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 is_open.update(|v| *v = !*v);
             });
 
@@ -210,7 +210,7 @@ impl<C: IntoView + 'static> IntoView for MenubarMenu<C> {
                     base.display(floem::style::Display::None)
                 }
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 is_open.set(false);
             });
 
@@ -431,7 +431,7 @@ impl IntoView for MenubarItem {
 
         if let Some(handler) = on_select {
             if !disabled {
-                Box::new(row.on_event_stop(floem::event::EventListener::Click, move |_| handler()))
+                Box::new(row.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
             } else {
                 Box::new(row)
             }
@@ -582,7 +582,7 @@ impl IntoView for MenubarCheckboxItem {
         if disabled {
             Box::new(row)
         } else {
-            Box::new(row.on_event_stop(floem::event::EventListener::Click, move |_| {
+            Box::new(row.on_event_stop(floem::event::listener::Click, move |_, _| {
                 checked.update(|v| *v = !*v);
             }))
         }

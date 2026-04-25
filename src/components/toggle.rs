@@ -182,7 +182,7 @@ impl IntoView for Toggle {
         if disabled {
             Box::new(label)
         } else {
-            Box::new(label.on_event_stop(floem::event::EventListener::Click, move |_| {
+            Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| {
                 pressed.update(|v| *v = !*v);
             }))
         }
@@ -322,7 +322,7 @@ impl<V: IntoView + 'static> IntoView for ToggleCustom<V> {
         if disabled {
             Box::new(container)
         } else {
-            Box::new(container.on_event_stop(floem::event::EventListener::Click, move |_| {
+            Box::new(container.on_event_stop(floem::event::listener::Click, move |_, _| {
                 pressed.update(|v| *v = !*v);
             }))
         }

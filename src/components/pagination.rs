@@ -109,7 +109,7 @@ impl IntoView for Pagination {
                     }
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 let page = current_page.get();
                 if page > 1 {
                     current_page.set(page - 1);
@@ -155,7 +155,7 @@ impl IntoView for Pagination {
                     }
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 let page = current_page.get();
                 if page < total_pages {
                     current_page.set(page + 1);
@@ -227,7 +227,7 @@ fn create_page_button(
             }
         })
     })
-    .on_event_stop(floem::event::EventListener::Click, move |_| {
+    .on_event_stop(floem::event::listener::Click, move |_, _| {
         let current = current_page.get();
         let display_page = calculate_display_page(page_num, current, total_pages, siblings);
 
@@ -434,7 +434,7 @@ impl IntoView for PaginationLink {
                         }
                     })
                 })
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     current_page.set(page);
                 }),
         )
@@ -519,7 +519,7 @@ impl IntoView for PaginationPrevious {
                     }
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 let page = current_page.get();
                 if page > 1 {
                     current_page.set(page - 1);
@@ -610,7 +610,7 @@ impl IntoView for PaginationNext {
                     }
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 let page = current_page.get();
                 if page < total_pages {
                     current_page.set(page + 1);

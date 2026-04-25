@@ -169,7 +169,7 @@ impl<V: IntoView + 'static> IntoView for Drawer<V> {
                     .inset(0.0)
                     .background(floem::peniko::Color::from_rgba8(0, 0, 0, 128))
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 is_open.set(false);
             });
 
@@ -232,7 +232,7 @@ impl<V: IntoView + 'static> IntoView for DrawerTrigger<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     is_open.set(true);
                 }),
         )
@@ -507,7 +507,7 @@ impl<V: IntoView + 'static> IntoView for DrawerClose<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::EventListener::Click, move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     is_open.set(false);
                 }),
         )

@@ -165,7 +165,7 @@ impl IntoView for Calendar {
                         .hover(|s| s.background(t.muted))
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 let m = view_month.get();
                 if m == 1 {
                     view_month.set(12);
@@ -186,7 +186,7 @@ impl IntoView for Calendar {
                         .hover(|s| s.background(t.muted))
                 })
             })
-            .on_event_stop(floem::event::EventListener::Click, move |_| {
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
                 let m = view_month.get();
                 if m == 12 {
                     view_month.set(1);
@@ -324,7 +324,7 @@ fn create_day_cell(
             }
         })
     })
-    .on_event_stop(floem::event::EventListener::Click, move |_| {
+    .on_event_stop(floem::event::listener::Click, move |_, _| {
         let year = view_year.get();
         let month = view_month.get();
         let first_day = SimpleDate::first_day_of_week(year, month) as i32;
