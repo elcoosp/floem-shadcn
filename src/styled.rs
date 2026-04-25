@@ -20,7 +20,6 @@ macro_rules! txt { ($n:ident,$f:ident) => { fn $n(self) -> Self { let t = curren
 macro_rules! brd { ($n:ident,$f:ident) => { fn $n(self) -> Self { let t = current_theme(); self.border_color(t.$f) } } }
 macro_rules! out { ($n:ident,$f:ident) => { fn $n(self) -> Self { let t = current_theme(); self.outline_color(t.$f) } } }
 macro_rules! rad { ($n:ident,$f:ident) => { fn $n(self) -> Self { let t = current_theme(); self.border_radius(t.$f) } } }
-
 impl ShadcnStyleExt for Style {
     bg!(bg_background,background); bg!(bg_foreground,foreground); bg!(bg_card,card); bg!(bg_card_foreground,card_foreground);
     bg!(bg_popover,popover); bg!(bg_popover_foreground,popover_foreground); bg!(bg_primary,primary); bg!(bg_primary_foreground,primary_foreground);
