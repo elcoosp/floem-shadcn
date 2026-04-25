@@ -1,6 +1,5 @@
 use floem::prelude::*;
 use floem::reactive::RwSignal;
-use floem::text::FontWeight;
 use floem::views::Scroll;
 use floem_test::prelude::*;
 use floem::headless::TestRoot;

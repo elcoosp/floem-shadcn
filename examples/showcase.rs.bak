@@ -5,7 +5,6 @@ use floem::views::Overlay;
 
 use floem::IntoView;
 use floem::reactive::RwSignal;
-use floem::text::FontWeight;
 use floem::views::{Label, Stack};
 use floem_shadcn::prelude::*;
 use floem_shadcn::theme::{ShadcnTheme, ShadcnThemeExt, ThemeMode};

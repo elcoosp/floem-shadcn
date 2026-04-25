@@ -1,6 +1,4 @@
 use floem::views::Decorators;
-use floem::reactive::SignalGet;
-use floem::reactive::SignalUpdate;
 use floem_test::TestRoot;
 // Tests for Button Group component
 
