@@ -18,7 +18,7 @@ ui-events = { version = "0.2", features = ["kurbo"] }
 [dev-dependencies]
 
 # floem-test = { git = "https://github.com/lapce/floem", rev = "ae651b10" }
-floem-test = {version = "0.2", git = "https://github.com/lapce/floem" }
+floem-test = { git = "https://github.com/lapce/floem" }
 dpi = "0.1"
 
 [[example]]

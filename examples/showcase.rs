@@ -1,8 +1,11 @@
-use floem::views::Overlay;
-// Showcase example for floem-shadcn components
-//!
-// Run with: cargo run --example showcase
+use floem::prelude::{SignalGet, SignalUpdate};
+use floem::text::FontWeight;
+use floem::views::Decorators;
+use floem_shadcn::components::select::{Select, SelectItemData};
 
+/// Showcase example for floem-shadcn components
+///
+/// Run with: cargo run --example showcase
 use floem::IntoView;
 use floem::reactive::RwSignal;
 use floem::views::{Label, Stack};
@@ -15,37 +18,33 @@ fn main() {
 }
 
 fn app_view() -> impl IntoView {
-    // Track which component section is active
     let active_section = RwSignal::new("buttons".to_string());
-    // Track current theme mode for reactive theme switching
     let theme_mode = RwSignal::new(ThemeMode::Light);
 
     Stack::horizontal((
-        // Sidebar navigation using full Sidebar APIs
         Sidebar::new()
             .header(
                 SidebarHeader::new().child(
                     Stack::vertical((
                         Label::derived(|| "floem-shadcn")
                             .style(|s| s.font_size(18.0).font_weight(FontWeight::BOLD)),
-                        Button::new("Toggle Theme")
-                            .outline()
-                            .sm()
-                            .on_event_stop(floem::event::listener::Click, move |_, _| {
+                        Button::new("Toggle Theme").outline().sm().on_event_stop(
+                            floem::event::listener::Click,
+                            move |_, _| {
                                 theme_mode.update(|m| {
                                     *m = match m {
                                         ThemeMode::Light => ThemeMode::Dark,
                                         ThemeMode::Dark => ThemeMode::Light,
                                     }
                                 });
-                            }),
+                            },
+                        ),
                     ))
                     .style(|s| s.gap_3()),
                 ),
             )
             .content(
                 SidebarContent::new()
-                    // Group 1: Form Inputs
                     .child(
                         SidebarGroup::new()
                             .child(SidebarGroupLabel::new("Form Inputs"))
@@ -70,7 +69,6 @@ fn app_view() -> impl IntoView {
                             ),
                     )
                     .child(SidebarSeparator::new())
-                    // Group 2: Layout & Feedback
                     .child(
                         SidebarGroup::new()
                             .child(SidebarGroupLabel::new("Layout & Feedback"))
@@ -96,7 +94,6 @@ fn app_view() -> impl IntoView {
                             ),
                     )
                     .child(SidebarSeparator::new())
-                    // Group 3: Overlays & Navigation
                     .child(
                         SidebarGroup::new()
                             .child(SidebarGroupLabel::new("Overlays & Navigation"))
@@ -115,7 +112,6 @@ fn app_view() -> impl IntoView {
                             ),
                     )
                     .child(SidebarSeparator::new())
-                    // Group 4: Data & Misc
                     .child(
                         SidebarGroup::new()
                             .child(SidebarGroupLabel::new("Data & Misc"))
@@ -141,7 +137,6 @@ fn app_view() -> impl IntoView {
                         .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
                 })),
             ),
-        // Main content area
         floem::views::Scroll::new(floem::views::dyn_container(
             move || active_section.get(),
             move |section| match section.as_str() {
@@ -201,14 +196,14 @@ fn app_view() -> impl IntoView {
             ThemeMode::Light => ShadcnTheme::light(),
             ThemeMode::Dark => ShadcnTheme::dark(),
         };
-        s.with_shadcn_theme(theme)
+        // Use the imported prop type and value – both are in scope
+        s.set(ShadcnThemeProp, theme)
             .w_full()
             .h_full()
             .bg_background()
             .text_foreground()
     })
 }
-
 // ============================================================================
 // Component Demos
 // ============================================================================
@@ -552,12 +547,18 @@ fn progress_demo() -> impl IntoView {
             Stack::vertical((
                 Progress::new(progress_value),
                 Stack::horizontal((
-                    Button::new("-10").sm().outline().on_event_stop(floem::event::listener::Click, move |_, _| {
-                        progress_value.update(|v| *v = (*v - 10.0).max(0.0))
-                    }),
-                    Button::new("+10").sm().outline().on_event_stop(floem::event::listener::Click, move |_, _| {
-                        progress_value.update(|v| *v = (*v + 10.0).min(100.0))
-                    }),
+                    Button::new("-10")
+                        .sm()
+                        .outline()
+                        .on_event_stop(floem::event::listener::Click, move |_, _| {
+                            progress_value.update(|v| *v = (*v - 10.0).max(0.0))
+                        }),
+                    Button::new("+10")
+                        .sm()
+                        .outline()
+                        .on_event_stop(floem::event::listener::Click, move |_, _| {
+                            progress_value.update(|v| *v = (*v + 10.0).min(100.0))
+                        }),
                 ))
                 .style(|s| s.gap_2()),
             ))
@@ -921,24 +922,34 @@ fn toast_demo() -> impl IntoView {
             subsection(
                 "Trigger Toasts",
                 Stack::horizontal((
-                    Button::new("Default Toast").on_event_stop(floem::event::listener::Click, move |_, _| {
-                        push_toast(
-                            toasts,
-                            ToastData::new("Scheduled", "Your meeting has been scheduled."),
-                        );
-                    }),
-                    Button::new("Success").outline().on_event_stop(floem::event::listener::Click, move |_, _| {
-                        push_toast(
-                            toasts,
-                            ToastData::new("Success!", "Your changes have been saved.").success(),
-                        );
-                    }),
-                    Button::new("Error").destructive().on_event_stop(floem::event::listener::Click, move |_, _| {
-                        push_toast(
-                            toasts,
-                            ToastData::new("Error", "Something went wrong.").destructive(),
-                        );
-                    }),
+                    Button::new("Default Toast").on_event_stop(
+                        floem::event::listener::Click,
+                        move |_, _| {
+                            push_toast(
+                                toasts,
+                                ToastData::new("Scheduled", "Your meeting has been scheduled."),
+                            );
+                        },
+                    ),
+                    Button::new("Success").outline().on_event_stop(
+                        floem::event::listener::Click,
+                        move |_, _| {
+                            push_toast(
+                                toasts,
+                                ToastData::new("Success!", "Your changes have been saved.")
+                                    .success(),
+                            );
+                        },
+                    ),
+                    Button::new("Error").destructive().on_event_stop(
+                        floem::event::listener::Click,
+                        move |_, _| {
+                            push_toast(
+                                toasts,
+                                ToastData::new("Error", "Something went wrong.").destructive(),
+                            );
+                        },
+                    ),
                 ))
                 .style(|s| s.gap_2()),
             ),
@@ -1394,7 +1405,10 @@ fn drawer_demo() -> impl IntoView {
             subsection(
                 "Bottom Drawer",
                 Stack::vertical((
-                    Button::new("Open Bottom Drawer").on_event_stop(floem::event::listener::Click, move |_, _| drawer_open.set(true)),
+                    Button::new("Open Bottom Drawer")
+                        .on_event_stop(floem::event::listener::Click, move |_, _| {
+                            drawer_open.set(true)
+                        }),
                     Drawer::new(drawer_open)
                         .side(DrawerSide::Bottom)
                         .content(Stack::vertical((
@@ -1404,7 +1418,9 @@ fn drawer_demo() -> impl IntoView {
                             ))),
                             DrawerFooter::new(
                                 Button::new("Save changes")
-                                    .on_event_stop(floem::event::listener::Click, move |_, _| drawer_open.set(false)),
+                                    .on_event_stop(floem::event::listener::Click, move |_, _| {
+                                        drawer_open.set(false)
+                                    }),
                             ),
                         ))),
                 ))
@@ -1415,7 +1431,9 @@ fn drawer_demo() -> impl IntoView {
                 Stack::vertical((
                     Button::new("Open Right Drawer")
                         .outline()
-                        .on_event_stop(floem::event::listener::Click, move |_, _| drawer_right.set(true)),
+                        .on_event_stop(floem::event::listener::Click, move |_, _| {
+                            drawer_right.set(true)
+                        }),
                     Drawer::new(drawer_right)
                         .side(DrawerSide::Right)
                         .content(Stack::vertical((
@@ -1426,7 +1444,9 @@ fn drawer_demo() -> impl IntoView {
                             DrawerFooter::new(
                                 Button::new("Close")
                                     .outline()
-                                    .on_event_stop(floem::event::listener::Click, move |_, _| drawer_right.set(false)),
+                                    .on_event_stop(floem::event::listener::Click, move |_, _| {
+                                        drawer_right.set(false)
+                                    }),
                             ),
                         ))),
                 ))
@@ -1650,14 +1670,14 @@ fn command_demo() -> impl IntoView {
                             CommandGroup::new("Suggestions")
                                 .child(CommandItem::new("calendar", "Calendar"))
                                 .child(CommandItem::new("search", "Search Emoji"))
-                                .child(CommandItem::new("calculator", "Calculator"))
+                                .child(CommandItem::new("calculator", "Calculator")),
                         )
                         .child(
                             CommandGroup::new("Settings")
                                 .child(CommandItem::new("profile", "Profile"))
                                 .child(CommandItem::new("billing", "Billing"))
-                                .child(CommandItem::new("settings", "Settings"))
-                        )
+                                .child(CommandItem::new("settings", "Settings")),
+                        ),
                 )
                 .style(|s| s.max_width(400.0)),
         ),))
@@ -1751,7 +1771,8 @@ fn demo_section<V: IntoView + 'static>(
 ) -> impl IntoView {
     Stack::vertical((
         // Title
-        Label::derived(move || title).style(|s| s.font_size(24.0).font_weight(FontWeight::BOLD).mb_2()),
+        Label::derived(move || title)
+            .style(|s| s.font_size(24.0).font_weight(FontWeight::BOLD).mb_2()),
         // Description
         Label::derived(move || description).style(|s| {
             s.font_size(14.0)
@@ -1789,6 +1810,8 @@ fn sidebar_button(label: &'static str, active_section: RwSignal<String>) -> impl
     SidebarMenuItem::new().child(
         SidebarMenuButton::new(label)
             .is_active(move || active_section.get() == id_for_active)
-            .on_event_stop(floem::event::listener::Click, move |_, _| active_section.set(id_for_click.clone())),
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
+                active_section.set(id_for_click.clone())
+            }),
     )
 }
