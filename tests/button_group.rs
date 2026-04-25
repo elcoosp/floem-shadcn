@@ -1,3 +1,4 @@
+use floem_shadcn::theme::{set_theme, ShadcnTheme};
 use floem::views::Decorators;
 use floem_test::TestRoot;
 // Tests for Button Group component
@@ -10,6 +11,7 @@ use floem_test::prelude::*;
 
 #[test]
 fn test_button_group_renders_three_buttons() {
+    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
  let btn1 = Button::new("Left");
  let btn2 = Button::new("Center");
  let btn3 = Button::new("Right");
@@ -30,6 +32,7 @@ fn test_button_group_renders_three_buttons() {
 
 #[test]
 fn test_button_group_with_separator() {
+    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
  let btn1 = Button::new("Left");
  let btn2 = Button::new("Right");
  let group = ButtonGroup::new()

@@ -2,6 +2,7 @@ use floem::prelude::{SignalGet, SignalUpdate};
 use floem::text::FontWeight;
 use floem::views::Decorators;
 use floem_shadcn::components::select::{Select, SelectItemData};
+use floem_shadcn::theme::{current_theme, set_theme};
 
 /// Showcase example for floem-shadcn components
 ///
@@ -18,10 +19,22 @@ fn main() {
 }
 
 fn app_view() -> impl IntoView {
+    // Track which component section is active
     let active_section = RwSignal::new("buttons".to_string());
+    // Track current theme mode for reactive theme switching
     let theme_mode = RwSignal::new(ThemeMode::Light);
 
+    // Keep the global theme in sync with the toggle
+    floem::reactive::Effect::new(move |_| {
+        let theme = match theme_mode.get() {
+            ThemeMode::Light => ShadcnTheme::light(),
+            ThemeMode::Dark => ShadcnTheme::dark(),
+        };
+        set_theme(theme);
+    });
+
     Stack::horizontal((
+        // Sidebar navigation using full Sidebar APIs
         Sidebar::new()
             .header(
                 SidebarHeader::new().child(
@@ -45,6 +58,7 @@ fn app_view() -> impl IntoView {
             )
             .content(
                 SidebarContent::new()
+                    // Group 1: Form Inputs
                     .child(
                         SidebarGroup::new()
                             .child(SidebarGroupLabel::new("Form Inputs"))
@@ -69,6 +83,7 @@ fn app_view() -> impl IntoView {
                             ),
                     )
                     .child(SidebarSeparator::new())
+                    // Group 2: Layout & Feedback
                     .child(
                         SidebarGroup::new()
                             .child(SidebarGroupLabel::new("Layout & Feedback"))
@@ -94,6 +109,7 @@ fn app_view() -> impl IntoView {
                             ),
                     )
                     .child(SidebarSeparator::new())
+                    // Group 3: Overlays & Navigation
                     .child(
                         SidebarGroup::new()
                             .child(SidebarGroupLabel::new("Overlays & Navigation"))
@@ -112,6 +128,7 @@ fn app_view() -> impl IntoView {
                             ),
                     )
                     .child(SidebarSeparator::new())
+                    // Group 4: Data & Misc
                     .child(
                         SidebarGroup::new()
                             .child(SidebarGroupLabel::new("Data & Misc"))
@@ -137,6 +154,7 @@ fn app_view() -> impl IntoView {
                         .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
                 })),
             ),
+        // Main content area
         floem::views::Scroll::new(floem::views::dyn_container(
             move || active_section.get(),
             move |section| match section.as_str() {
@@ -192,18 +210,18 @@ fn app_view() -> impl IntoView {
         .style(|s| s.flex_grow(1.0).h_full().p_8().bg_background()),
     ))
     .style(move |s| {
-        let theme = match theme_mode.get() {
-            ThemeMode::Light => ShadcnTheme::light(),
-            ThemeMode::Dark => ShadcnTheme::dark(),
-        };
-        // Use the imported prop type and value – both are in scope
-        s.set(ShadcnThemeProp, theme)
-            .w_full()
-            .h_full()
-            .bg_background()
-            .text_foreground()
+        // Reactively apply background and foreground based on theme_mode.
+        // We must depend on theme_mode so the style updates when the toggle is clicked.
+        let _ = theme_mode.get(); // create a reactive dependency
+        s.with_shadcn_theme(|s, t| {
+            s.background(t.background)
+                .color(t.foreground)
+                .w_full()
+                .h_full()
+        })
     })
 }
+
 // ============================================================================
 // Component Demos
 // ============================================================================
