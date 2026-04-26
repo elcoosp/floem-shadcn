@@ -1,4 +1,5 @@
 use crate::theme::ShadcnThemeExt;
+use floem::context::LayoutChanged;
 use floem::prelude::*;
 use floem::reactive::{Context, RwSignal, Scope, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
@@ -11,6 +12,8 @@ pub struct ComboboxContext {
     pub selected: RwSignal<Option<String>>,
     pub search: RwSignal<String>,
     pub is_open: RwSignal<bool>,
+    pub trigger_origin: RwSignal<floem::kurbo::Point>,
+    pub trigger_size: RwSignal<floem::kurbo::Size>,
 }
 pub struct Combobox {
     id: ViewId,
@@ -22,11 +25,15 @@ pub struct Combobox {
 impl Combobox {
     pub fn new(selected: RwSignal<Option<String>>, search: RwSignal<String>) -> Self {
         let is_open = RwSignal::new(false);
+        let trigger_origin = RwSignal::new(floem::kurbo::Point::ZERO);
+        let trigger_size = RwSignal::new(floem::kurbo::Size::ZERO);
         let scope = Scope::current().create_child();
         scope.provide_context(ComboboxContext {
             selected,
             search,
             is_open,
+            trigger_origin,
+            trigger_size,
         });
         Self {
             id: ViewId::new(),
@@ -110,6 +117,8 @@ impl IntoView for ComboboxTrigger {
             let selected = ctx.selected;
             let is_open = ctx.is_open;
             let items = self.items.clone();
+            let trigger_origin = ctx.trigger_origin;
+            let trigger_size = ctx.trigger_size;
             Box::new(
                 floem::views::Stack::horizontal((
                     floem::views::Label::derived(move || {
@@ -159,6 +168,13 @@ impl IntoView for ComboboxTrigger {
                             .hover(|s| s.border_color(t.ring))
                     })
                 })
+                .on_event_stop(
+                    LayoutChanged::listener(),
+                    move |_cx, event: &LayoutChanged| {
+                        trigger_origin.set(event.new_window_origin);
+                        trigger_size.set(event.new_box.size());
+                    },
+                )
                 .on_event_stop(floem::event::listener::Click, move |_, _| {
                     is_open.update(|v| *v = !*v);
                 }),
@@ -212,14 +228,16 @@ impl IntoView for ComboboxContent {
         let ctx = Context::get::<ComboboxContext>();
         let stem = Container::with_id(self.id, ()).style(|s| s.flex_col().width_full());
         if let Some(ctx) = ctx {
+            let trigger_origin = ctx.trigger_origin;
+            let trigger_size = ctx.trigger_size;
             Box::new(floem::views::Container::new(stem).style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
+                    let origin = trigger_origin.get();
+                    let size = trigger_size.get();
                     s.position(floem::style::Position::Absolute)
-                        .inset_top_pct(100.0)
-                        .inset_left(0.0)
-                        .inset_right(0.0)
-                        .margin_top(6.0)
-                        .min_width(200.0)
+                        .inset_left(origin.x)
+                        .inset_top(origin.y + size.height + 6.0)
+                        .min_width(size.width.max(200.0))
                         .flex_col()
                         .background(t.popover)
                         .color(t.popover_foreground)

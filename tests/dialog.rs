@@ -9,7 +9,6 @@ use floem_shadcn::components::dialog::{
 use floem_test::prelude::*;
 
 #[test]
-#[ignore]
 fn test_dialog_opens_via_trigger() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
@@ -51,7 +50,6 @@ fn test_dialog_closes_via_close_button() {
 }
 
 #[test]
-#[ignore]
 fn test_dialog_backdrop_click_closes() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
@@ -211,7 +209,6 @@ fn test_multiple_dialogs() {
 }
 
 #[test]
-#[ignore]
 fn test_clicking_backdrop_closes_dialog() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());

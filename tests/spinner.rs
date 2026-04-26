@@ -6,7 +6,6 @@ use floem_shadcn::components::spinner::*;
 use floem_test::prelude::*;
 
 #[test]
-#[ignore]
 fn test_spinner_default_md_size() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let spinner = Spinner::new();
@@ -31,7 +30,6 @@ fn test_spinner_default_md_size() {
 }
 
 #[test]
-#[ignore]
 fn test_spinner_sm_size() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let spinner = Spinner::new().size(SpinnerSize::Sm);
@@ -50,7 +48,6 @@ fn test_spinner_sm_size() {
 }
 
 #[test]
-#[ignore]
 fn test_spinner_lg_size() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let spinner = Spinner::new().size(SpinnerSize::Lg);

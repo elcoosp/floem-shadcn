@@ -7,7 +7,7 @@ use floem::views::{Decorators, Label, Stack};
 use floem_shadcn::components::accordion::{Accordion, AccordionItem};
 use floem_shadcn::components::alert::Alert;
 use floem_shadcn::components::alert_dialog::AlertDialog;
-use floem_shadcn::components::aspect_ratio::{AspectRatio};
+use floem_shadcn::components::aspect_ratio::AspectRatio;
 use floem_shadcn::components::avatar::Avatar;
 use floem_shadcn::components::badge::Badge;
 use floem_shadcn::components::breadcrumb::{
@@ -65,8 +65,8 @@ use floem_shadcn::components::toast::{ToastContainer, ToastData, push_toast};
 use floem_shadcn::components::toggle::Toggle;
 use floem_shadcn::components::toggle_group::{ToggleGroup, ToggleGroupItem};
 use floem_shadcn::components::tooltip::TooltipExt;
-use floem_shadcn::theme::{ShadcnThemeExt, ThemeMode};
 use floem_shadcn::styled::ShadcnStyleExt;
+use floem_shadcn::theme::{ShadcnThemeExt, ThemeMode};
 use floem_tailwind::TailwindExt; // <-- ADD THIS
 
 fn main() {

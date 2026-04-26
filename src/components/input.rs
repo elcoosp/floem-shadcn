@@ -1,40 +1,65 @@
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
-use floem::reactive::RwSignal;
-use floem::views::{Decorators, TextInput};
+use floem::reactive::{Effect, RwSignal, SignalGet, SignalUpdate};
+use floem::views::{Decorators, TextInput, TextInputEnter};
 use floem::{HasViewId, ViewId};
 
 pub struct Input {
     id: ViewId,
+    buffer: RwSignal<String>,
     placeholder: Option<String>,
+    on_enter: Option<Box<dyn Fn(&str)>>,
 }
+
 impl Input {
     pub fn new() -> Self {
+        Self::with_text("")
+    }
+
+    pub fn with_text(initial: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
+            buffer: RwSignal::new(initial.into()),
             placeholder: None,
+            on_enter: None,
         }
     }
-    pub fn with_text(t: impl Into<String>) -> Self {
-        Self {
-            placeholder: Some(t.into()),
-            ..Self::new()
-        }
-    }
-    pub fn placeholder(mut self, t: impl Into<String>) -> Self {
-        self.placeholder = Some(t.into());
+
+    pub fn placeholder(mut self, text: impl Into<String>) -> Self {
+        self.placeholder = Some(text.into());
         self
     }
-    pub fn on_update(self, _: impl Fn(&str) + 'static) -> Self {
+
+    pub fn on_update(self, f: impl Fn(&str) + 'static) -> Self {
+        let buf = self.buffer;
+        Effect::new(move |_| {
+            let text = buf.get();
+            f(&text);
+        });
         self
     }
-    pub fn value(self, _: impl Fn() -> String + 'static) -> Self {
+
+    pub fn on_enter(mut self, f: impl Fn(&str) + 'static) -> Self {
+        self.on_enter = Some(Box::new(f));
         self
     }
-    pub fn on_enter(self, _: impl Fn(&str) + 'static) -> Self {
+
+    pub fn value(self, getter: impl Fn() -> String + 'static) -> Self {
+        let buf = self.buffer;
+        Effect::new(move |_| {
+            let new_value = getter();
+            if buf.get_untracked() != new_value {
+                buf.set(new_value);
+            }
+        });
         self
+    }
+
+    pub fn buffer(&self) -> RwSignal<String> {
+        self.buffer
     }
 }
+
 impl Default for Input {
     fn default() -> Self {
         Self::new()
@@ -45,6 +70,7 @@ impl HasViewId for Input {
         self.id
     }
 }
+
 impl IntoView for Input {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
@@ -52,28 +78,33 @@ impl IntoView for Input {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        let buffer = RwSignal::new(String::new());
-        Box::new(
-            TextInput::new(buffer)
-                .placeholder(self.placeholder.unwrap_or_default())
-                .style(move |s| {
-                    s.height(40.0)
-                        .width_full()
-                        .border_radius(6.0)
-                        .border(1.0)
-                        .padding_left(12.0)
-                        .padding_right(12.0)
-                        .padding_top(8.0)
-                        .padding_bottom(8.0)
-                        .font_size(14.0)
-                        .with_shadcn_theme(|s, t| {
-                            let ring = t.ring;
-                            s.border_color(t.input)
-                                .background(t.background)
-                                .color(t.foreground)
-                                .focus(move |s| s.outline(2.0).outline_color(ring))
-                        })
-                }),
-        )
+        let mut view = TextInput::new(self.buffer);
+        if let Some(ph) = self.placeholder {
+            view = view.placeholder(ph);
+        }
+        if let Some(cb) = self.on_enter {
+            let buffer = self.buffer;
+            view = view.on_event_stop(TextInputEnter::listener(), move |_, _| {
+                cb(&buffer.get_untracked());
+            });
+        }
+        Box::new(view.style(move |s| {
+            s.height(40.0)
+                .width_full()
+                .border_radius(6.0)
+                .border(1.0)
+                .padding_left(12.0)
+                .padding_right(12.0)
+                .padding_top(8.0)
+                .padding_bottom(8.0)
+                .font_size(14.0)
+                .with_shadcn_theme(|s, t| {
+                    let ring = t.ring;
+                    s.border_color(t.input)
+                        .background(t.background)
+                        .color(t.foreground)
+                        .focus(move |s| s.outline(2.0).outline_color(ring))
+                })
+        }))
     }
 }

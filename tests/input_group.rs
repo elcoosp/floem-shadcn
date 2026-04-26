@@ -8,7 +8,6 @@ use floem_shadcn::components::input_group::{AddonPosition, InputGroup, InputGrou
 use floem_test::prelude::*;
 
 #[test]
-#[ignore]
 fn test_input_group_with_prefix_addon() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let addon = InputGroupAddon::new(AddonPosition::Prefix, floem::views::Label::new("$"));
@@ -24,7 +23,6 @@ fn test_input_group_with_prefix_addon() {
 }
 
 #[test]
-#[ignore]
 fn test_input_group_with_disabled() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let addon = InputGroupAddon::new(AddonPosition::Suffix, floem::views::Label::new(".com"));

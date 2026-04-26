@@ -6,7 +6,6 @@ use floem_shadcn::components::typography::*;
 use floem_test::prelude::*;
 
 #[test]
-#[ignore]
 fn test_h1_has_large_font_size() {
     let h1 = TypographyH1::new("Title");
     let id = h1.view_id();
@@ -21,7 +20,6 @@ fn test_h1_has_large_font_size() {
 }
 
 #[test]
-#[ignore]
 fn test_muted_has_muted_color() {
     let muted = TypographyMuted::new("muted text");
     let id = muted.view_id();
@@ -36,7 +34,6 @@ fn test_muted_has_muted_color() {
 }
 
 #[test]
-#[ignore]
 fn test_list_renders() {
     let list = TypographyList::new(vec!["Item 1".into(), "Item 2".into()], false);
     let id = list.view_id();

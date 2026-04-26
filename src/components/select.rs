@@ -1,4 +1,5 @@
 use crate::theme::ShadcnThemeExt;
+use floem::context::LayoutChanged;
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
@@ -24,13 +25,14 @@ impl SelectItemData {
         self
     }
 }
-
 pub struct Select {
     id: ViewId,
     selected: RwSignal<Option<String>>,
     placeholder: String,
     items: Vec<SelectItemData>,
     disabled: bool,
+    trigger_origin: RwSignal<floem::kurbo::Point>,
+    trigger_size: RwSignal<floem::kurbo::Size>,
 }
 impl Select {
     pub fn new(s: RwSignal<Option<String>>) -> Self {
@@ -40,6 +42,8 @@ impl Select {
             placeholder: "Select...".into(),
             items: vec![],
             disabled: false,
+            trigger_origin: RwSignal::new(floem::kurbo::Point::ZERO),
+            trigger_size: RwSignal::new(floem::kurbo::Size::ZERO),
         }
     }
     pub fn placeholder(mut self, p: impl Into<String>) -> Self {
@@ -71,6 +75,8 @@ impl IntoView for Select {
         let ph = self.placeholder;
         let items = self.items;
         let disabled = self.disabled;
+        let trigger_origin = self.trigger_origin;
+        let trigger_size = self.trigger_size;
         let is_open = RwSignal::new(false);
         let items_for_trigger = items.clone();
         let trigger = floem::views::Stack::horizontal((
@@ -123,7 +129,14 @@ impl IntoView for Select {
                             .hover(|s| s.border_color(t.ring))
                     })
             })
-        });
+        })
+        .on_event_stop(
+            LayoutChanged::listener(),
+            move |_cx, event: &LayoutChanged| {
+                trigger_origin.set(event.new_window_origin);
+                trigger_size.set(event.new_box.size());
+            },
+        );
         let trigger = if !disabled {
             trigger
                 .on_event_stop(floem::event::listener::Click, move |_, _| {
@@ -133,6 +146,8 @@ impl IntoView for Select {
         } else {
             trigger.into_any()
         };
+        let to = trigger_origin;
+        let ts = trigger_size;
         let item_views: Vec<Box<dyn View>> = items
             .iter()
             .map(|item| {
@@ -209,10 +224,12 @@ impl IntoView for Select {
             .style(|s| s.width_full().max_height(300.0));
         let dropdown = floem::views::Container::new(items_container).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
+                let origin = to.get();
+                let tsize = ts.get();
                 s.position(floem::style::Position::Absolute)
-                    .inset_top_pct(100.0)
-                    .inset_left(0.0)
-                    .inset_right(0.0)
+                    .inset_left(origin.x)
+                    .inset_top(origin.y + tsize.height + 6.0)
+                    .min_width(tsize.width.max(120.0))
                     .margin_top(6.0)
                     .padding(4.0)
                     .background(t.popover)
@@ -230,7 +247,6 @@ impl IntoView for Select {
         Box::new(floem::views::Stack::new((trigger, dropdown)))
     }
 }
-
 pub struct SelectTrigger<V> {
     id: ViewId,
     child: V,
@@ -285,7 +301,6 @@ impl<V: IntoView + 'static> IntoView for SelectTrigger<V> {
         )
     }
 }
-
 pub struct SelectContent<V> {
     id: ViewId,
     child: V,
@@ -342,7 +357,6 @@ impl<V: IntoView + 'static> IntoView for SelectContent<V> {
         )
     }
 }
-
 pub struct SelectItem;
 impl SelectItem {
     #[allow(dead_code)]
@@ -377,7 +391,6 @@ impl IntoView for SelectItem {
         Box::new(floem::views::Empty::new())
     }
 }
-
 pub struct SelectLabel;
 impl SelectLabel {
     #[allow(dead_code)]
@@ -400,7 +413,6 @@ impl IntoView for SelectLabel {
         Box::new(floem::views::Empty::new())
     }
 }
-
 pub struct SelectSeparator;
 impl SelectSeparator {
     pub fn new() -> Self {
@@ -427,7 +439,6 @@ impl IntoView for SelectSeparator {
         Box::new(floem::views::Empty::new())
     }
 }
-
 pub struct SelectGroup<V> {
     id: ViewId,
     child: V,

@@ -6,7 +6,6 @@ use floem_shadcn::components::kbd::*;
 use floem_test::prelude::*;
 
 #[test]
-#[ignore]
 fn test_kbd_renders() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let kbd = Kbd::new("⌘K");
@@ -23,7 +22,6 @@ fn test_kbd_renders() {
 }
 
 #[test]
-#[ignore]
 fn test_kbd_group() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let group = KbdGroup::new(vec!["⌘".into(), "K".into()]);
