@@ -183,6 +183,7 @@ impl IntoView for ComboboxTrigger {
         }
     }
 }
+
 pub struct ComboboxContent {
     id: ViewId,
 }
@@ -239,6 +240,7 @@ impl IntoView for ComboboxContent {
     }
 }
 impl ParentView for ComboboxContent {}
+
 pub struct ComboboxInput {
     id: ViewId,
     placeholder: String,
@@ -292,6 +294,7 @@ impl IntoView for ComboboxInput {
         )
     }
 }
+
 pub struct ComboboxList {
     id: ViewId,
     max_height: f64,
@@ -331,6 +334,7 @@ impl IntoView for ComboboxList {
     }
 }
 impl ParentView for ComboboxList {}
+
 pub struct ComboboxItem {
     id: ViewId,
     value: String,
@@ -439,6 +443,7 @@ impl IntoView for ComboboxItem {
         }
     }
 }
+
 pub struct ComboboxEmpty {
     id: ViewId,
     text: String,
@@ -480,6 +485,7 @@ impl IntoView for ComboboxEmpty {
         }))
     }
 }
+
 pub struct ComboboxGroup {
     id: ViewId,
 }
@@ -509,6 +515,7 @@ impl IntoView for ComboboxGroup {
     }
 }
 impl ParentView for ComboboxGroup {}
+
 pub struct ComboboxLabel {
     id: ViewId,
     text: String,
@@ -545,6 +552,7 @@ impl IntoView for ComboboxLabel {
         }))
     }
 }
+
 pub struct ComboboxSeparator;
 impl ComboboxSeparator {
     pub fn new() -> Self {

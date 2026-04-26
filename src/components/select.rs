@@ -24,6 +24,7 @@ impl SelectItemData {
         self
     }
 }
+
 pub struct Select {
     id: ViewId,
     selected: RwSignal<Option<String>>,
@@ -229,6 +230,7 @@ impl IntoView for Select {
         Box::new(floem::views::Stack::new((trigger, dropdown)))
     }
 }
+
 pub struct SelectTrigger<V> {
     id: ViewId,
     child: V,
@@ -283,6 +285,7 @@ impl<V: IntoView + 'static> IntoView for SelectTrigger<V> {
         )
     }
 }
+
 pub struct SelectContent<V> {
     id: ViewId,
     child: V,
@@ -339,6 +342,7 @@ impl<V: IntoView + 'static> IntoView for SelectContent<V> {
         )
     }
 }
+
 pub struct SelectItem;
 impl SelectItem {
     #[allow(dead_code)]
@@ -373,6 +377,7 @@ impl IntoView for SelectItem {
         Box::new(floem::views::Empty::new())
     }
 }
+
 pub struct SelectLabel;
 impl SelectLabel {
     #[allow(dead_code)]
@@ -395,6 +400,7 @@ impl IntoView for SelectLabel {
         Box::new(floem::views::Empty::new())
     }
 }
+
 pub struct SelectSeparator;
 impl SelectSeparator {
     pub fn new() -> Self {
@@ -421,6 +427,7 @@ impl IntoView for SelectSeparator {
         Box::new(floem::views::Empty::new())
     }
 }
+
 pub struct SelectGroup<V> {
     id: ViewId,
     child: V,

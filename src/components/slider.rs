@@ -119,7 +119,7 @@ impl Slider {
                 .padding_left(8.0)
                 .padding_right(8.0)
         })
-        .on_event_stop(floem::event::listener::PointerDown, move |cx, event| {
+        .on_event_stop(floem::event::listener::PointerDown, move |_cx, event| {
             if disabled {
                 return;
             }
@@ -130,14 +130,14 @@ impl Slider {
                 container_id.set_pointer_capture(pid);
             }
         })
-        .on_event_stop(floem::event::listener::PointerMove, move |cx, event| {
+        .on_event_stop(floem::event::listener::PointerMove, move |_cx, event| {
             if disabled || !is_dragging.get() {
                 return;
             }
             let x = event.current.logical_point().x;
             value.set(calc_value_relative(container_id, x));
         })
-        .on_event_stop(floem::event::listener::PointerUp, move |cx, _event| {
+        .on_event_stop(floem::event::listener::PointerUp, move |_cx, _event| {
             is_dragging.set(false);
         })
     }
