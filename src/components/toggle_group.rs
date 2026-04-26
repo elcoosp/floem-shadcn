@@ -34,7 +34,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
-
+use floem_tailwind::TailwindExt;
 /// Toggle group variant
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToggleGroupVariant {
@@ -107,8 +107,9 @@ impl<V: IntoView + 'static> IntoView for ToggleGroup<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let variant = self.variant;
@@ -125,7 +126,7 @@ impl<V: IntoView + 'static> IntoView for ToggleGroup<V> {
                     match variant {
                         ToggleGroupVariant::Default => base,
                         ToggleGroupVariant::Outline => {
-                            base.border(1.0).border_color(t.input).padding(2.0)
+                            base.border_1().border_color(t.input).padding(2.0)
                         }
                     }
                 })
@@ -189,8 +190,9 @@ impl<V: IntoView + 'static> IntoView for ToggleGroupMultiple<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let variant = self.variant;
@@ -207,7 +209,7 @@ impl<V: IntoView + 'static> IntoView for ToggleGroupMultiple<V> {
                     match variant {
                         ToggleGroupVariant::Default => base,
                         ToggleGroupVariant::Outline => {
-                            base.border(1.0).border_color(t.input).padding(2.0)
+                            base.border_1().border_color(t.input).padding(2.0)
                         }
                     }
                 })
@@ -263,9 +265,9 @@ impl HasViewId for ToggleGroupItem {
 impl IntoView for ToggleGroupItem {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let value = self.value.clone();
@@ -285,8 +287,7 @@ impl IntoView for ToggleGroupItem {
                     .padding_right(12.0)
                     .padding_top(8.0)
                     .padding_bottom(8.0)
-                    .font_size(14.0)
-                    
+                    .text_sm()
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default
@@ -309,9 +310,11 @@ impl IntoView for ToggleGroupItem {
         if disabled {
             Box::new(label)
         } else if let Some(signal) = selected_signal {
-            Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| {
-                signal.update(|v| *v = Some(value_for_click.clone()));
-            }))
+            Box::new(
+                label.on_event_stop(floem::event::listener::Click, move |_, _| {
+                    signal.update(|v| *v = Some(value_for_click.clone()));
+                }),
+            )
         } else {
             Box::new(label)
         }
@@ -365,9 +368,9 @@ impl HasViewId for ToggleGroupItemMultiple {
 impl IntoView for ToggleGroupItemMultiple {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let value = self.value.clone();
@@ -387,8 +390,7 @@ impl IntoView for ToggleGroupItemMultiple {
                     .padding_right(12.0)
                     .padding_top(8.0)
                     .padding_bottom(8.0)
-                    .font_size(14.0)
-                    
+                    .text_sm()
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default
@@ -411,15 +413,17 @@ impl IntoView for ToggleGroupItemMultiple {
         if disabled {
             Box::new(label)
         } else if let Some(signal) = selected_signal {
-            Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| {
-                signal.update(|v| {
-                    if v.contains(&value_for_click) {
-                        v.retain(|x| x != &value_for_click);
-                    } else {
-                        v.push(value_for_click.clone());
-                    }
-                });
-            }))
+            Box::new(
+                label.on_event_stop(floem::event::listener::Click, move |_, _| {
+                    signal.update(|v| {
+                        if v.contains(&value_for_click) {
+                            v.retain(|x| x != &value_for_click);
+                        } else {
+                            v.push(value_for_click.clone());
+                        }
+                    });
+                }),
+            )
         } else {
             Box::new(label)
         }

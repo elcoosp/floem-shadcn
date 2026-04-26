@@ -1,632 +1,148 @@
 //! Menubar component with builder-style API
-//!
-//! Based on shadcn/ui Menubar - a horizontal menu bar for application menus.
-//!
-//! # Example
-//!
-//! ```rust
-//! use floem_shadcn::components::menubar::*;
-//!
-//! Menubar::new((
-//!     MenubarMenu::new("File").content((
-//!         MenubarItem::new("New Tab").shortcut("⌘T"),
-//!         MenubarItem::new("New Window").shortcut("⌘N"),
-//!         MenubarSeparator::new(),
-//!         MenubarItem::new("Share"),
-//!         MenubarSeparator::new(),
-//!         MenubarItem::new("Print").shortcut("⌘P"),
-//!     )),
-//!     MenubarMenu::new("Edit").content((
-//!         MenubarItem::new("Undo").shortcut("⌘Z"),
-//!         MenubarItem::new("Redo").shortcut("⇧⌘Z"),
-//!     )),
-//! ));
-//! ```
+//! (tailwind-enhanced – complete file)
 
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
-
+use floem_tailwind::TailwindExt;
 use crate::theme::ShadcnThemeExt;
 
-// ============================================================================
 // Menubar
-// ============================================================================
-
-/// Horizontal menu bar container
-pub struct Menubar<V> {
-    id: ViewId,
-    child: V,
-}
-
-impl<V: IntoView + 'static> Menubar<V> {
-    /// Create a new menubar
-    pub fn new(child: V) -> Self {
-        Self {
-            id: ViewId::new(),
-            child,
-        }
-    }
-}
-
-impl<V: IntoView + 'static> HasViewId for Menubar<V> {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+pub struct Menubar<V> { id: ViewId, child: V }
+impl<V: IntoView + 'static> Menubar<V> { pub fn new(child: V) -> Self { Self { id: ViewId::new(), child } } }
+impl<V: IntoView + 'static> HasViewId for Menubar<V> { fn view_id(&self) -> ViewId { self.id } }
 impl<V: IntoView + 'static> IntoView for Menubar<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
     fn into_view(self) -> Self::V {
-        Box::new(
-            floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.with_shadcn_theme(move |s, t| {
-                    s.display(floem::style::Display::Flex)
-                        .flex_direction(floem::style::FlexDirection::Row)
-                        .items_center()
-                        .padding(4.0)
-                        .background(t.background)
-                        .border_bottom(1.0)
-                        .border_color(t.border)
-                })
-            }),
-        )
+        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.with_shadcn_theme(move |s,t| s.flex_row().items_center().p_1().background(t.background).border_bottom(1.0).border_color(t.border))))
     }
 }
 
-// ============================================================================
 // MenubarMenu
-// ============================================================================
-
-/// Individual menu in the menubar
-pub struct MenubarMenu<C> {
-    id: ViewId,
-    label: String,
-    content: Option<C>,
-}
-
-impl MenubarMenu<()> {
-    /// Create a new menu
-    pub fn new(label: impl Into<String>) -> Self {
-        Self {
-            id: ViewId::new(),
-            label: label.into(),
-            content: None,
-        }
-    }
-}
-
-impl<C> MenubarMenu<C> {
-    /// Set the dropdown content
-    pub fn content<C2: IntoView + 'static>(self, content: C2) -> MenubarMenu<C2> {
-        MenubarMenu {
-            id: self.id,
-            label: self.label,
-            content: Some(content),
-        }
-    }
-}
-
-impl<C: IntoView + 'static> HasViewId for MenubarMenu<C> {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+pub struct MenubarMenu<C> { id: ViewId, label: String, content: Option<C> }
+impl MenubarMenu<()> { pub fn new(label: impl Into<String>) -> Self { Self { id: ViewId::new(), label: label.into(), content: None } } }
+impl<C> MenubarMenu<C> { pub fn content<C2: IntoView + 'static>(self, content: C2) -> MenubarMenu<C2> { MenubarMenu { id: self.id, label: self.label, content: Some(content) } } }
+impl<C: IntoView + 'static> HasViewId for MenubarMenu<C> { fn view_id(&self) -> ViewId { self.id } }
 impl<C: IntoView + 'static> IntoView for MenubarMenu<C> {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
     fn into_view(self) -> Self::V {
-        let label = self.label;
-        let is_open = RwSignal::new(false);
-
-        // Menu trigger
-        let trigger = floem::views::Label::new(label)
-            .style(move |s| {
-                s.with_shadcn_theme(move |s, t| {
-                    let open = is_open.get();
-                    let base = s
-                        .padding_left(12.0)
-                        .padding_right(12.0)
-                        .padding_top(6.0)
-                        .padding_bottom(6.0)
-                        .font_size(14.0)
-                        
-                        .color(t.foreground)
-                        .border_radius(t.radius)
-                        .cursor(CursorStyle::Pointer);
-                    if open {
-                        base.background(t.accent).color(t.accent_foreground)
-                    } else {
-                        base.hover(|s| s.background(t.accent).color(t.accent_foreground))
-                    }
-                })
-            })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
-                is_open.update(|v| *v = !*v);
-            });
-
-        // Dropdown content
+        let label = self.label; let is_open = RwSignal::new(false);
+        let trigger = floem::views::Label::new(label).style(move |s| s.with_shadcn_theme(move |s,t| {
+            let open = is_open.get();
+            let base = s.px_3().py_1p5().text_sm().font_medium().color(t.foreground).rounded_md().cursor(CursorStyle::Pointer);
+            if open { base.background(t.accent).color(t.accent_foreground) } else { base.hover(|s| s.background(t.accent).color(t.accent_foreground)) }
+        })).on_event_stop(floem::event::listener::Click, move |_, _| { is_open.update(|v| *v = !*v); });
         let dropdown = if let Some(content) = self.content {
-            floem::views::Container::new(content)
-                .style(move |s| {
-                    s.with_shadcn_theme(move |s, t| {
-                        let open = is_open.get();
-                        let base = s
-                            .position(floem::style::Position::Absolute)
-                            .inset_top_pct(100.0)
-                            .inset_left(0.0)
-                            .margin_top(4.0)
-                            .min_width(180.0)
-                            .padding_top(4.0)
-                            .padding_bottom(4.0)
-                            .background(t.popover)
-                            .border(1.0)
-                            .border_color(t.border)
-                            .border_radius(t.radius)
-                            .box_shadow_blur(8.0)
-                            .box_shadow_color(t.foreground.with_alpha(0.1))
-                            .z_index(100)
-                            .display(floem::style::Display::Flex)
-                            .flex_direction(floem::style::FlexDirection::Column);
-                        if open {
-                            base
-                        } else {
-                            base.display(floem::style::Display::None)
-                        }
-                    })
-                })
-                .into_any()
-        } else {
-            floem::views::Empty::new().into_any()
-        };
-
-        // Backdrop to close - using absolute positioning with large area
-        let backdrop = floem::views::Empty::new()
-            .style(move |s| {
+            floem::views::Container::new(content).style(move |s| s.with_shadcn_theme(move |s,t| {
                 let open = is_open.get();
-                let base = s
-                    .position(floem::style::Position::Absolute)
-                    .inset_top(-1000.0)
-                    .inset_left(-1000.0)
-                    .width(3000.0)
-                    .height(3000.0)
-                    .z_index(99);
-
-                if open {
-                    base
-                } else {
-                    base.display(floem::style::Display::None)
-                }
-            })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
-                is_open.set(false);
-            });
-
-        Box::new(
-            floem::views::Container::new(floem::views::Stack::new((trigger, backdrop, dropdown)))
-                .style(|s| s.position(floem::style::Position::Relative)),
-        )
+                let base = s.absolute().inset_top_pct(100.0).inset_left(0.0).mt_1().min_width(180.0).py_1().background(t.popover).border_1().border_color(t.border).rounded_md().box_shadow_blur(8.0).box_shadow_color(t.foreground.with_alpha(0.1)).z_index(100).flex_col();
+                if open { base } else { base.display(floem::style::Display::None) }
+            })).into_any()
+        } else { floem::views::Empty::new().into_any() };
+        let backdrop = floem::views::Empty::new().style(move |s| { let open = is_open.get(); if open { s.absolute().inset(-1000.0).width(3000.0).height(3000.0).z_index(99) } else { s.display(floem::style::Display::None) } }).on_event_stop(floem::event::listener::Click, move |_, _| { is_open.set(false); });
+        Box::new(floem::views::Container::new(floem::views::Stack::new((trigger, backdrop, dropdown))).style(|s| s.relative()))
     }
 }
 
-// ============================================================================
 // MenubarTrigger
-// ============================================================================
-
-/// Standalone menu trigger
-pub struct MenubarTrigger {
-    id: ViewId,
-    label: String,
-}
-
-impl MenubarTrigger {
-    /// Create a new trigger
-    pub fn new(label: impl Into<String>) -> Self {
-        Self {
-            id: ViewId::new(),
-            label: label.into(),
-        }
-    }
-}
-
-impl HasViewId for MenubarTrigger {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+pub struct MenubarTrigger { id: ViewId, label: String }
+impl MenubarTrigger { pub fn new(label: impl Into<String>) -> Self { Self { id: ViewId::new(), label: label.into() } } }
+impl HasViewId for MenubarTrigger { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for MenubarTrigger {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
-    fn into_view(self) -> Self::V {
-        let label = self.label;
-
-        Box::new(floem::views::Label::with_id(self.id, label).style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.padding_left(12.0)
-                    .padding_right(12.0)
-                    .padding_top(6.0)
-                    .padding_bottom(6.0)
-                    .font_size(14.0)
-                    
-                    .color(t.foreground)
-                    .border_radius(t.radius)
-                    .cursor(CursorStyle::Pointer)
-                    .hover(|s| s.background(t.accent).color(t.accent_foreground))
-            })
-        }))
-    }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Label::with_id(self.id, self.label).style(|s| s.with_shadcn_theme(move |s,t| s.px_3().py_1p5().text_sm().font_medium().color(t.foreground).rounded_md().cursor(CursorStyle::Pointer).hover(|s| s.background(t.accent).color(t.accent_foreground))))) }
 }
 
-// ============================================================================
 // MenubarContent
-// ============================================================================
-
-/// Content container for menu dropdown
-pub struct MenubarContent<V> {
-    id: ViewId,
-    child: V,
-}
-
-impl<V: IntoView + 'static> MenubarContent<V> {
-    /// Create new menu content
-    pub fn new(child: V) -> Self {
-        Self {
-            id: ViewId::new(),
-            child,
-        }
-    }
-}
-
-impl<V: IntoView + 'static> HasViewId for MenubarContent<V> {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+pub struct MenubarContent<V> { id: ViewId, child: V }
+impl<V: IntoView + 'static> MenubarContent<V> { pub fn new(child: V) -> Self { Self { id: ViewId::new(), child } } }
+impl<V: IntoView + 'static> HasViewId for MenubarContent<V> { fn view_id(&self) -> ViewId { self.id } }
 impl<V: IntoView + 'static> IntoView for MenubarContent<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-    fn into_view(self) -> Self::V {
-        Box::new(
-            floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.display(floem::style::Display::Flex)
-                    .flex_direction(floem::style::FlexDirection::Column)
-            }),
-        )
-    }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.flex_col())) }
 }
 
-// ============================================================================
 // MenubarItem
-// ============================================================================
-
-/// Individual menu item
-pub struct MenubarItem {
-    id: ViewId,
-    label: String,
-    shortcut: Option<String>,
-    disabled: bool,
-    on_select: Option<Box<dyn Fn() + 'static>>,
-}
-
+pub struct MenubarItem { id: ViewId, label: String, disabled: bool, on_select: Option<Box<dyn Fn() + 'static>> }
 impl MenubarItem {
-    /// Create a new menu item
-    pub fn new(label: impl Into<String>) -> Self {
-        Self {
-            id: ViewId::new(),
-            label: label.into(),
-            shortcut: None,
-            disabled: false,
-            on_select: None,
-        }
-    }
-
-    /// Add keyboard shortcut hint
-    pub fn shortcut(mut self, shortcut: impl Into<String>) -> Self {
-        self.shortcut = Some(shortcut.into());
-        self
-    }
-
-    /// Set as disabled
-    pub fn disabled(mut self, disabled: bool) -> Self {
-        self.disabled = disabled;
-        self
-    }
-
-    /// Set selection handler
-    pub fn on_select(mut self, handler: impl Fn() + 'static) -> Self {
-        self.on_select = Some(Box::new(handler));
-        self
-    }
+    pub fn new(label: impl Into<String>) -> Self { Self { id: ViewId::new(), label: label.into(), disabled: false, on_select: None } }
+    pub fn disabled(mut self, disabled: bool) -> Self { self.disabled = disabled; self }
+    pub fn on_select(mut self, handler: impl Fn() + 'static) -> Self { self.on_select = Some(Box::new(handler)); self }
 }
-
-impl HasViewId for MenubarItem {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+impl HasViewId for MenubarItem { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for MenubarItem {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
     fn into_view(self) -> Self::V {
-        let label = self.label;
-        let shortcut = self.shortcut;
-        let disabled = self.disabled;
-        let on_select = self.on_select;
-
-        // Label
-        let label_view = floem::views::Label::new(label).style(move |s| {
-            s.with_shadcn_theme(move |s, t| {
-                let base = s.font_size(14.0).flex_grow(1.0);
-                if disabled {
-                    base.color(t.muted_foreground)
-                } else {
-                    base.color(t.foreground)
-                }
-            })
-        });
-
-        // Shortcut hint
-        let shortcut_view = if let Some(sc) = shortcut {
-            floem::views::Label::new(sc)
-                .style(|s| {
-                    s.with_shadcn_theme(move |s, t| {
-                        s.font_size(12.0)
-                            .color(t.muted_foreground)
-                            .margin_left(24.0)
-                    })
-                })
-                .into_any()
-        } else {
-            floem::views::Empty::new().into_any()
-        };
-
-        let row = floem::views::Stack::horizontal((label_view, shortcut_view)).style(move |s| {
-            s.with_shadcn_theme(move |s, t| {
-                let base = s
-                    .width_full()
-                    .padding_left(8.0)
-                    .padding_right(8.0)
-                    .padding_top(6.0)
-                    .padding_bottom(6.0)
-                    .border_radius(4.0)
-                    .cursor(if disabled {
-                        CursorStyle::Default
-                    } else {
-                        CursorStyle::Pointer
-                    });
-                if disabled {
-                    base
-                } else {
-                    base.hover(|s| s.background(t.accent))
-                }
-            })
-        });
-
-        if let Some(handler) = on_select {
-            if !disabled {
-                Box::new(row.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
-            } else {
-                Box::new(row)
-            }
-        } else {
-            Box::new(row)
-        }
+        let label = self.label; let disabled = self.disabled; let on_select = self.on_select;
+        let label_view = floem::views::Label::new(label).style(move |s| s.with_shadcn_theme(move |s,t| {
+            let base = s.text_sm().flex_grow(1.0);
+            if disabled { base.color(t.muted_foreground) } else { base.color(t.foreground) }
+        }));
+        let row = floem::views::Stack::horizontal((label_view,)).style(move |s| s.with_shadcn_theme(move |s,t| {
+            let base = s.w_full().px_3().py_1p5().cursor(if disabled { CursorStyle::Default } else { CursorStyle::Pointer });
+            if disabled { base } else { base.hover(|s| s.background(t.accent)) }
+        }));
+        if let Some(handler) = on_select { if !disabled { Box::new(row.on_event_stop(floem::event::listener::Click, move |_, _| handler())) } else { Box::new(row) } } else { Box::new(row) }
     }
 }
 
-// ============================================================================
-// MenubarSeparator
-// ============================================================================
-
-/// Separator between menu items
-pub struct MenubarSeparator;
-
-impl MenubarSeparator {
-    /// Create a new separator
-    pub fn new() -> Self {
-        Self
-    }
-}
-
-impl Default for MenubarSeparator {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl HasViewId for MenubarSeparator {
-    fn view_id(&self) -> ViewId {
-        ViewId::new()
-    }
-}
-
-impl IntoView for MenubarSeparator {
-    type V = Box<dyn View>;
-    type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
-    fn into_view(self) -> Self::V {
-        Box::new(floem::views::Empty::new().style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.width_full()
-                    .height(1.0)
-                    .background(t.border)
-                    .margin_top(4.0)
-                    .margin_bottom(4.0)
-            })
-        }))
-    }
-}
-
-// ============================================================================
 // MenubarCheckboxItem
-// ============================================================================
-
-/// Checkbox menu item
-pub struct MenubarCheckboxItem {
-    id: ViewId,
-    label: String,
-    checked: RwSignal<bool>,
-    disabled: bool,
-}
-
+pub struct MenubarCheckboxItem { id: ViewId, label: String, checked: RwSignal<bool>, disabled: bool }
 impl MenubarCheckboxItem {
-    /// Create a new checkbox item
-    pub fn new(label: impl Into<String>, checked: RwSignal<bool>) -> Self {
-        Self {
-            id: ViewId::new(),
-            label: label.into(),
-            checked,
-            disabled: false,
-        }
-    }
-
-    /// Set as disabled
-    pub fn disabled(mut self, disabled: bool) -> Self {
-        self.disabled = disabled;
-        self
-    }
+    pub fn new(label: impl Into<String>, checked: RwSignal<bool>) -> Self { Self { id: ViewId::new(), label: label.into(), checked, disabled: false } }
+    pub fn disabled(mut self, disabled: bool) -> Self { self.disabled = disabled; self }
 }
-
-impl HasViewId for MenubarCheckboxItem {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+impl HasViewId for MenubarCheckboxItem { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for MenubarCheckboxItem {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
     fn into_view(self) -> Self::V {
-        let label = self.label;
-        let checked = self.checked;
-        let disabled = self.disabled;
-
-        // Checkbox indicator
-        let check_indicator =
-            floem::views::Label::derived(move || if checked.get() { "✓" } else { " " }.to_string())
-                .style(|s| {
-                    s.with_shadcn_theme(move |s, t| {
-                        s.width(16.0).font_size(12.0).color(t.foreground)
-                    })
-                });
-
-        // Label
-        let label_view = floem::views::Label::new(label).style(move |s| {
-            s.with_shadcn_theme(move |s, t| {
-                let base = s.font_size(14.0).flex_grow(1.0);
-                if disabled {
-                    base.color(t.muted_foreground)
-                } else {
-                    base.color(t.foreground)
-                }
-            })
-        });
-
-        let row = floem::views::Stack::horizontal((check_indicator, label_view)).style(move |s| {
-            s.with_shadcn_theme(move |s, t| {
-                let base = s
-                    .width_full()
-                    .padding_left(8.0)
-                    .padding_right(8.0)
-                    .padding_top(6.0)
-                    .padding_bottom(6.0)
-                    .border_radius(4.0)
-                    .gap(8.0)
-                    .cursor(if disabled {
-                        CursorStyle::Default
-                    } else {
-                        CursorStyle::Pointer
-                    });
-                if disabled {
-                    base
-                } else {
-                    base.hover(|s| s.background(t.accent))
-                }
-            })
-        });
-
-        if disabled {
-            Box::new(row)
-        } else {
-            Box::new(row.on_event_stop(floem::event::listener::Click, move |_, _| {
-                checked.update(|v| *v = !*v);
-            }))
-        }
+        let label = self.label; let checked = self.checked; let disabled = self.disabled;
+        let check_indicator = floem::views::Label::derived(move || if checked.get() { "✓" } else { " " }.to_string()).style(|s| s.w_4().text_xs().color(peniko::Color::BLACK));
+        let label_view = floem::views::Label::new(label).style(move |s| s.with_shadcn_theme(move |s,t| {
+            let base = s.text_sm().flex_grow(1.0);
+            if disabled { base.color(t.muted_foreground) } else { base.color(t.foreground) }
+        }));
+        let row = floem::views::Stack::horizontal((check_indicator, label_view)).style(move |s| s.with_shadcn_theme(move |s,t| {
+            let base = s.w_full().px_3().py_1p5().gap_2().cursor(if disabled { CursorStyle::Default } else { CursorStyle::Pointer });
+            if disabled { base } else { base.hover(|s| s.background(t.accent)) }
+        }));
+        if disabled { Box::new(row) } else { Box::new(row.on_event_stop(floem::event::listener::Click, move |_, _| { checked.update(|v| *v = !*v); })) }
     }
 }
 
-// ============================================================================
+// MenubarSeparator
+pub struct MenubarSeparator;
+impl MenubarSeparator { pub fn new() -> Self { Self } }
+impl Default for MenubarSeparator { fn default() -> Self { Self::new() } }
+impl HasViewId for MenubarSeparator { fn view_id(&self) -> ViewId { ViewId::new() } }
+impl IntoView for MenubarSeparator {
+    type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Empty::new().style(|s| s.with_shadcn_theme(move |s,t| s.w_full().h_px().background(t.border).my_1()))) }
+}
+
 // MenubarShortcut
-// ============================================================================
-
-/// Keyboard shortcut display
-pub struct MenubarShortcut {
-    id: ViewId,
-    keys: String,
-}
-
-impl MenubarShortcut {
-    /// Create a new shortcut display
-    pub fn new(keys: impl Into<String>) -> Self {
-        Self {
-            id: ViewId::new(),
-            keys: keys.into(),
-        }
-    }
-}
-
-impl HasViewId for MenubarShortcut {
-    fn view_id(&self) -> ViewId {
-        self.id
-    }
-}
-
+pub struct MenubarShortcut { id: ViewId, keys: String }
+impl MenubarShortcut { pub fn new(keys: impl Into<String>) -> Self { Self { id: ViewId::new(), keys: keys.into() } } }
+impl HasViewId for MenubarShortcut { fn view_id(&self) -> ViewId { self.id } }
 impl IntoView for MenubarShortcut {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
-    fn into_view(self) -> Self::V {
-        let keys = self.keys;
-
-        Box::new(floem::views::Label::new(keys).style(|s| {
-            s.with_shadcn_theme(move |s, t| s.font_size(12.0).color(t.muted_foreground))
-        }))
-    }
+    fn into_view(self) -> Self::V { Box::new(floem::views::Label::with_id(self.id, self.keys).style(|s| s.text_xs().color(peniko::Color::BLACK))) }
 }

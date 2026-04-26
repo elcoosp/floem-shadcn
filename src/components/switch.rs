@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::switch::Switch;
 //!
@@ -22,6 +22,7 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -61,24 +62,14 @@ impl Switch {
         let checked = self.checked;
         let disabled = self.disabled;
 
-        // shadcn/ui Switch (v4 new-york):
-        // Root: h-[1.15rem] w-8 shrink-0 rounded-full border border-transparent shadow-xs
-        //       data-[state=checked]:bg-primary data-[state=unchecked]:bg-input
-        // Thumb: size-4 rounded-full bg-background
-        //        data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0
-
-        // The thumb (circle that moves)
-        // size-4 = 16px
+        // Thumb (circle that moves)
         let thumb = floem::views::Empty::new().style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 let is_checked = checked.get();
-                // Track is 32px (w-8), thumb is 16px (size-4)
-                // Checked: translate-x-[calc(100%-2px)] = 32 - 16 - 2 = 14px
-                // Unchecked: translate-x-0 = 0px
                 let translate_x = if is_checked { 14.0 } else { 0.0 };
-                s.size(16.0, 16.0) // size-4 = 16px
-                    .border_radius(9999.0) // rounded-full
-                    .background(t.background) // bg-background
+                s.size_4() // size-4 = 16px
+                    .rounded_full()
+                    .background(t.background)
                     .position(floem::style::Position::Absolute)
                     .inset_left(translate_x)
                     .transition(
@@ -88,27 +79,25 @@ impl Switch {
             })
         });
 
-        // The track (background)
-        // h-[1.15rem] ≈ 18px, w-8 = 32px
+        // Track (background)
         let track = floem::views::Container::new(thumb).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 let is_checked = checked.get();
-                s.height(18.0) // h-[1.15rem] ≈ 18px
-                    .width(32.0) // w-8 = 32px
-                    .flex_shrink(0.0) // shrink-0
-                    .border_radius(9999.0) // rounded-full
-                    .border(1.0) // border
-                    .border_color(peniko::Color::TRANSPARENT) // border-transparent
-                    .box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)) // shadow-xs
+                s.height(18.0) // h-[1.15rem]
+                    .w_8() // w-8 = 32px
+                    .flex_shrink(0.0)
+                    .rounded_full()
+                    .border_1()
+                    .border_color(peniko::Color::TRANSPARENT)
+                    .box_shadow_blur(2.0)
+                    .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
                     .position(floem::style::Position::Relative)
                     .transition(
                         floem::style::Background,
                         floem::style::Transition::linear(millis(150)),
                     )
-                    // Checked: bg-primary, Unchecked: bg-input
                     .apply_if(is_checked, |s| s.background(t.primary))
                     .apply_if(!is_checked, |s| s.background(t.input))
-                    // Disabled state
                     .apply_if(disabled, |s| s.cursor(CursorStyle::Default))
                     .apply_if(!disabled, |s| s.cursor(CursorStyle::Pointer))
             })
@@ -128,9 +117,8 @@ impl Switch {
         if let Some(label_text) = self.label_text {
             let label_view = floem::views::Label::new(label_text).style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
-                    // Label: text-sm font-medium leading-none
-                    s.font_size(14.0)
-                        
+                    s.text_sm()
+                        .font_medium()
                         .line_height(1.0)
                         .color(if disabled {
                             t.muted_foreground
@@ -156,7 +144,7 @@ impl Switch {
             };
 
             floem::views::Stack::horizontal((track, label_view))
-                .style(|s| s.gap(8.0).items_center()) // gap-2 = 8px
+                .style(|s| s.gap(8.0).items_center())
                 .into_any()
         } else {
             track
@@ -173,9 +161,9 @@ impl HasViewId for Switch {
 impl IntoView for Switch {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())

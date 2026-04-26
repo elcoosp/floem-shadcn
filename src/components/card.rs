@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem_shadcn::components::card::{Card, CardHeader, CardContent, CardFooter};
 //!
 //! let card = Card::new((
@@ -20,9 +20,10 @@ use floem::prelude::*;
 use floem::view::IntoViewIter;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
-use crate::theme::ShadcnThemeExt;
 use crate::styled::ShadcnStyleExt;
+use crate::theme::ShadcnThemeExt;
 
 // ============================================================================
 // Card
@@ -46,11 +47,10 @@ impl<C: IntoViewIter> Card<C> {
     /// Build the card view with reactive styling
     pub fn build(self) -> impl IntoView {
         floem::views::Stack::vertical_from_iter(self.children.into_view_iter()).style(|s| {
-            s.gap(24.0)
-                .border_radius(12.0)
-                .border(1.0)
-                .padding_top(24.0).padding_bottom(24.0)
-                // Note: shadow-sm not available in floem-tailwind yet
+            s.gap_6()
+                .rounded_xl() // rounded-xl = 12px
+                .border_1()
+                .py_6() // py-6 = 24px
                 .with_shadcn_theme(|s, t| {
                     s.border_color(t.border)
                         .background(t.card)
@@ -69,9 +69,9 @@ impl<C: IntoViewIter> HasViewId for Card<C> {
 impl<C: IntoViewIter> IntoView for Card<C> {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -127,31 +127,28 @@ impl HasViewId for CardHeader {
 impl IntoView for CardHeader {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let mut children: Vec<Box<dyn View>> = Vec::new();
 
         if let Some(title) = self.title {
-            children
-                .push(Box::new(Label::derived(move || title.clone()).style(|s| {
-                    s.font_size(18.0).line_height(1.0)
-                })));
+            children.push(Box::new(
+                Label::derived(move || title.clone())
+                    .style(|s| s.text_lg().leading_none().font_medium()),
+            ));
         }
 
         if let Some(description) = self.description {
-            children.push(Box::new(Label::derived(move || description.clone()).style(
-                |s| {
-                    s.font_size(14.0)
-                        .line_height(1.43) // 20px / 14px
-                        .text_muted_foreground()
-                },
-            )));
+            children.push(Box::new(
+                Label::derived(move || description.clone())
+                    .style(|s| s.text_sm().text_muted_foreground()),
+            ));
         }
 
-        Box::new(floem::views::Stack::vertical_from_iter(children).style(|s| s.gap(8.0).padding_left(24.0).padding_right(24.0))) // gap-2 px-6
+        Box::new(floem::views::Stack::vertical_from_iter(children).style(|s| s.gap_2().px_6())) // gap-2 px-6
     }
 }
 
@@ -185,11 +182,12 @@ impl<V: IntoView + 'static> IntoView for CardContent<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
-        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.padding_left(24.0).padding_right(24.0)))
+        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.px_6()))
     }
 }
 
@@ -223,13 +221,14 @@ impl<V: IntoView + 'static> IntoView for CardFooter<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.flex().items_center().padding_left(24.0).padding_right(24.0) // flex items-center px-6
+                s.flex().items_center().px_6() // flex items-center px-6
             }),
         )
     }
@@ -265,13 +264,14 @@ impl<V: IntoView + 'static> IntoView for CardTitle<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
-                .style(|s| s.font_size(18.0).line_height(1.0)),
+                .style(|s| s.text_lg().leading_none().font_medium()),
         )
     }
 }
@@ -306,16 +306,14 @@ impl<V: IntoView + 'static> IntoView for CardDescription<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(
-            floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.font_size(14.0)
-                    .line_height(1.43) // 20px / 14px
-                    .text_muted_foreground()
-            }),
+            floem::views::Container::with_id(self.id, self.child)
+                .style(|s| s.text_sm().text_muted_foreground()),
         )
     }
 }

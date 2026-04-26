@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem_shadcn::components::badge::Badge;
 //!
 //! // Default badge
@@ -19,6 +19,7 @@
 use floem::prelude::*;
 use floem::style::Style;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
 use crate::theme::{ShadcnTheme, ShadcnThemeExt};
 
@@ -93,9 +94,9 @@ impl<V: IntoView + 'static> HasViewId for Badge<V> {
 impl<V: IntoView + 'static> IntoView for Badge<V> {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -103,17 +104,16 @@ impl<V: IntoView + 'static> IntoView for Badge<V> {
 }
 
 fn build_badge_style(s: Style, variant: BadgeVariant) -> Style {
-    // Base styles using floem-tailwind
-    // Use rounded_xl (12px) for pill shape - half the badge height (~22px)
+    // Base styles using floem-tailwind utilities
     let s = s
         .flex()
         .items_center()
-        .border_radius(9999.0) // 12px radius for pill shape
-        .border(1.0)
-        .padding_left(8.0).padding_right(8.0) // 8px horizontal padding
-        .padding_top(2.0).padding_bottom(2.0) // 2px vertical padding
-        .font_size(12.0) // 12px font size
-        
+        .rounded_full()
+        .border_1()
+        .px_2()
+        .py_0p5()
+        .text_xs()
+        .font_medium()
         .transition(
             floem::style::Background,
             floem::style::Transition::linear(millis(100)),

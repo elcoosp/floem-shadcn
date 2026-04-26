@@ -24,7 +24,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
-
+use floem_tailwind::TailwindExt;
 /// Direction of the resizable panel group
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ResizableDirection {
@@ -86,8 +86,9 @@ impl<V: IntoView + 'static> IntoView for ResizablePanelGroup<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let direction = self.direction;
@@ -95,8 +96,8 @@ impl<V: IntoView + 'static> IntoView for ResizablePanelGroup<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(move |s| {
                 let base = s
-                    .width_full()
-                    .height_full()
+                    .w_full()
+                    .h_full()
                     .display(floem::style::Display::Flex);
 
                 match direction {
@@ -168,8 +169,9 @@ impl<V: IntoView + 'static> IntoView for ResizablePanel<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let default_size = self.default_size.unwrap_or(50.0);
@@ -251,9 +253,9 @@ impl HasViewId for ResizableHandle {
 impl IntoView for ResizableHandle {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let direction = self.direction;
@@ -281,11 +283,11 @@ impl IntoView for ResizableHandle {
                     match direction {
                         ResizableDirection::Horizontal => base
                             .width(4.0)
-                            .height_full()
+                            .h_full()
                             .cursor(CursorStyle::ColResize)
                             .hover(|s| s.background(t.primary)),
                         ResizableDirection::Vertical => base
-                            .width_full()
+                            .w_full()
                             .height(4.0)
                             .cursor(CursorStyle::RowResize)
                             .hover(|s| s.background(t.primary)),

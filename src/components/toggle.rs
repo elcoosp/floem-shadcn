@@ -21,7 +21,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
-
+use floem_tailwind::TailwindExt;
 /// Toggle variant for styling
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToggleVariant {
@@ -112,9 +112,9 @@ impl HasViewId for Toggle {
 impl IntoView for Toggle {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let pressed = self.pressed;
@@ -138,7 +138,6 @@ impl IntoView for Toggle {
                     .padding_top(py)
                     .padding_bottom(py)
                     .font_size(font_size)
-                    
                     .border_radius(t.radius)
                     .cursor(if disabled {
                         CursorStyle::Default
@@ -160,12 +159,12 @@ impl IntoView for Toggle {
                         if is_pressed {
                             base.background(t.accent)
                                 .color(t.accent_foreground)
-                                .border(1.0)
+                                .border_1()
                                 .border_color(t.input)
                         } else {
                             base.background(floem::peniko::Color::TRANSPARENT)
                                 .color(t.foreground)
-                                .border(1.0)
+                                .border_1()
                                 .border_color(t.input)
                                 .hover(|s| s.background(t.accent).color(t.accent_foreground))
                         }
@@ -182,9 +181,11 @@ impl IntoView for Toggle {
         if disabled {
             Box::new(label)
         } else {
-            Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| {
-                pressed.update(|v| *v = !*v);
-            }))
+            Box::new(
+                label.on_event_stop(floem::event::listener::Click, move |_, _| {
+                    pressed.update(|v| *v = !*v);
+                }),
+            )
         }
     }
 }
@@ -263,8 +264,9 @@ impl<V: IntoView + 'static> IntoView for ToggleCustom<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let pressed = self.pressed;
@@ -307,10 +309,10 @@ impl<V: IntoView + 'static> IntoView for ToggleCustom<V> {
                     }
                     ToggleVariant::Outline => {
                         if is_pressed {
-                            base.background(t.accent).border(1.0).border_color(t.input)
+                            base.background(t.accent).border_1().border_color(t.input)
                         } else {
                             base.background(floem::peniko::Color::TRANSPARENT)
-                                .border(1.0)
+                                .border_1()
                                 .border_color(t.input)
                                 .hover(|s| s.background(t.accent))
                         }
@@ -322,9 +324,11 @@ impl<V: IntoView + 'static> IntoView for ToggleCustom<V> {
         if disabled {
             Box::new(container)
         } else {
-            Box::new(container.on_event_stop(floem::event::listener::Click, move |_, _| {
-                pressed.update(|v| *v = !*v);
-            }))
+            Box::new(
+                container.on_event_stop(floem::event::listener::Click, move |_, _| {
+                    pressed.update(|v| *v = !*v);
+                }),
+            )
         }
     }
 }

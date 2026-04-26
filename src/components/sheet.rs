@@ -25,7 +25,7 @@ use floem::views::{Decorators, Overlay};
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
-
+use floem_tailwind::TailwindExt;
 /// Which side the sheet slides in from
 #[derive(Clone, Copy, Default)]
 pub enum SheetSide {
@@ -68,8 +68,9 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let open = self.open;
@@ -92,18 +93,18 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
 
         // Use Overlay with fixed positioning
         let sheet_overlay = Overlay::new(
-                floem::views::Stack::new((backdrop, content_wrapper))
-                    .style(|s| s.width_full().height_full()),
-            )
-            .style(move |s| {
-                let is_open = open.get();
-                s.fixed()
-                    .inset(0.0)
-                    .width_full()
-                    .height_full()
-                    .z_index(50)
-                    .apply_if(!is_open, |s| s.hide())
-            });
+            floem::views::Stack::new((backdrop, content_wrapper))
+                .style(|s| s.w_full().h_full()),
+        )
+        .style(move |s| {
+            let is_open = open.get();
+            s.fixed()
+                .inset(0.0)
+                .w_full()
+                .h_full()
+                .z_index(50)
+                .apply_if(!is_open, |s| s.hide())
+        });
 
         Box::new(sheet_overlay)
     }
@@ -147,8 +148,9 @@ impl<V: IntoView + 'static> IntoView for SheetContent<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let side = self.side;
@@ -159,12 +161,12 @@ impl<V: IntoView + 'static> IntoView for SheetContent<V> {
                     let base = s
                         .background(t.background)
                         .border_color(t.border)
-                        .padding(24.0)
+                        .p_6()
                         .position(floem::style::Position::Absolute)
                         .z_index(50)
                         .display(floem::style::Display::Flex)
                         .flex_direction(floem::style::FlexDirection::Column)
-                        .gap(16.0);
+                        .gap_4();
                     match side {
                         SheetSide::Top => base
                             .inset_top(0.0)
@@ -227,15 +229,16 @@ impl<V: IntoView + 'static> IntoView for SheetHeader<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(|s| {
                 s.display(floem::style::Display::Flex)
                     .flex_direction(floem::style::FlexDirection::Column)
-                    .gap(4.0)
+                    .gap_1()
             }),
         )
     }
@@ -270,19 +273,16 @@ impl HasViewId for SheetTitle {
 impl IntoView for SheetTitle {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
-        Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.font_size(18.0)
-                    
-                    .color(t.foreground)
-            })
-        }))
+        Box::new(
+            floem::views::Label::with_id(self.id, text)
+                .style(|s| s.with_shadcn_theme(move |s, t| s.text_lg().color(t.foreground))),
+        )
     }
 }
 
@@ -315,14 +315,14 @@ impl HasViewId for SheetDescription {
 impl IntoView for SheetDescription {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
-            s.with_shadcn_theme(move |s, t| s.font_size(14.0).color(t.muted_foreground))
+            s.with_shadcn_theme(move |s, t| s.text_sm().color(t.muted_foreground))
         }))
     }
 }
@@ -357,15 +357,16 @@ impl<V: IntoView + 'static> IntoView for SheetFooter<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(|s| {
                 s.display(floem::style::Display::Flex)
                     .flex_direction(floem::style::FlexDirection::Row)
-                    .gap(8.0)
+                    .gap_2()
                     .justify_end()
                     .margin_top(16.0)
             }),
@@ -405,8 +406,9 @@ impl<V: IntoView + 'static> IntoView for SheetClose<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let open = self.open;

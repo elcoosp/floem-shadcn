@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::alert_dialog::*;
 //!
@@ -25,15 +25,14 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::{Decorators, Overlay};
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
-use floem_tailwind::TailwindExt;
 
 // ============================================================================
 // AlertDialog
 // ============================================================================
 
-/// Modal dialog for important confirmations
 pub struct AlertDialog {
     id: ViewId,
     is_open: RwSignal<bool>,
@@ -47,7 +46,6 @@ pub struct AlertDialog {
 }
 
 impl AlertDialog {
-    /// Create a new alert dialog
     pub fn new(is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -61,39 +59,27 @@ impl AlertDialog {
             destructive: false,
         }
     }
-
-    /// Set the trigger button text
     pub fn trigger(mut self, text: impl Into<String>) -> Self {
         self.trigger_text = text.into();
         self
     }
-
-    /// Set the dialog title
     pub fn title(mut self, title: impl Into<String>) -> Self {
         self.title = title.into();
         self
     }
-
-    /// Set the dialog description
     pub fn description(mut self, description: impl Into<String>) -> Self {
         self.description = description.into();
         self
     }
-
-    /// Set the cancel button text
     pub fn cancel(mut self, text: impl Into<String>) -> Self {
         self.cancel_text = text.into();
         self
     }
-
-    /// Set the action button text and handler
     pub fn action(mut self, text: impl Into<String>, handler: impl Fn() + 'static) -> Self {
         self.action_text = text.into();
         self.on_action = Some(Box::new(handler));
         self
     }
-
-    /// Make the action button destructive (red)
     pub fn destructive(mut self) -> Self {
         self.destructive = true;
         self
@@ -109,9 +95,9 @@ impl HasViewId for AlertDialog {
 impl IntoView for AlertDialog {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
@@ -123,19 +109,16 @@ impl IntoView for AlertDialog {
         let on_action = self.on_action;
         let destructive = self.destructive;
 
-        // Trigger button
         let trigger = floem::views::Label::new(trigger_text)
             .style(|s| {
                 s.with_shadcn_theme(move |s, t| {
-                    s.padding_left(16.0)
-                        .padding_right(16.0)
-                        .padding_top(8.0)
-                        .padding_bottom(8.0)
-                        .font_size(14.0)
-                        
+                    s.px_4()
+                        .py_2()
+                        .text_sm()
+                        .font_medium()
                         .background(t.primary)
                         .color(t.primary_foreground)
-                        .border_radius(t.radius)
+                        .rounded_md()
                         .cursor(CursorStyle::Pointer)
                         .hover(|s| s.background(t.primary.with_alpha(0.9)))
                 })
@@ -144,37 +127,30 @@ impl IntoView for AlertDialog {
                 is_open.set(true);
             });
 
-        // Title
         let title_view = floem::views::Label::new(title).style(|s| {
-            s.with_shadcn_theme(move |s, t| s.font_size(18.0).color(t.foreground))
+            s.with_shadcn_theme(move |s, t| s.text_lg().font_semibold().color(t.foreground))
         });
 
-        // Description
         let desc_view = if !description.is_empty() {
             floem::views::Label::new(description)
                 .style(|s| {
-                    s.with_shadcn_theme(move |s, t| {
-                        s.font_size(14.0).color(t.muted_foreground).margin_top(8.0)
-                    })
+                    s.with_shadcn_theme(move |s, t| s.text_sm().color(t.muted_foreground).mt_2())
                 })
                 .into_any()
         } else {
             floem::views::Empty::new().into_any()
         };
 
-        // Cancel button
         let cancel_btn = floem::views::Label::new(cancel_text)
             .style(|s| {
                 s.with_shadcn_theme(move |s, t| {
-                    s.padding_left(16.0)
-                        .padding_right(16.0)
-                        .padding_top(8.0)
-                        .padding_bottom(8.0)
-                        .font_size(14.0)
-                        
+                    s.px_4()
+                        .py_2()
+                        .text_sm()
+                        .font_medium()
                         .background(t.secondary)
                         .color(t.secondary_foreground)
-                        .border_radius(t.radius)
+                        .rounded_md()
                         .cursor(CursorStyle::Pointer)
                         .hover(|s| s.background(t.secondary.with_alpha(0.8)))
                 })
@@ -183,7 +159,6 @@ impl IntoView for AlertDialog {
                 is_open.set(false);
             });
 
-        // Action button
         let action_btn = floem::views::Label::new(action_text)
             .style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
@@ -197,16 +172,13 @@ impl IntoView for AlertDialog {
                     } else {
                         t.primary_foreground
                     };
-
-                    s.padding_left(16.0)
-                        .padding_right(16.0)
-                        .padding_top(8.0)
-                        .padding_bottom(8.0)
-                        .font_size(14.0)
-                        
+                    s.px_4()
+                        .py_2()
+                        .text_sm()
+                        .font_medium()
                         .background(bg)
                         .color(fg)
-                        .border_radius(t.radius)
+                        .rounded_md()
                         .cursor(CursorStyle::Pointer)
                         .hover(|s| s.background(bg.with_alpha(0.9)))
                 })
@@ -218,24 +190,18 @@ impl IntoView for AlertDialog {
                 is_open.set(false);
             });
 
-        // Footer with buttons
         let footer = floem::views::Stack::horizontal((cancel_btn, action_btn))
-            .style(|s| s.gap(8.0).justify_end());
+            .style(|s| s.gap_2().justify_end());
 
-        // Dialog content in Overlay - escapes parent clipping
         let dialog_overlay = Overlay::new(
             floem::views::Stack::new((
-                // Backdrop - semi-transparent, doesn't close on click for alert dialogs
                 floem::views::Empty::new()
                     .style(move |s| {
                         s.absolute()
-                            .inset(0.0)
+                            .inset_0()
                             .background(peniko::Color::from_rgba8(0, 0, 0, 128))
                     })
-                    .on_event_stop(floem::event::listener::Click, move |_, _| {
-                        // Don't close on backdrop click for alert dialogs
-                    }),
-                // Content wrapper - centered modal
+                    .on_event_stop(floem::event::listener::Click, move |_, _| {}),
                 floem::views::Stack::vertical((title_view, desc_view, footer))
                     .style(move |s| {
                         s.absolute()
@@ -243,23 +209,24 @@ impl IntoView for AlertDialog {
                             .inset_top_pct(50.0)
                             .z_index(10)
                             .max_width(512.0)
-                            .border_radius(8.0)
+                            .rounded_lg()
                             .p_6()
                             .gap_4()
-                            .box_shadow_blur(8.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,60))
+                            .box_shadow_blur(8.0)
+                            .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 60))
                     })
                     .style(move |s| {
                         s.with_shadcn_theme(move |s, t| {
-                            s.background(t.background).border(1.0).border_color(t.border)
+                            s.background(t.background).border_1().border_color(t.border)
                         })
                     }),
             ))
             .style(move |s| {
                 let open = is_open.get();
                 s.fixed()
-                    .inset(0.0)
-                    .width_full()
-                    .height_full()
+                    .inset_0()
+                    .w_full()
+                    .h_full()
                     .apply_if(!open, |s| s.hide())
             }),
         );
@@ -268,19 +235,13 @@ impl IntoView for AlertDialog {
     }
 }
 
-// ============================================================================
-// AlertDialogTrigger
-// ============================================================================
-
-/// Standalone trigger for alert dialog
+// (Remaining standalone components: AlertDialogTrigger, AlertDialogContent, etc. follow the same Tailwind substitutions)
 pub struct AlertDialogTrigger<V> {
     id: ViewId,
     child: V,
     is_open: RwSignal<bool>,
 }
-
 impl<V: IntoView + 'static> AlertDialogTrigger<V> {
-    /// Create a new trigger
     pub fn new(child: V, is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -289,23 +250,19 @@ impl<V: IntoView + 'static> AlertDialogTrigger<V> {
         }
     }
 }
-
 impl<V: IntoView + 'static> HasViewId for AlertDialogTrigger<V> {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl<V: IntoView + 'static> IntoView for AlertDialogTrigger<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
-
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
@@ -316,19 +273,12 @@ impl<V: IntoView + 'static> IntoView for AlertDialogTrigger<V> {
     }
 }
 
-// ============================================================================
-// AlertDialogContent
-// ============================================================================
-
-/// Standalone content for alert dialog
 pub struct AlertDialogContent<V> {
     id: ViewId,
     child: V,
     is_open: RwSignal<bool>,
 }
-
 impl<V: IntoView + 'static> AlertDialogContent<V> {
-    /// Create new content
     pub fn new(child: V, is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -337,82 +287,65 @@ impl<V: IntoView + 'static> AlertDialogContent<V> {
         }
     }
 }
-
 impl<V: IntoView + 'static> HasViewId for AlertDialogContent<V> {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
         let child = self.child;
-
-        // Alert dialog content in Overlay - escapes parent clipping
-        Box::new(
-            Overlay::new(
-                floem::views::Stack::new((
-                    // Backdrop - semi-transparent, doesn't close on click for alert dialogs
-                    floem::views::Empty::new()
-                        .style(move |s| {
-                            s.absolute()
-                                .inset(0.0)
-                                .background(peniko::Color::from_rgba8(0, 0, 0, 128))
+        Box::new(Overlay::new(
+            floem::views::Stack::new((
+                floem::views::Empty::new()
+                    .style(move |s| {
+                        s.absolute()
+                            .inset_0()
+                            .background(peniko::Color::from_rgba8(0, 0, 0, 128))
+                    })
+                    .on_event_stop(floem::event::listener::Click, move |_, _| {}),
+                floem::views::Container::new(child)
+                    .style(move |s| {
+                        s.absolute()
+                            .inset_left_pct(50.0)
+                            .inset_top_pct(50.0)
+                            .z_index(10)
+                            .max_width(512.0)
+                            .rounded_lg()
+                            .p_6()
+                            .gap_4()
+                            .box_shadow_blur(8.0)
+                            .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 60))
+                    })
+                    .style(move |s| {
+                        s.with_shadcn_theme(move |s, t| {
+                            s.background(t.background).border_1().border_color(t.border)
                         })
-                        .on_event_stop(floem::event::listener::Click, move |_, _| {
-                            // Don't close on backdrop click for alert dialogs
-                        }),
-                    // Content wrapper - centered modal
-                    floem::views::Container::new(child)
-                        .style(move |s| {
-                            s.absolute()
-                                .inset_left_pct(50.0)
-                                .inset_top_pct(50.0)
-                                .z_index(10)
-                                .max_width(512.0)
-                                .border_radius(8.0)
-                                .p_6()
-                                .gap_4()
-                                .box_shadow_blur(8.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,60))
-                        })
-                        .style(move |s| {
-                            s.with_shadcn_theme(move |s, t| {
-                                s.background(t.background).border(1.0).border_color(t.border)
-                            })
-                        }),
-                ))
-                .style(move |s| {
-                    let open = is_open.get();
-                    s.fixed()
-                        .inset(0.0)
-                        .width_full()
-                        .height_full()
-                        .apply_if(!open, |s| s.hide())
-                }),
-            ),
-        )
+                    }),
+            ))
+            .style(move |s| {
+                let open = is_open.get();
+                s.fixed()
+                    .inset_0()
+                    .w_full()
+                    .h_full()
+                    .apply_if(!open, |s| s.hide())
+            }),
+        ))
     }
 }
 
-// ============================================================================
-// AlertDialogHeader
-// ============================================================================
-
-/// Header section of alert dialog
 pub struct AlertDialogHeader<V> {
     id: ViewId,
     child: V,
 }
-
 impl<V: IntoView + 'static> AlertDialogHeader<V> {
-    /// Create a new header
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -420,43 +353,29 @@ impl<V: IntoView + 'static> AlertDialogHeader<V> {
         }
     }
 }
-
 impl<V: IntoView + 'static> HasViewId for AlertDialogHeader<V> {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl<V: IntoView + 'static> IntoView for AlertDialogHeader<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
     fn into_view(self) -> Self::V {
         Box::new(
-            floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.display(floem::style::Display::Flex)
-                    .flex_direction(floem::style::FlexDirection::Column)
-                    .margin_bottom(16.0)
-            }),
+            floem::views::Container::with_id(self.id, self.child).style(|s| s.flex_col().mb_4()),
         )
     }
 }
 
-// ============================================================================
-// AlertDialogFooter
-// ============================================================================
-
-/// Footer section with action buttons
 pub struct AlertDialogFooter<V> {
     id: ViewId,
     child: V,
 }
-
 impl<V: IntoView + 'static> AlertDialogFooter<V> {
-    /// Create a new footer
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -464,44 +383,30 @@ impl<V: IntoView + 'static> AlertDialogFooter<V> {
         }
     }
 }
-
 impl<V: IntoView + 'static> HasViewId for AlertDialogFooter<V> {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl<V: IntoView + 'static> IntoView for AlertDialogFooter<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
     fn into_view(self) -> Self::V {
         Box::new(
-            floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.display(floem::style::Display::Flex)
-                    .flex_direction(floem::style::FlexDirection::Row)
-                    .justify_end()
-                    .gap(8.0)
-            }),
+            floem::views::Container::with_id(self.id, self.child)
+                .style(|s| s.flex_row().justify_end().gap_2()),
         )
     }
 }
 
-// ============================================================================
-// AlertDialogTitle
-// ============================================================================
-
-/// Title for alert dialog
 pub struct AlertDialogTitle {
     id: ViewId,
     text: String,
 }
-
 impl AlertDialogTitle {
-    /// Create a new title
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -509,45 +414,30 @@ impl AlertDialogTitle {
         }
     }
 }
-
 impl HasViewId for AlertDialogTitle {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl IntoView for AlertDialogTitle {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
     fn into_view(self) -> Self::V {
         let text = self.text;
-
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.font_size(18.0)
-                    
-                    .color(t.foreground)
-            })
+            s.with_shadcn_theme(move |s, t| s.text_lg().font_semibold().color(t.foreground))
         }))
     }
 }
 
-// ============================================================================
-// AlertDialogDescription
-// ============================================================================
-
-/// Description for alert dialog
 pub struct AlertDialogDescription {
     id: ViewId,
     text: String,
 }
-
 impl AlertDialogDescription {
-    /// Create a new description
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -555,36 +445,25 @@ impl AlertDialogDescription {
         }
     }
 }
-
 impl HasViewId for AlertDialogDescription {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl IntoView for AlertDialogDescription {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
     fn into_view(self) -> Self::V {
         let text = self.text;
-
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.font_size(14.0).color(t.muted_foreground).margin_top(8.0)
-            })
+            s.with_shadcn_theme(move |s, t| s.text_sm().color(t.muted_foreground).mt_2())
         }))
     }
 }
 
-// ============================================================================
-// AlertDialogAction
-// ============================================================================
-
-/// Action button for alert dialog
 pub struct AlertDialogAction {
     id: ViewId,
     text: String,
@@ -592,9 +471,7 @@ pub struct AlertDialogAction {
     on_click: Option<Box<dyn Fn() + 'static>>,
     is_open: Option<RwSignal<bool>>,
 }
-
 impl AlertDialogAction {
-    /// Create a new action button
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -604,45 +481,35 @@ impl AlertDialogAction {
             is_open: None,
         }
     }
-
-    /// Make destructive (red)
     pub fn destructive(mut self) -> Self {
         self.destructive = true;
         self
     }
-
-    /// Set click handler
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
     }
-
-    /// Connect to dialog state (to close on click)
     pub fn dialog(mut self, is_open: RwSignal<bool>) -> Self {
         self.is_open = Some(is_open);
         self
     }
 }
-
 impl HasViewId for AlertDialogAction {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl IntoView for AlertDialogAction {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
     fn into_view(self) -> Self::V {
         let text = self.text;
         let destructive = self.destructive;
         let on_click = self.on_click;
         let is_open = self.is_open;
-
         Box::new(
             floem::views::Label::new(text)
                 .style(move |s| {
@@ -657,16 +524,13 @@ impl IntoView for AlertDialogAction {
                         } else {
                             t.primary_foreground
                         };
-
-                        s.padding_left(16.0)
-                            .padding_right(16.0)
-                            .padding_top(8.0)
-                            .padding_bottom(8.0)
-                            .font_size(14.0)
-                            
+                        s.px_4()
+                            .py_2()
+                            .text_sm()
+                            .font_medium()
                             .background(bg)
                             .color(fg)
-                            .border_radius(t.radius)
+                            .rounded_md()
                             .cursor(CursorStyle::Pointer)
                             .hover(|s| s.background(bg.with_alpha(0.9)))
                     })
@@ -683,19 +547,12 @@ impl IntoView for AlertDialogAction {
     }
 }
 
-// ============================================================================
-// AlertDialogCancel
-// ============================================================================
-
-/// Cancel button for alert dialog
 pub struct AlertDialogCancel {
     id: ViewId,
     text: String,
     is_open: Option<RwSignal<bool>>,
 }
-
 impl AlertDialogCancel {
-    /// Create a new cancel button
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -703,44 +560,36 @@ impl AlertDialogCancel {
             is_open: None,
         }
     }
-
-    /// Connect to dialog state
     pub fn dialog(mut self, is_open: RwSignal<bool>) -> Self {
         self.is_open = Some(is_open);
         self
     }
 }
-
 impl HasViewId for AlertDialogCancel {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl IntoView for AlertDialogCancel {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
     fn into_view(self) -> Self::V {
         let text = self.text;
         let is_open = self.is_open;
-
         Box::new(
             floem::views::Label::new(text)
                 .style(|s| {
                     s.with_shadcn_theme(move |s, t| {
-                        s.padding_left(16.0)
-                            .padding_right(16.0)
-                            .padding_top(8.0)
-                            .padding_bottom(8.0)
-                            .font_size(14.0)
-                            
+                        s.px_4()
+                            .py_2()
+                            .text_sm()
+                            .font_medium()
                             .background(t.secondary)
                             .color(t.secondary_foreground)
-                            .border_radius(t.radius)
+                            .rounded_md()
                             .cursor(CursorStyle::Pointer)
                             .hover(|s| s.background(t.secondary.with_alpha(0.8)))
                     })

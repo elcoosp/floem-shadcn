@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem::view::ParentView;
 //! use floem_shadcn::components::input::Input;
 //! use floem_shadcn::components::input_group::{InputGroup, InputGroupAddon, AddonPosition};
@@ -29,6 +29,8 @@ pub enum AddonPosition {
 }
 
 /// Container that groups inputs with adornments (addons)
+///
+/// Uses `ParentView` to accept child buttons.
 pub struct InputGroup {
     id: ViewId,
     disabled: bool,

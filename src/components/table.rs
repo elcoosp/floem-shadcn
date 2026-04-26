@@ -46,7 +46,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
-
+use floem_tailwind::TailwindExt;
 // ============================================================================
 // Table
 // ============================================================================
@@ -72,18 +72,18 @@ impl HasViewId for Table {
 impl IntoView for Table {
     type V = Container;
     type Intermediate = Container;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.with_shadcn_theme(|s, t| {
-                s.width_full()
+                s.w_full()
                     .grid()
                     .grid_auto_flow(GridAutoFlow::Row)
-                    .font_size(14.0)
-                    .border(1.0)
+                    .text_sm()
+                    .border_1()
                     .border_color(t.border)
                     .border_radius(t.radius)
             })
@@ -118,13 +118,13 @@ impl HasViewId for TableHeader {
 impl IntoView for TableHeader {
     type V = Container;
     type Intermediate = Container;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ())
-            .style(|s| s.width_full().grid().grid_auto_flow(GridAutoFlow::Row))
+            .style(|s| s.w_full().grid().grid_auto_flow(GridAutoFlow::Row))
     }
 }
 
@@ -155,13 +155,13 @@ impl HasViewId for TableBody {
 impl IntoView for TableBody {
     type V = Container;
     type Intermediate = Container;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ())
-            .style(|s| s.width_full().grid().grid_auto_flow(GridAutoFlow::Row))
+            .style(|s| s.w_full().grid().grid_auto_flow(GridAutoFlow::Row))
     }
 }
 
@@ -192,16 +192,15 @@ impl HasViewId for TableFooter {
 impl IntoView for TableFooter {
     type V = Container;
     type Intermediate = Container;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.with_shadcn_theme(|s, t| {
-                s.width_full()
+                s.w_full()
                     .grid()
-                    
                     .background(t.muted.with_alpha(0.5))
                     .border_top(1.0)
                     .border_color(t.border)
@@ -237,14 +236,14 @@ impl HasViewId for TableRow {
 impl IntoView for TableRow {
     type V = Container;
     type Intermediate = Container;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
             s.with_shadcn_theme(|s, t| {
-                s.width_full()
+                s.w_full()
                     .grid() // Use Grid for cells
                     .grid_auto_flow(GridAutoFlow::Column) // Cells flow horizontally
                     .grid_auto_columns(vec![MinMax {
@@ -302,9 +301,9 @@ impl HasViewId for TableHead {
 impl IntoView for TableHead {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -313,10 +312,10 @@ impl IntoView for TableHead {
         Box::new(floem::views::Label::with_id(self.id, text).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 let base = s
-                    .height(40.0) // h-10
+                    .h_10() // h-10
                     .padding_horiz(8.0) // px-2
-                    .font_size(14.0) // text-sm
-                     // font-medium
+                    .text_sm() // text-sm
+                    // font-medium
                     .color(t.foreground) // text-foreground
                     .items_center(); // align-middle vertically
                 if let Some(w) = width {
@@ -367,8 +366,9 @@ impl<V: IntoView + 'static> IntoView for TableHeadCustom<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let width = self.width;
@@ -377,10 +377,10 @@ impl<V: IntoView + 'static> IntoView for TableHeadCustom<V> {
             floem::views::Container::with_id(self.id, self.child).style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
                     let base = s
-                        .height(40.0) // h-10
+                        .h_10() // h-10
                         .padding_horiz(8.0) // px-2
-                        .font_size(14.0) // text-sm
-                         // font-medium
+                        .text_sm() // text-sm
+                        // font-medium
                         .color(t.foreground) // text-foreground
                         .items_center(); // align-middle vertically
                     if let Some(w) = width {
@@ -431,9 +431,9 @@ impl HasViewId for TableCell {
 impl IntoView for TableCell {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -443,7 +443,7 @@ impl IntoView for TableCell {
             s.with_shadcn_theme(move |s, t| {
                 let base = s
                     .padding(8.0) // p-2
-                    .font_size(14.0) // text-sm
+                    .text_sm() // text-sm
                     .color(t.foreground) // text-foreground
                     .items_center(); // align-middle
                 if let Some(w) = width {
@@ -494,8 +494,9 @@ impl<V: IntoView + 'static> IntoView for TableCellCustom<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let width = self.width;
@@ -505,7 +506,7 @@ impl<V: IntoView + 'static> IntoView for TableCellCustom<V> {
                 s.with_shadcn_theme(move |s, t| {
                     let base = s
                         .padding(8.0) // p-2
-                        .font_size(14.0) // text-sm
+                        .text_sm() // text-sm
                         .color(t.foreground) // text-foreground
                         .items_center(); // align-middle
                     if let Some(w) = width {
@@ -548,9 +549,9 @@ impl HasViewId for TableCaption {
 impl IntoView for TableCaption {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let text = self.text;
@@ -558,9 +559,9 @@ impl IntoView for TableCaption {
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
                 s.margin_top(16.0) // mt-4
-                    .font_size(14.0) // text-sm
+                    .text_sm() // text-sm
                     .color(t.muted_foreground) // text-muted-foreground
-                    .width_full()
+                    .w_full()
             })
         }))
     }

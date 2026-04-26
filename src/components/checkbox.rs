@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::checkbox::Checkbox;
 //!
@@ -22,6 +22,7 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -74,9 +75,9 @@ impl Checkbox {
             floem::views::svg(|| CHECKMARK_SVG.to_string()).style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
                     let is_checked = checked.get();
-                    s.width(14.0) // size-3.5 = 14px
-                        .height(14.0)
-                        .color(t.primary_foreground) // text-primary-foreground (white on dark primary)
+                    s.size_4() // size-4 = 16px
+                        .height(14.0) // size-3.5 = 14px icon
+                        .color(t.primary_foreground)
                         .apply_if(!is_checked, |s| s.display(floem::style::Display::None))
                 })
             }),
@@ -84,12 +85,12 @@ impl Checkbox {
         .style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 let is_checked = checked.get();
-                // size-4 = 16px, rounded-[4px] = 4px, border = 1px
-                s.size(16.0, 16.0) // size-4 = 16px
+                s.size_4() // size-4 = 16px
                     .flex_shrink(0.0) // shrink-0
-                    .border_radius(4.0) // rounded-[4px] = 4px border radius
-                    .border(1.0) // border
-                    .box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)) // shadow-xs (using shadow_sm as equivalent)
+                    .rounded() // rounded-[4px] = 4px
+                    .border_1() // border (1px)
+                    .box_shadow_blur(2.0)
+                    .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25)) // shadow-xs
                     .flex()
                     .items_center()
                     .justify_center()
@@ -121,8 +122,8 @@ impl Checkbox {
         if let Some(label_text) = self.label_text {
             let label_view = floem::views::Label::new(label_text).style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
-                    s.font_size(14.0) // 14px
-                        
+                    s.text_sm() // text-sm = 14px
+                        .font_medium()
                         .line_height(1.0)
                         .color(if disabled {
                             t.muted_foreground
@@ -145,7 +146,7 @@ impl Checkbox {
             };
 
             floem::views::Stack::horizontal((checkbox_box, label_view))
-                .style(|s| s.gap(8.0).items_center()) // gap-2 = 8px
+                .style(|s| s.gap(8.0).items_center())
                 .into_any()
         } else {
             checkbox_box
@@ -162,9 +163,9 @@ impl HasViewId for Checkbox {
 impl IntoView for Checkbox {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())

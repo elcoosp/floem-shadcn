@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::tabs::{Tabs, TabsList, Tab, TabsContent};
 //!
@@ -25,6 +25,7 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -61,16 +62,12 @@ impl<V: floem::view::IntoViewIter + 'static> IntoView for Tabs<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
-        Box::new(
-            floem::views::Stack::with_id(self.id, self.child).style(|s| {
-                s.flex_direction(floem::style::FlexDirection::Column)
-                    .gap(8.0)
-            }),
-        )
+        Box::new(floem::views::Stack::with_id(self.id, self.child).style(|s| s.flex_col().gap_2()))
     }
 }
 
@@ -104,22 +101,21 @@ impl<V: floem::view::IntoViewIter + 'static> IntoView for TabsList<V> {
     type V = Box<dyn View>;
 
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Stack::with_id(self.id, self.child).style(move |s| {
                 s.with_shadcn_theme(|s, t| {
-                    s.flex_row() // Flex row container
-                        .items_center() // items-center
-                        // No width set - defaults to content width (w-fit)
-                        // Users can add .style(|s| s.width_full()) to TabsList if needed
+                    s.flex_row()
+                        .items_center()
                         .background(t.muted)
-                        .border_radius(8.0) // rounded-lg
-                        .height(36.0) // h-9 = 36px
+                        .h_9() // h-9 = 36px
+                        .rounded_lg() // rounded-lg = 8px
                         .padding(3.0) // p-[3px]
-                        .gap(3.0) // Small gap between tabs
+                        .gap(3.0)
                 })
             }),
         )
@@ -172,20 +168,20 @@ impl Tab {
                         .map(|sig| sig.get() == id.clone())
                         .unwrap_or(false);
                     let base = s
-                        .flex_row() // Flex container for centering label
-                        .flex_grow(1.0) // flex-1 - grow to fill space
-                        .flex_basis(0.0) // Start from 0 width, grow from there
-                        .min_width(0.0) // Allow shrinking below content width
-                        .height(29.0) // h-[calc(100%-1px)] ≈ 36px - 6px padding - 1px = 29px
-                        .padding_left(8.0).padding_right(8.0) // px-2 = 8px
-                        .padding_top(4.0).padding_bottom(4.0) // py-1 = 4px
-                        .items_center() // Center content vertically
-                        .justify_center() // Center content horizontally
-                        .border_radius(6.0) // rounded-md
-                        .border(1.0) // border
-                        .border_color(peniko::Color::TRANSPARENT) // border-transparent
-                        .font_size(14.0)
-                        
+                        .flex_row()
+                        .flex_grow(1.0) // flex-1
+                        .flex_basis(0.0)
+                        .min_width(0.0)
+                        .height(29.0) // h-[calc(100%-1px)]
+                        .px_2() // px-2 = 8px
+                        .py_1() // py-1 = 4px
+                        .items_center()
+                        .justify_center()
+                        .rounded_md() // rounded-md = 6px
+                        .border_1()
+                        .border_color(peniko::Color::TRANSPARENT)
+                        .text_sm() // text-sm = 14px
+                        .font_medium()
                         .cursor(CursorStyle::Pointer)
                         .transition(
                             floem::style::Background,
@@ -194,7 +190,8 @@ impl Tab {
                     if is_active {
                         base.background(t.background)
                             .color(t.foreground)
-                            .box_shadow_blur(2.0).box_shadow_color(peniko::Color::from_rgba8(0,0,0,25)) // shadow-sm for active state
+                            .box_shadow_blur(2.0)
+                            .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
                     } else {
                         base.background(peniko::Color::TRANSPARENT)
                             .color(t.muted_foreground)
@@ -218,9 +215,9 @@ impl HasViewId for Tab {
 impl IntoView for Tab {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
@@ -266,9 +263,9 @@ impl<V: IntoView + 'static> HasViewId for TabsContent<V> {
 impl<V: IntoView + 'static> IntoView for TabsContent<V> {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         let id = self.id;
@@ -276,7 +273,7 @@ impl<V: IntoView + 'static> IntoView for TabsContent<V> {
 
         Box::new(
             floem::views::Container::with_id(self.view_id, self.child).style(move |s| {
-                let is_active = active_signal.map(|sig| sig.get() == id).unwrap_or(true); // Show by default if no signal
+                let is_active = active_signal.map(|sig| sig.get() == id).unwrap_or(true);
 
                 s.apply_if(!is_active, |s| s.display(floem::style::Display::None))
             }),
