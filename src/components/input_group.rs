@@ -83,6 +83,8 @@ impl IntoView for InputGroup {
 impl ParentView for InputGroup {}
 
 /// Addon element (prefix or suffix) for InputGroup
+#[allow(dead_code)]
+#[allow(dead_code)]
 pub struct InputGroupAddon<V> {
     id: ViewId,
     position: AddonPosition,

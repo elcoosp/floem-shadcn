@@ -2,7 +2,7 @@
 
 use floem::style::{Style, StylePropValue};
 use peniko::Color;
-use peniko::color::{AlphaColor, HueDirection, Oklch, Srgb};
+use peniko::color::{AlphaColor, Oklch, Srgb};
 
 #[inline]
 fn oklch(l: f32, c: f32, h: f32) -> Color {

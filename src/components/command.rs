@@ -1,27 +1,4 @@
-//! Command component with builder-style API
-//!
-//! Based on shadcn/ui Command - a command palette for searching and executing commands.
-//!
-//! # Example
-//!
-//! ```
-//! use floem::reactive::RwSignal;
-//! use floem::view::ParentView;
-//! use floem_shadcn::components::command::*;
-//!
-//! let search = RwSignal::new(String::new());
-//!
-//! Command::new(search)
-//!     .placeholder("Type a command or search...")
-//!     .child(CommandList::new()
-//!         .child(CommandGroup::new("Suggestions")
-//!             .child(CommandItem::new("calendar", "Calendar"))
-//!             .child(CommandItem::new("search", "Search Emoji")))
-//!         .child(CommandSeparator::new())
-//!         .child(CommandGroup::new("Settings")
-//!             .child(CommandItem::new("profile", "Profile"))
-//!             .child(CommandItem::new("settings", "Settings"))));
-//! ```
+#[allow(dead_code)]
 
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
@@ -32,6 +9,7 @@ use floem::views::{Decorators, Stem};
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+#[allow(dead_code)]
 pub struct Command {
     content_id: ViewId,
     search: RwSignal<String>,
@@ -94,6 +72,7 @@ impl IntoView for Command {
 }
 impl ParentView for Command {}
 
+#[allow(dead_code)]
 pub struct CommandInput {
     id: ViewId,
     search: RwSignal<String>,
@@ -259,6 +238,7 @@ impl IntoView for CommandGroup {
 }
 impl ParentView for CommandGroup {}
 
+#[allow(dead_code)]
 pub struct CommandItem {
     id: ViewId,
     value: String,
