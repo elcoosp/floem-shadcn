@@ -33,6 +33,9 @@ fn test_kbd_group() {
 
     let layout = id.get_layout().expect("KbdGroup layout should exist");
     // Relaxed check – headless may return zero width
-    assert!(layout.size.width >= 0.0, "KbdGroup should have a valid layout");
+    assert!(
+        layout.size.width >= 0.0,
+        "KbdGroup should have a valid layout"
+    );
     assert!(layout.size.height >= 0.0);
 }

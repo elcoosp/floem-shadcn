@@ -2,8 +2,8 @@ use floem::prelude::*;
 use floem::view::ParentView;
 use floem_shadcn::components::button::Button;
 use floem_shadcn::components::button_group::{ButtonGroup, ButtonGroupSeparator};
-use floem_test::prelude::*;
 use floem_test::TestRoot;
+use floem_test::prelude::*;
 
 #[test]
 fn test_button_group_renders_three_buttons() {
@@ -21,7 +21,10 @@ fn test_button_group_renders_three_buttons() {
     let layout = id.get_layout().expect("ButtonGroup layout should exist");
     // In headless, exact dimensions may be zero – we just verify it renders
     assert!(layout.size.width >= 0.0, "Group should have a valid layout");
-    assert!(layout.size.height >= 0.0, "Group should have a valid height");
+    assert!(
+        layout.size.height >= 0.0,
+        "Group should have a valid height"
+    );
 }
 
 #[test]

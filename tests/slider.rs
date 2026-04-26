@@ -1,12 +1,12 @@
 //! Tests for the Slider component
 
+use floem::prelude::*;
 use floem::reactive::RwSignal;
 use floem::view::ViewId;
 use floem::views::Decorators;
-use floem::prelude::*;
-use floem_test::prelude::*;
-use floem_test::TestRoot;
 use floem_shadcn::components::slider::Slider;
+use floem_test::TestRoot;
+use floem_test::prelude::*;
 
 fn create_test_slider(value: RwSignal<f64>, width: f64) -> (ViewId, impl IntoView) {
     let container_id = ViewId::new();

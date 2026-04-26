@@ -17,8 +17,14 @@ fn test_spinner_default_md_size_renders() {
 
     let layout = id.get_layout().expect("Spinner layout should exist");
     // In headless, SVG may have zero dimensions – just ensure layout exists
-    assert!(layout.size.width >= 0.0, "Spinner layout width should be non-negative");
-    assert!(layout.size.height >= 0.0, "Spinner layout height should be non-negative");
+    assert!(
+        layout.size.width >= 0.0,
+        "Spinner layout width should be non-negative"
+    );
+    assert!(
+        layout.size.height >= 0.0,
+        "Spinner layout height should be non-negative"
+    );
 }
 
 #[test]
