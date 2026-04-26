@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::dropdown_menu::*;
 //!
@@ -29,10 +29,7 @@ use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
-// ============================================================================
-// DropdownMenu
-// ============================================================================
-
+/// DropdownMenu – a popup menu that appears when the trigger is clicked.
 pub struct DropdownMenu<T, C> {
     open: RwSignal<bool>,
     trigger: Option<T>,
@@ -40,6 +37,7 @@ pub struct DropdownMenu<T, C> {
 }
 
 impl DropdownMenu<(), ()> {
+    /// Create a new dropdown menu controlled by the given open signal.
     pub fn new(open: RwSignal<bool>) -> Self {
         Self {
             open,
@@ -50,6 +48,7 @@ impl DropdownMenu<(), ()> {
 }
 
 impl<T, C> DropdownMenu<T, C> {
+    /// Provide the trigger widget (a button, for example).
     pub fn trigger<T2: Fn() -> V, V: IntoView + 'static>(self, trigger: T2) -> DropdownMenu<T2, C> {
         DropdownMenu {
             open: self.open,
@@ -57,6 +56,8 @@ impl<T, C> DropdownMenu<T, C> {
             content: self.content,
         }
     }
+
+    /// Provide the menu items to show when open.
     pub fn content<C2: IntoView + 'static>(self, content: C2) -> DropdownMenu<T, C2> {
         DropdownMenu {
             open: self.open,
@@ -72,6 +73,7 @@ where
     C: IntoView + 'static,
     TV: IntoView + 'static,
 {
+    /// Build the view: trigger + dropdown overlay.
     pub fn build(self) -> impl IntoView {
         let open = self.open;
         let trigger = self.trigger;
@@ -152,10 +154,7 @@ where
     }
 }
 
-// ============================================================================
-// DropdownMenuContent
-// ============================================================================
-
+/// Content wrapper for the dropdown menu items.
 pub struct DropdownMenuContent<V> {
     id: ViewId,
     child: V,
@@ -184,10 +183,7 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuContent<V> {
     }
 }
 
-// ============================================================================
-// DropdownMenuItem
-// ============================================================================
-
+/// A single item inside a dropdown menu.
 pub struct DropdownMenuItem {
     id: ViewId,
     text: String,
@@ -197,6 +193,7 @@ pub struct DropdownMenuItem {
 }
 
 impl DropdownMenuItem {
+    /// Create a new item with the given text.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -206,14 +203,20 @@ impl DropdownMenuItem {
             on_click: None,
         }
     }
+
+    /// Attach a click handler.
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
     }
+
+    /// Mark the item as disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
+
+    /// Apply destructive (red) styling.
     pub fn destructive(mut self) -> Self {
         self.destructive = true;
         self
@@ -272,10 +275,7 @@ impl IntoView for DropdownMenuItem {
     }
 }
 
-// ============================================================================
-// DropdownMenuItemCustom, Separator, Label, Group, Shortcut (simplified similarly)
-// ============================================================================
-
+/// Dropdown menu item with custom child content.
 pub struct DropdownMenuItemCustom<V> {
     id: ViewId,
     child: V,
@@ -342,6 +342,7 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
     }
 }
 
+/// Separator line between menu items.
 pub struct DropdownMenuSeparator;
 impl DropdownMenuSeparator {
     pub fn new() -> Self {
@@ -371,6 +372,7 @@ impl IntoView for DropdownMenuSeparator {
     }
 }
 
+/// Label for a group of menu items.
 pub struct DropdownMenuLabel {
     id: ViewId,
     text: String,
@@ -410,6 +412,7 @@ impl IntoView for DropdownMenuLabel {
     }
 }
 
+/// Group of related menu items.
 pub struct DropdownMenuGroup<V> {
     id: ViewId,
     child: V,
@@ -438,6 +441,7 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuGroup<V> {
     }
 }
 
+/// Shortcut hint displayed to the right of a menu item.
 pub struct DropdownMenuShortcut {
     id: ViewId,
     text: String,

@@ -35,7 +35,8 @@ use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
 use floem_tailwind::TailwindExt;
-/// Toggle group variant
+
+/// Toggle group variant.
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToggleGroupVariant {
     #[default]
@@ -43,7 +44,7 @@ pub enum ToggleGroupVariant {
     Outline,
 }
 
-/// Toggle group size
+/// Toggle group size.
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToggleGroupSize {
     Sm,
@@ -52,11 +53,9 @@ pub enum ToggleGroupSize {
     Lg,
 }
 
-// ============================================================================
-// ToggleGroup (Single Selection)
-// ============================================================================
-
-/// Toggle group with single selection
+/// Toggle group with **single** selection.
+///
+/// Only one item can be active at a time.
 pub struct ToggleGroup<V> {
     id: ViewId,
     #[allow(dead_code)]
@@ -67,7 +66,7 @@ pub struct ToggleGroup<V> {
 }
 
 impl<V: IntoView + 'static> ToggleGroup<V> {
-    /// Create a toggle group with single selection
+    /// Create a single‑selection toggle group.
     pub fn single(selected: RwSignal<Option<String>>, child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -78,19 +77,14 @@ impl<V: IntoView + 'static> ToggleGroup<V> {
         }
     }
 
-    /// Set the variant
     pub fn variant(mut self, variant: ToggleGroupVariant) -> Self {
         self.variant = variant;
         self
     }
-
-    /// Use outline variant
     pub fn outline(mut self) -> Self {
         self.variant = ToggleGroupVariant::Outline;
         self
     }
-
-    /// Set the size
     pub fn size(mut self, size: ToggleGroupSize) -> Self {
         self.size = size;
         self
@@ -105,7 +99,6 @@ impl<V: IntoView + 'static> HasViewId for ToggleGroup<V> {
 
 impl<V: IntoView + 'static> IntoView for ToggleGroup<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -135,11 +128,7 @@ impl<V: IntoView + 'static> IntoView for ToggleGroup<V> {
     }
 }
 
-// ============================================================================
-// ToggleGroupMultiple
-// ============================================================================
-
-/// Toggle group with multiple selection
+/// Toggle group with **multiple** selection.
 pub struct ToggleGroupMultiple<V> {
     id: ViewId,
     #[allow(dead_code)]
@@ -150,7 +139,6 @@ pub struct ToggleGroupMultiple<V> {
 }
 
 impl<V: IntoView + 'static> ToggleGroupMultiple<V> {
-    /// Create a toggle group with multiple selection
     pub fn new(selected: RwSignal<Vec<String>>, child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -160,22 +148,12 @@ impl<V: IntoView + 'static> ToggleGroupMultiple<V> {
             size: ToggleGroupSize::Default,
         }
     }
-
-    /// Set the variant
     pub fn variant(mut self, variant: ToggleGroupVariant) -> Self {
         self.variant = variant;
         self
     }
-
-    /// Use outline variant
     pub fn outline(mut self) -> Self {
         self.variant = ToggleGroupVariant::Outline;
-        self
-    }
-
-    /// Set the size
-    pub fn size(mut self, size: ToggleGroupSize) -> Self {
-        self.size = size;
         self
     }
 }
@@ -188,7 +166,6 @@ impl<V: IntoView + 'static> HasViewId for ToggleGroupMultiple<V> {
 
 impl<V: IntoView + 'static> IntoView for ToggleGroupMultiple<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -196,7 +173,6 @@ impl<V: IntoView + 'static> IntoView for ToggleGroupMultiple<V> {
 
     fn into_view(self) -> Self::V {
         let variant = self.variant;
-
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
@@ -218,11 +194,7 @@ impl<V: IntoView + 'static> IntoView for ToggleGroupMultiple<V> {
     }
 }
 
-// ============================================================================
-// ToggleGroupItem (for single selection)
-// ============================================================================
-
-/// Individual item in a single-selection toggle group
+/// An item inside a single‑selection toggle group.
 pub struct ToggleGroupItem {
     id: ViewId,
     value: String,
@@ -232,7 +204,6 @@ pub struct ToggleGroupItem {
 }
 
 impl ToggleGroupItem {
-    /// Create a new toggle group item
     pub fn new(value: impl Into<String>, text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -242,14 +213,10 @@ impl ToggleGroupItem {
             disabled: false,
         }
     }
-
-    /// Set the selected signal (connects to parent group)
     pub fn selected(mut self, signal: RwSignal<Option<String>>) -> Self {
         self.selected_signal = Some(signal);
         self
     }
-
-    /// Set as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
@@ -321,11 +288,7 @@ impl IntoView for ToggleGroupItem {
     }
 }
 
-// ============================================================================
-// ToggleGroupItemMultiple (for multiple selection)
-// ============================================================================
-
-/// Individual item in a multiple-selection toggle group
+/// An item inside a multiple‑selection toggle group.
 pub struct ToggleGroupItemMultiple {
     id: ViewId,
     value: String,
@@ -335,7 +298,6 @@ pub struct ToggleGroupItemMultiple {
 }
 
 impl ToggleGroupItemMultiple {
-    /// Create a new toggle group item for multiple selection
     pub fn new(value: impl Into<String>, text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -345,14 +307,10 @@ impl ToggleGroupItemMultiple {
             disabled: false,
         }
     }
-
-    /// Set the selected signal (connects to parent group)
     pub fn selected(mut self, signal: RwSignal<Vec<String>>) -> Self {
         self.selected_signal = Some(signal);
         self
     }
-
-    /// Set as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self

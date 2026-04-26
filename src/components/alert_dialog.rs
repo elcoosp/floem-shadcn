@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::alert_dialog::*;
 //!
@@ -29,10 +29,7 @@ use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
-// ============================================================================
-// AlertDialog
-// ============================================================================
-
+/// A modal confirmation dialog with a trigger, title, description, and action buttons.
 pub struct AlertDialog {
     id: ViewId,
     is_open: RwSignal<bool>,
@@ -46,6 +43,7 @@ pub struct AlertDialog {
 }
 
 impl AlertDialog {
+    /// Create a new AlertDialog controlled by the given open signal.
     pub fn new(is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -59,6 +57,7 @@ impl AlertDialog {
             destructive: false,
         }
     }
+
     pub fn trigger(mut self, text: impl Into<String>) -> Self {
         self.trigger_text = text.into();
         self
@@ -235,7 +234,7 @@ impl IntoView for AlertDialog {
     }
 }
 
-// (Remaining standalone components: AlertDialogTrigger, AlertDialogContent, etc. follow the same Tailwind substitutions)
+/// When clicked, opens the nearest parent AlertDialog.
 pub struct AlertDialogTrigger<V> {
     id: ViewId,
     child: V,
@@ -273,6 +272,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogTrigger<V> {
     }
 }
 
+/// The content (overlay) of an AlertDialog.
 pub struct AlertDialogContent<V> {
     id: ViewId,
     child: V,
@@ -341,6 +341,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
     }
 }
 
+/// Header for an AlertDialog.
 pub struct AlertDialogHeader<V> {
     id: ViewId,
     child: V,
@@ -371,6 +372,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogHeader<V> {
     }
 }
 
+/// Footer for an AlertDialog.
 pub struct AlertDialogFooter<V> {
     id: ViewId,
     child: V,
@@ -402,6 +404,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogFooter<V> {
     }
 }
 
+/// Title text for an AlertDialog.
 pub struct AlertDialogTitle {
     id: ViewId,
     text: String,
@@ -433,6 +436,7 @@ impl IntoView for AlertDialogTitle {
     }
 }
 
+/// Description text for an AlertDialog.
 pub struct AlertDialogDescription {
     id: ViewId,
     text: String,
@@ -464,6 +468,7 @@ impl IntoView for AlertDialogDescription {
     }
 }
 
+/// Action button of an AlertDialog.
 pub struct AlertDialogAction {
     id: ViewId,
     text: String,
@@ -547,6 +552,7 @@ impl IntoView for AlertDialogAction {
     }
 }
 
+/// Cancel button of an AlertDialog.
 pub struct AlertDialogCancel {
     id: ViewId,
     text: String,

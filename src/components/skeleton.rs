@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem_shadcn::components::skeleton::Skeleton;
 //!
 //! // Basic skeleton
@@ -23,6 +23,9 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+/// A styled skeleton (loading placeholder) builder.
+///
+/// Use the `width()`, `height()`, `circle()`, or `text()` convenience methods.
 pub struct Skeleton {
     id: ViewId,
     width: Option<f64>,
@@ -39,6 +42,7 @@ impl Skeleton {
             border_radius: None,
         }
     }
+    /// Create a skeleton suitable for a single line of text.
     pub fn text() -> Self {
         Self {
             id: ViewId::new(),
@@ -59,6 +63,7 @@ impl Skeleton {
         self.border_radius = Some(radius);
         self
     }
+    /// Create a circular skeleton (e.g. for avatars).
     pub fn circle(mut self, size: f64) -> Self {
         self.width = Some(size);
         self.height = Some(size);
@@ -69,7 +74,6 @@ impl Skeleton {
     pub fn build(self) -> impl IntoView {
         let width = self.width;
         let height = self.height;
-        let _border_radius = self.border_radius.unwrap_or(4.0);
 
         floem::views::Empty::new().style(move |s| {
             let mut style = s.rounded_sm();

@@ -4,7 +4,7 @@
 //!
 //! # Example (recommended)
 //!
-//! ```
+//! ```rust
 //! use floem_shadcn::components::dialog::{Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogClose};
 //! use floem_shadcn::components::button::Button;
 //!
@@ -37,7 +37,7 @@
 //!
 //! Use `dialog.open_signal()` to get the signal for programmatic control:
 //!
-//! ```
+//! ```rust
 //! let dialog = Dialog::new((trigger, content));
 //! let open = dialog.open_signal();
 //! // Later: open.set(true) to open programmatically
@@ -52,19 +52,13 @@ use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
-// ============================================================================
-// Dialog Context - passes open signal to children via reactive Context
-// ============================================================================
-
+/// Dialog Context - passes the open signal to children via the reactive context.
 #[derive(Clone, Copy)]
 pub struct DialogContext {
     pub open: RwSignal<bool>,
 }
 
-// ============================================================================
-// Dialog
-// ============================================================================
-
+/// Root dialog component that provides the open/close context.
 pub struct Dialog<V> {
     id: ViewId,
     open: RwSignal<bool>,
@@ -73,6 +67,7 @@ pub struct Dialog<V> {
 }
 
 impl<V: IntoView + 'static> Dialog<V> {
+    /// Create a new dialog. Children receive the `DialogContext`.
     pub fn new(child: V) -> Self {
         let open = RwSignal::new(false);
         let scope = Scope::current().create_child();
@@ -85,6 +80,7 @@ impl<V: IntoView + 'static> Dialog<V> {
         }
     }
 
+    /// Returns the signal controlling the dialog's open state.
     pub fn open_signal(&self) -> RwSignal<bool> {
         self.open
     }
@@ -98,7 +94,6 @@ impl<V: IntoView + 'static> HasViewId for Dialog<V> {
 
 impl<V: IntoView + 'static> IntoView for Dialog<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -112,10 +107,7 @@ impl<V: IntoView + 'static> IntoView for Dialog<V> {
     }
 }
 
-// ============================================================================
-// DialogTrigger
-// ============================================================================
-
+/// When clicked, opens the nearest parent dialog.
 pub struct DialogTrigger<V> {
     id: ViewId,
     child: V,
@@ -138,7 +130,6 @@ impl<V: IntoView + 'static> HasViewId for DialogTrigger<V> {
 
 impl<V: IntoView + 'static> IntoView for DialogTrigger<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -159,10 +150,7 @@ impl<V: IntoView + 'static> IntoView for DialogTrigger<V> {
     }
 }
 
-// ============================================================================
-// DialogClose
-// ============================================================================
-
+/// When clicked, closes the nearest parent dialog.
 pub struct DialogClose<V> {
     id: ViewId,
     child: V,
@@ -185,7 +173,6 @@ impl<V: IntoView + 'static> HasViewId for DialogClose<V> {
 
 impl<V: IntoView + 'static> IntoView for DialogClose<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -206,16 +193,16 @@ impl<V: IntoView + 'static> IntoView for DialogClose<V> {
     }
 }
 
-// ============================================================================
-// DialogContent
-// ============================================================================
-
+/// The modal portal that contains the overlay backdrop and the content panel.
+///
+/// Children are automatically placed inside the centered modal card.
 pub struct DialogContent {
     id: ViewId,
     children: Vec<Box<dyn View>>,
 }
 
 impl DialogContent {
+    /// Create a new dialog content from any collection of views.
     pub fn new(children: impl floem::view::IntoViewIter) -> Self {
         Self {
             id: ViewId::new(),
@@ -290,10 +277,7 @@ impl IntoView for DialogContent {
     }
 }
 
-// ============================================================================
-// DialogHeader
-// ============================================================================
-
+/// Header container for the dialog title and description.
 pub struct DialogHeader {
     id: ViewId,
     title: Option<String>,
@@ -308,10 +292,12 @@ impl DialogHeader {
             description: None,
         }
     }
+
     pub fn title(mut self, title: impl Into<String>) -> Self {
         self.title = Some(title.into());
         self
     }
+
     pub fn description(mut self, description: impl Into<String>) -> Self {
         self.description = Some(description.into());
         self
@@ -358,10 +344,7 @@ impl IntoView for DialogHeader {
     }
 }
 
-// ============================================================================
-// DialogFooter
-// ============================================================================
-
+/// Footer container, usually holding action buttons.
 pub struct DialogFooter<V> {
     id: ViewId,
     child: V,
@@ -384,7 +367,6 @@ impl<V: IntoView + 'static> HasViewId for DialogFooter<V> {
 
 impl<V: IntoView + 'static> IntoView for DialogFooter<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -398,10 +380,7 @@ impl<V: IntoView + 'static> IntoView for DialogFooter<V> {
     }
 }
 
-// ============================================================================
-// DialogTitle / DialogDescription (standalone)
-// ============================================================================
-
+/// Standalone dialog title.
 pub struct DialogTitle<V> {
     id: ViewId,
     child: V,
@@ -436,6 +415,7 @@ impl<V: IntoView + 'static> IntoView for DialogTitle<V> {
     }
 }
 
+/// Standalone dialog description.
 pub struct DialogDescription<V> {
     id: ViewId,
     child: V,

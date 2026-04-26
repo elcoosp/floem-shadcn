@@ -26,7 +26,8 @@ use floem::{HasViewId, ViewId};
 
 use crate::theme::ShadcnThemeExt;
 use floem_tailwind::TailwindExt;
-/// Which side the sheet slides in from
+
+/// Which side the sheet slides in from.
 #[derive(Clone, Copy, Default)]
 pub enum SheetSide {
     Top,
@@ -36,11 +37,7 @@ pub enum SheetSide {
     Right,
 }
 
-// ============================================================================
-// Sheet
-// ============================================================================
-
-/// Sheet container with backdrop
+/// Sheet container with backdrop.
 pub struct Sheet<V> {
     id: ViewId,
     open: RwSignal<bool>,
@@ -48,7 +45,7 @@ pub struct Sheet<V> {
 }
 
 impl<V: IntoView + 'static> Sheet<V> {
-    /// Create a new sheet with the given open signal and content
+    /// Create a new sheet with the given open signal and content.
     pub fn new(open: RwSignal<bool>, content: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -66,7 +63,6 @@ impl<V: IntoView + 'static> HasViewId for Sheet<V> {
 
 impl<V: IntoView + 'static> IntoView for Sheet<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -75,7 +71,6 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
     fn into_view(self) -> Self::V {
         let open = self.open;
 
-        // Backdrop
         let backdrop = floem::views::Empty::new()
             .style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
@@ -88,10 +83,8 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
                 open.update(|v| *v = false);
             });
 
-        // Content wrapper
         let content_wrapper = floem::views::Container::new(self.content);
 
-        // Use Overlay with fixed positioning
         let sheet_overlay = Overlay::new(
             floem::views::Stack::new((backdrop, content_wrapper)).style(|s| s.w_full().h_full()),
         )
@@ -109,11 +102,7 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
     }
 }
 
-// ============================================================================
-// SheetContent
-// ============================================================================
-
-/// The content panel of a sheet
+/// The content panel of a sheet.
 pub struct SheetContent<V> {
     id: ViewId,
     child: V,
@@ -121,7 +110,7 @@ pub struct SheetContent<V> {
 }
 
 impl<V: IntoView + 'static> SheetContent<V> {
-    /// Create new sheet content
+    /// Create new sheet content.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -130,7 +119,7 @@ impl<V: IntoView + 'static> SheetContent<V> {
         }
     }
 
-    /// Set which side the sheet appears from
+    /// Set which side the sheet appears from.
     pub fn side(mut self, side: SheetSide) -> Self {
         self.side = side;
         self
@@ -145,7 +134,6 @@ impl<V: IntoView + 'static> HasViewId for SheetContent<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetContent<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -198,18 +186,13 @@ impl<V: IntoView + 'static> IntoView for SheetContent<V> {
     }
 }
 
-// ============================================================================
-// SheetHeader
-// ============================================================================
-
-/// Header section for sheet content
+/// Header section for sheet content.
 pub struct SheetHeader<V> {
     id: ViewId,
     child: V,
 }
 
 impl<V: IntoView + 'static> SheetHeader<V> {
-    /// Create new sheet header
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -226,7 +209,6 @@ impl<V: IntoView + 'static> HasViewId for SheetHeader<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetHeader<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -243,18 +225,13 @@ impl<V: IntoView + 'static> IntoView for SheetHeader<V> {
     }
 }
 
-// ============================================================================
-// SheetTitle
-// ============================================================================
-
-/// Title text for sheet
+/// Title text for sheet.
 pub struct SheetTitle {
     id: ViewId,
     text: String,
 }
 
 impl SheetTitle {
-    /// Create new sheet title
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -285,18 +262,13 @@ impl IntoView for SheetTitle {
     }
 }
 
-// ============================================================================
-// SheetDescription
-// ============================================================================
-
-/// Description text for sheet
+/// Description text for sheet.
 pub struct SheetDescription {
     id: ViewId,
     text: String,
 }
 
 impl SheetDescription {
-    /// Create new sheet description
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -327,18 +299,13 @@ impl IntoView for SheetDescription {
     }
 }
 
-// ============================================================================
-// SheetFooter
-// ============================================================================
-
-/// Footer section for sheet (typically for actions)
+/// Footer section for sheet (actions).
 pub struct SheetFooter<V> {
     id: ViewId,
     child: V,
 }
 
 impl<V: IntoView + 'static> SheetFooter<V> {
-    /// Create new sheet footer
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -355,7 +322,6 @@ impl<V: IntoView + 'static> HasViewId for SheetFooter<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetFooter<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -374,11 +340,7 @@ impl<V: IntoView + 'static> IntoView for SheetFooter<V> {
     }
 }
 
-// ============================================================================
-// SheetClose
-// ============================================================================
-
-/// Close button for sheet
+/// Close button for sheet.
 pub struct SheetClose<V> {
     id: ViewId,
     open: RwSignal<bool>,
@@ -386,7 +348,6 @@ pub struct SheetClose<V> {
 }
 
 impl<V: IntoView + 'static> SheetClose<V> {
-    /// Create new sheet close button
     pub fn new(open: RwSignal<bool>, child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -404,7 +365,6 @@ impl<V: IntoView + 'static> HasViewId for SheetClose<V> {
 
 impl<V: IntoView + 'static> IntoView for SheetClose<V> {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()

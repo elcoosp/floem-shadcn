@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem_shadcn::components::avatar::Avatar;
 //!
 //! // Avatar with initials fallback
@@ -21,6 +21,10 @@ use floem_tailwind::TailwindExt;
 
 use crate::styled::ShadcnStyleExt;
 
+/// A styled avatar builder.
+///
+/// Displays initials as a fallback when no image is provided. The size can be
+/// customised with `size()`.
 pub struct Avatar {
     id: ViewId,
     fallback_text: Option<String>,
@@ -28,6 +32,7 @@ pub struct Avatar {
 }
 
 impl Avatar {
+    /// Create a new avatar with default size (40px).
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
@@ -36,16 +41,19 @@ impl Avatar {
         }
     }
 
+    /// Set the fallback text (e.g. initials).
     pub fn fallback(mut self, text: impl Into<String>) -> Self {
         self.fallback_text = Some(text.into());
         self
     }
 
+    /// Set the size (width and height) in pixels.
     pub fn size(mut self, size: f64) -> Self {
         self.size = size;
         self
     }
 
+    /// Build the avatar view.
     pub fn build(self) -> impl IntoView {
         let size = self.size;
         let fallback = self.fallback_text.unwrap_or_default();

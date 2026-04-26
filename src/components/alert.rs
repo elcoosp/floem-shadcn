@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ``````rust
 //! use floem_shadcn::components::alert::Alert;
 //!
 //! // Default alert
@@ -35,7 +35,19 @@ pub enum AlertVariant {
     Destructive,
 }
 
-/// A styled alert builder
+/// A styled alert builder.
+///
+/// Supports default and destructive variants with optional title and description.
+///
+/// # Example
+///
+/// ``````rust
+/// use floem_shadcn::components::alert::Alert;
+///
+/// let alert = Alert::new()
+///     .title("Heads up!")
+///     .description("You can add components to your app using the cli.");
+/// ```
 pub struct Alert {
     id: ViewId,
     variant: AlertVariant,
@@ -44,7 +56,7 @@ pub struct Alert {
 }
 
 impl Alert {
-    /// Create a new alert
+    /// Create a new alert.
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
@@ -54,30 +66,29 @@ impl Alert {
         }
     }
 
-    /// Set the alert variant to destructive
+    /// Set the alert variant to destructive.
     pub fn destructive(mut self) -> Self {
         self.variant = AlertVariant::Destructive;
         self
     }
 
-    /// Set the alert title
+    /// Set the alert title.
     pub fn title(mut self, title: impl Into<String>) -> Self {
         self.title = Some(title.into());
         self
     }
 
-    /// Set the alert description
+    /// Set the alert description.
     pub fn description(mut self, description: impl Into<String>) -> Self {
         self.description = Some(description.into());
         self
     }
 
-    /// Build the alert view
+    /// Build the alert view.
     pub fn build(self) -> impl IntoView {
         let variant = self.variant;
         let mut children: Vec<Box<dyn View>> = Vec::new();
 
-        // Icon based on variant
         let icon_svg = match variant {
             AlertVariant::Default => INFO_ICON_SVG,
             AlertVariant::Destructive => ALERT_ICON_SVG,
@@ -97,7 +108,6 @@ impl Alert {
             }),
         ));
 
-        // Content container
         let mut content_children: Vec<Box<dyn View>> = Vec::new();
 
         if let Some(title) = self.title {
@@ -177,8 +187,5 @@ impl IntoView for Alert {
     }
 }
 
-// Info icon SVG
 const INFO_ICON_SVG: &str = r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>"#;
-
-// Alert triangle icon SVG
 const ALERT_ICON_SVG: &str = r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>"#;

@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::accordion::{Accordion, AccordionItem};
 //!
@@ -25,10 +25,7 @@ use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
-// ============================================================================
-// Accordion
-// ============================================================================
-
+/// Accordion container that manages single‑item expansion.
 pub struct Accordion<V> {
     id: ViewId,
     #[allow(dead_code)]
@@ -37,6 +34,7 @@ pub struct Accordion<V> {
 }
 
 impl<V: IntoView + 'static> Accordion<V> {
+    /// Create a new accordion with the given expansion state and items.
     pub fn new(expanded: RwSignal<Option<String>>, child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -65,10 +63,10 @@ impl<V: IntoView + 'static> IntoView for Accordion<V> {
     }
 }
 
-// ============================================================================
-// AccordionItem
-// ============================================================================
-
+/// A single collapsible item within an accordion.
+///
+/// Provide a unique `id`, a `title` displayed in the trigger, and the `content` that is shown
+/// when the item is expanded.
 pub struct AccordionItem {
     view_id: ViewId,
     id: String,
@@ -78,6 +76,7 @@ pub struct AccordionItem {
 }
 
 impl AccordionItem {
+    /// Create a new accordion item.
     pub fn new(
         id: impl Into<String>,
         title: impl Into<String>,
@@ -92,11 +91,13 @@ impl AccordionItem {
         }
     }
 
+    /// Connect this item to the accordion’s shared expanded‑state signal.
     pub fn expanded(mut self, signal: RwSignal<Option<String>>) -> Self {
         self.expanded_signal = Some(signal);
         self
     }
 
+    /// Build the item view (trigger + content panel).
     pub fn build(self) -> impl IntoView {
         let id = self.id.clone();
         let title = self.title.clone();

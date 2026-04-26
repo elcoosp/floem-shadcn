@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::progress::Progress;
 //!
@@ -25,7 +25,9 @@ use floem_tailwind::TailwindExt;
 
 use crate::styled::ShadcnStyleExt;
 
-/// A styled progress bar builder
+/// A styled progress bar builder.
+///
+/// Accepts a signal for 0‑100 percent value or can be indeterminate.
 pub struct Progress {
     id: ViewId,
     value: Option<RwSignal<f64>>,
@@ -33,7 +35,7 @@ pub struct Progress {
 }
 
 impl Progress {
-    /// Create a new progress bar with the given value signal (0-100)
+    /// Create a new progress bar with the given value signal (0‑100).
     pub fn new(value: RwSignal<f64>) -> Self {
         Self {
             id: ViewId::new(),
@@ -42,7 +44,7 @@ impl Progress {
         }
     }
 
-    /// Create an indeterminate progress bar (no specific value)
+    /// Create an indeterminate progress bar (no specific value).
     pub fn indeterminate() -> Self {
         Self {
             id: ViewId::new(),
@@ -51,13 +53,13 @@ impl Progress {
         }
     }
 
-    /// Set the maximum value (default: 100)
+    /// Set the maximum value (default 100).
     pub fn max(mut self, max: f64) -> Self {
         self.max = max;
         self
     }
 
-    /// Build the progress bar view
+    /// Build the progress bar view.
     pub fn build(self) -> impl IntoView {
         let value = self.value;
         let max = self.max;
@@ -71,19 +73,14 @@ impl Progress {
 
             s.h_full()
                 .width_pct(percent)
-                .rounded() // rounded = 4px
+                .rounded()
                 .transition(
                     floem::style::Width,
                     floem::style::Transition::linear(millis(200)),
                 )
                 .bg_primary()
         }))
-        .style(|s| {
-            s.w_full()
-                .h_2() // h-2 = 8px
-                .rounded()
-                .bg_muted()
-        })
+        .style(|s| s.w_full().h_2().rounded().bg_muted())
     }
 }
 

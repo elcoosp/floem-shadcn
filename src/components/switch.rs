@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::switch::Switch;
 //!
@@ -26,7 +26,9 @@ use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
-/// A styled switch (toggle) builder
+/// A styled switch (toggle) builder.
+///
+/// Supports a label and disabled state.
 pub struct Switch {
     id: ViewId,
     checked: RwSignal<bool>,
@@ -35,7 +37,7 @@ pub struct Switch {
 }
 
 impl Switch {
-    /// Create a new switch with the given checked signal
+    /// Create a new switch with the given checked signal.
     pub fn new(checked: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -45,19 +47,19 @@ impl Switch {
         }
     }
 
-    /// Set the label text
+    /// Set the label text.
     pub fn label(mut self, text: impl Into<String>) -> Self {
         self.label_text = Some(text.into());
         self
     }
 
-    /// Set the switch as disabled
+    /// Set the switch as disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
 
-    /// Build the switch view
+    /// Build the switch view.
     pub fn build(self) -> impl IntoView {
         let checked = self.checked;
         let disabled = self.disabled;
@@ -67,7 +69,7 @@ impl Switch {
             s.with_shadcn_theme(move |s, t| {
                 let is_checked = checked.get();
                 let translate_x = if is_checked { 14.0 } else { 0.0 };
-                s.size_4() // size-4 = 16px
+                s.size_4()
                     .rounded_full()
                     .background(t.background)
                     .position(floem::style::Position::Absolute)
@@ -83,8 +85,8 @@ impl Switch {
         let track = floem::views::Container::new(thumb).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 let is_checked = checked.get();
-                s.height(18.0) // h-[1.15rem]
-                    .w_8() // w-8 = 32px
+                s.height(18.0)
+                    .w_8()
                     .flex_shrink(0.0)
                     .rounded_full()
                     .border_1()

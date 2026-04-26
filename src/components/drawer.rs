@@ -1,7 +1,28 @@
 //! Drawer component with builder-style API
-//! (tailwind-enhanced – complete file)
+//!
+//! Based on shadcn/ui Drawer - a slide-out panel from the edge of the screen.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem::reactive::RwSignal;
+//! use floem_shadcn::components::drawer::{Drawer, DrawerSide, DrawerContent, DrawerTitle, DrawerDescription, DrawerFooter};
+//! use floem_shadcn::components::button::Button;
+//!
+//! let open = RwSignal::new(false);
+//!
+//! Drawer::new(open)
+//!     .side(DrawerSide::Bottom)
+//!     .content(DrawerContent::new((
+//!         DrawerTitle::new("Edit profile"),
+//!         DrawerDescription::new("Make changes to your profile here."),
+//!         DrawerFooter::new((
+//!             Button::new("Cancel").outline(),
+//!             Button::new("Save").primary(),
+//!         )),
+//!     )));
+//! ```
 
-use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
@@ -9,6 +30,9 @@ use floem::views::{Decorators, Overlay};
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+use crate::theme::ShadcnThemeExt;
+
+/// Which side the drawer slides in from.
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum DrawerSide {
     Top,
@@ -18,14 +42,16 @@ pub enum DrawerSide {
     Left,
 }
 
-// Main Drawer
+/// Drawer component – a slide‑out panel with backdrop.
 pub struct Drawer<V> {
     id: ViewId,
     is_open: RwSignal<bool>,
     side: DrawerSide,
     content: Option<V>,
 }
+
 impl Drawer<()> {
+    /// Create a new drawer controlled by the given open signal.
     pub fn new(is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -35,11 +61,14 @@ impl Drawer<()> {
         }
     }
 }
+
 impl<V> Drawer<V> {
+    /// Set the side from which the drawer appears.
     pub fn side(mut self, side: DrawerSide) -> Self {
         self.side = side;
         self
     }
+    /// Provide the drawer content.
     pub fn content<V2: IntoView + 'static>(self, content: V2) -> Drawer<V2> {
         Drawer {
             id: self.id,
@@ -49,17 +78,20 @@ impl<V> Drawer<V> {
         }
     }
 }
+
 impl<V: IntoView + 'static> HasViewId for Drawer<V> {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
+
 impl<V: IntoView + 'static> IntoView for Drawer<V> {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
     }
+
     fn into_view(self) -> Self::V {
         let is_open = self.is_open;
         let side = self.side;
@@ -151,7 +183,7 @@ impl<V: IntoView + 'static> IntoView for Drawer<V> {
     }
 }
 
-// DrawerTrigger
+/// When clicked, opens the nearest parent Drawer.
 pub struct DrawerTrigger<V> {
     id: ViewId,
     child: V,
@@ -189,7 +221,7 @@ impl<V: IntoView + 'static> IntoView for DrawerTrigger<V> {
     }
 }
 
-// DrawerContent
+/// Content container for a drawer.
 pub struct DrawerContent<V> {
     id: ViewId,
     child: V,
@@ -221,7 +253,7 @@ impl<V: IntoView + 'static> IntoView for DrawerContent<V> {
     }
 }
 
-// DrawerHeader
+/// Header section for a drawer.
 pub struct DrawerHeader<V> {
     id: ViewId,
     child: V,
@@ -253,7 +285,7 @@ impl<V: IntoView + 'static> IntoView for DrawerHeader<V> {
     }
 }
 
-// DrawerTitle
+/// Title text for a drawer.
 pub struct DrawerTitle {
     id: ViewId,
     text: String,
@@ -285,7 +317,7 @@ impl IntoView for DrawerTitle {
     }
 }
 
-// DrawerDescription
+/// Description text for a drawer.
 pub struct DrawerDescription {
     id: ViewId,
     text: String,
@@ -317,7 +349,7 @@ impl IntoView for DrawerDescription {
     }
 }
 
-// DrawerFooter
+/// Footer section for a drawer (action buttons).
 pub struct DrawerFooter<V> {
     id: ViewId,
     child: V,
@@ -349,7 +381,7 @@ impl<V: IntoView + 'static> IntoView for DrawerFooter<V> {
     }
 }
 
-// DrawerClose
+/// When clicked, closes the nearest parent Drawer.
 pub struct DrawerClose<V> {
     id: ViewId,
     child: V,
