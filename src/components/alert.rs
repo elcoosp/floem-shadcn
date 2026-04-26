@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem_shadcn::components::alert::Alert;
 //!
 //! // Default alert
@@ -20,10 +20,11 @@
 //! ```
 
 use floem::prelude::*;
-use floem::text::Weight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
+use crate::styled::ShadcnStyleExt;
 use crate::theme::ShadcnThemeExt;
 
 /// Alert variants
@@ -84,8 +85,7 @@ impl Alert {
 
         children.push(Box::new(
             floem::views::svg(move || icon_svg.to_string()).style(move |s| {
-                s.width(16.0)
-                    .height(16.0)
+                s.size_4() // w-4 h-4 = 16px
                     .flex_shrink(0.0)
                     .with_shadcn_theme(move |s, t| {
                         let color = match variant {
@@ -102,8 +102,8 @@ impl Alert {
 
         if let Some(title) = self.title {
             content_children.push(Box::new(floem::views::Label::new(title).style(move |s| {
-                s.font_size(14.0)
-                    .font_weight(Weight::MEDIUM)
+                s.text_sm() // text-sm = 14px
+                    .font_medium() // font-medium
                     .line_height(1.0)
                     .with_shadcn_theme(move |s, t| {
                         let color = match variant {
@@ -116,36 +116,33 @@ impl Alert {
         }
 
         if let Some(description) = self.description {
-            content_children.push(Box::new(floem::views::Label::new(description).style(
-                move |s| {
-                    s.font_size(14.0)
-                        .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
-                },
-            )));
+            content_children.push(Box::new(
+                floem::views::Label::new(description)
+                    .style(move |s| s.text_sm().text_muted_foreground()),
+            ));
         }
 
         children.push(Box::new(
             floem::views::Stack::vertical_from_iter(content_children)
-                .style(|s| s.gap(4.0).flex_grow(1.0)),
+                .style(|s| s.gap_1().flex_grow(1.0)),
         ));
 
         floem::views::Stack::horizontal_from_iter(children).style(move |s| {
-            s.width_full()
-                .padding(16.0)
-                .border_radius(8.0)
-                .border(1.0)
-                .gap(12.0)
+            s.w_full()
+                .p_4() // p-4 = 16px
+                .rounded_lg() // rounded-lg = 8px
+                .border_1()
+                .gap_3() // gap-3 = 12px
                 .items_start()
                 .with_shadcn_theme(move |s, t| {
                     let (bg, border_color) = match variant {
                         AlertVariant::Default => (t.background, t.border),
                         AlertVariant::Destructive => {
-                            // Subtle red background
                             let destructive_bg = peniko::Color::from_rgba8(
                                 t.destructive.to_rgba8().r,
                                 t.destructive.to_rgba8().g,
                                 t.destructive.to_rgba8().b,
-                                25, // Low alpha for subtle background
+                                25,
                             );
                             (destructive_bg, t.destructive)
                         }
@@ -170,10 +167,9 @@ impl HasViewId for Alert {
 
 impl IntoView for Alert {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
 
     fn into_view(self) -> Self::V {

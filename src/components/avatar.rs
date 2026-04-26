@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem_shadcn::components::avatar::Avatar;
 //!
 //! // Avatar with initials fallback
@@ -15,13 +15,12 @@
 //! ```
 
 use floem::prelude::*;
-use floem::text::Weight;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
-use crate::theme::ShadcnThemeExt;
+use crate::styled::ShadcnStyleExt;
 
-/// A styled avatar builder
 pub struct Avatar {
     id: ViewId,
     fallback_text: Option<String>,
@@ -29,7 +28,6 @@ pub struct Avatar {
 }
 
 impl Avatar {
-    /// Create a new avatar
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
@@ -38,37 +36,33 @@ impl Avatar {
         }
     }
 
-    /// Set the fallback text (usually initials)
     pub fn fallback(mut self, text: impl Into<String>) -> Self {
         self.fallback_text = Some(text.into());
         self
     }
 
-    /// Set the avatar size (default: 40.0)
     pub fn size(mut self, size: f64) -> Self {
         self.size = size;
         self
     }
 
-    /// Build the avatar view
     pub fn build(self) -> impl IntoView {
         let size = self.size;
         let fallback = self.fallback_text.unwrap_or_default();
         let font_size = size * 0.4;
 
-        floem::views::Container::new(floem::views::Label::new(fallback).style(move |s| {
-            s.font_size(font_size)
-                .font_weight(Weight::MEDIUM)
-                .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
-        }))
+        floem::views::Container::new(
+            floem::views::Label::new(fallback)
+                .style(move |s| s.font_size(font_size).font_medium().text_muted_foreground()),
+        )
         .style(move |s| {
             s.width(size)
                 .height(size)
-                .border_radius(size / 2.0) // Circular
-                .display(floem::style::Display::Flex)
+                .rounded_full()
+                .flex()
                 .items_center()
                 .justify_center()
-                .with_shadcn_theme(|s, t| s.background(t.muted))
+                .bg_muted()
         })
     }
 }
@@ -87,12 +81,10 @@ impl HasViewId for Avatar {
 
 impl IntoView for Avatar {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
     }

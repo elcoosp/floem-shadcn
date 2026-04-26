@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::progress::Progress;
 //!
@@ -21,8 +21,9 @@ use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet};
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
-use crate::theme::ShadcnThemeExt;
+use crate::styled::ShadcnStyleExt;
 
 /// A styled progress bar builder
 pub struct Progress {
@@ -61,33 +62,27 @@ impl Progress {
         let value = self.value;
         let max = self.max;
 
-        // The track (background)
+        floem::views::Container::new(floem::views::Empty::new().style(move |s| {
+            let percent = if let Some(v) = value {
+                ((v.get() / max) * 100.0).clamp(0.0, 100.0)
+            } else {
+                30.0
+            };
 
-        floem::views::Container::new(
-            // The indicator (foreground)
-            floem::views::Empty::new().style(move |s| {
-                let percent = if let Some(v) = value {
-                    ((v.get() / max) * 100.0).clamp(0.0, 100.0)
-                } else {
-                    // Indeterminate - show 30% width
-                    30.0
-                };
-
-                s.height_full()
-                    .width_pct(percent)
-                    .border_radius(4.0)
-                    .transition(
-                        floem::style::Width,
-                        floem::style::Transition::linear(millis(200)),
-                    )
-                    .with_shadcn_theme(|s, t| s.background(t.primary))
-            }),
-        )
+            s.h_full()
+                .width_pct(percent)
+                .rounded() // rounded = 4px
+                .transition(
+                    floem::style::Width,
+                    floem::style::Transition::linear(millis(200)),
+                )
+                .bg_primary()
+        }))
         .style(|s| {
-            s.width_full()
-                .height(8.0)
-                .border_radius(4.0)
-                .with_shadcn_theme(|s, t| s.background(t.muted))
+            s.w_full()
+                .h_2() // h-2 = 8px
+                .rounded()
+                .bg_muted()
         })
     }
 }
@@ -100,10 +95,9 @@ impl HasViewId for Progress {
 
 impl IntoView for Progress {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
 
     fn into_view(self) -> Self::V {

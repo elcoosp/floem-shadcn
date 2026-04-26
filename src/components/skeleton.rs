@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem_shadcn::components::skeleton::Skeleton;
 //!
 //! // Basic skeleton
@@ -17,13 +17,12 @@
 //! let skeleton = Skeleton::text();
 //! ```
 
+use crate::styled::ShadcnStyleExt;
 use floem::prelude::*;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
-use crate::theme::ShadcnThemeExt;
-
-/// A styled skeleton (loading placeholder) builder
 pub struct Skeleton {
     id: ViewId,
     width: Option<f64>,
@@ -32,7 +31,6 @@ pub struct Skeleton {
 }
 
 impl Skeleton {
-    /// Create a new skeleton
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
@@ -41,8 +39,6 @@ impl Skeleton {
             border_radius: None,
         }
     }
-
-    /// Create a text-line skeleton (full width, standard text height)
     pub fn text() -> Self {
         Self {
             id: ViewId::new(),
@@ -51,26 +47,18 @@ impl Skeleton {
             border_radius: Some(4.0),
         }
     }
-
-    /// Set the width
     pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
         self
     }
-
-    /// Set the height
     pub fn height(mut self, height: f64) -> Self {
         self.height = Some(height);
         self
     }
-
-    /// Set the border radius
     pub fn radius(mut self, radius: f64) -> Self {
         self.border_radius = Some(radius);
         self
     }
-
-    /// Make a circular skeleton (for avatar placeholders)
     pub fn circle(mut self, size: f64) -> Self {
         self.width = Some(size);
         self.height = Some(size);
@@ -78,28 +66,24 @@ impl Skeleton {
         self
     }
 
-    /// Build the skeleton view
     pub fn build(self) -> impl IntoView {
         let width = self.width;
         let height = self.height;
-        let border_radius = self.border_radius.unwrap_or(4.0);
+        let _border_radius = self.border_radius.unwrap_or(4.0);
 
         floem::views::Empty::new().style(move |s| {
-            let mut style = s.border_radius(border_radius);
-
+            let mut style = s.rounded_sm();
             if let Some(w) = width {
                 style = style.width(w);
             } else {
-                style = style.width_full();
+                style = style.w_full();
             }
-
             if let Some(h) = height {
                 style = style.height(h);
             } else {
-                style = style.height(20.0);
+                style = style.h_5();
             }
-
-            style.with_shadcn_theme(|s, t| s.background(t.muted))
+            style.bg_muted()
         })
     }
 }
@@ -109,21 +93,17 @@ impl Default for Skeleton {
         Self::new()
     }
 }
-
 impl HasViewId for Skeleton {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl IntoView for Skeleton {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
     }

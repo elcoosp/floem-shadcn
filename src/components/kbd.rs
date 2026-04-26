@@ -1,0 +1,67 @@
+use crate::theme::ShadcnThemeExt;
+use floem::prelude::*;
+use floem::views::Decorators;
+use floem::{HasViewId, ViewId};
+pub struct Kbd {
+    id: ViewId,
+    key: String,
+}
+impl Kbd {
+    pub fn new(k: impl Into<String>) -> Self {
+        Self {
+            id: ViewId::new(),
+            key: k.into(),
+        }
+    }
+}
+impl HasViewId for Kbd {
+    fn view_id(&self) -> ViewId {
+        self.id
+    }
+}
+impl IntoView for Kbd {
+    type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
+    fn into_view(self) -> Self::V {
+        Box::new(floem::views::Label::new(self.key).style(|s| {
+            s.with_shadcn_theme(|s, t| {
+                s.padding_left(4.0)
+                    .padding_right(4.0)
+                    .padding_top(2.0)
+                    .padding_bottom(2.0)
+                    .font_size(11.0)
+                    .background(t.muted)
+                    .color(t.muted_foreground)
+                    .border(1.0)
+                    .border_color(t.border)
+                    .border_radius(t.radius_sm)
+                    .line_height(1.0)
+            })
+        }))
+    }
+}
+pub struct KbdGroup;
+impl KbdGroup {
+    #[allow(dead_code)]
+    pub fn new(_: Vec<String>) -> Self {
+        Self
+    }
+}
+impl HasViewId for KbdGroup {
+    fn view_id(&self) -> ViewId {
+        ViewId::new()
+    }
+}
+impl IntoView for KbdGroup {
+    type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
+    fn into_view(self) -> Self::V {
+        Box::new(floem::views::Empty::new())
+    }
+}

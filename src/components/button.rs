@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem_shadcn::components::button::Button;
 //!
 //! // Default button
@@ -148,10 +148,9 @@ impl<V: IntoView + 'static> HasViewId for Button<V> {
 
 impl<V: IntoView + 'static> IntoView for Button<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
 
     fn into_view(self) -> Self::V {
@@ -165,13 +164,8 @@ fn build_button_style(s: Style, size: ButtonSize, variant: ButtonVariant) -> Sty
         .flex()
         .items_center()
         .justify_center()
-        // Prevent button from stretching:
-        // - self_center: prevents cross-axis stretching (e.g., width in vertical Stack)
-        // - flex_grow(0): prevents main-axis stretching (e.g., width in horizontal Stack with wrap)
-        .self_center()
         .flex_grow(0.0)
-        .cursor_pointer()
-        .font_medium()
+        .cursor(floem::style::CursorStyle::Pointer)
         .transition(
             floem::style::Background,
             floem::style::Transition::linear(millis(100)),
@@ -181,12 +175,12 @@ fn build_button_style(s: Style, size: ButtonSize, variant: ButtonVariant) -> Sty
             floem::style::Transition::linear(millis(100)),
         );
 
-    // Size styles using floem-tailwind
+    // Size styles with Tailwind methods and font-medium
     let s = match size {
-        ButtonSize::Sm => s.h_9().px_3().rounded_md().text_xs(),
-        ButtonSize::Default => s.h_10().px_4().py_2().rounded_md().text_sm(),
-        ButtonSize::Lg => s.h_11().px_8().rounded_md().text_sm(),
-        ButtonSize::Icon => s.h_10().w_10().rounded_md(),
+        ButtonSize::Sm => s.h_9().px_3().rounded_md().text_xs().font_medium(),
+        ButtonSize::Default => s.h_10().px_4().py_2().rounded_md().text_sm().font_medium(),
+        ButtonSize::Lg => s.h_11().px_8().rounded_md().text_sm().font_medium(),
+        ButtonSize::Icon => s.h_10().w_10().rounded_md().font_medium(),
     };
 
     // Theme-dependent styles (variant colors + hover + active)
@@ -235,7 +229,6 @@ fn apply_variant_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Sty
 }
 
 fn apply_hover_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Style {
-    // shadcn/ui uses opacity for hover: primary/90, destructive/90, secondary/80
     let hover_primary = with_alpha(t.primary, 0.9);
     let hover_destructive = with_alpha(t.destructive, 0.9);
     let hover_secondary = with_alpha(t.secondary, 0.8);
@@ -253,7 +246,6 @@ fn apply_hover_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Style
 }
 
 fn apply_active_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Style {
-    // Active states: slightly more pronounced than hover
     let active_primary = with_alpha(t.primary, 0.8);
     let active_destructive = with_alpha(t.destructive, 0.8);
     let active_secondary = with_alpha(t.secondary, 0.7);

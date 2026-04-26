@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem_shadcn::components::badge::Badge;
 //!
 //! // Default badge
@@ -93,10 +93,9 @@ impl<V: IntoView + 'static> HasViewId for Badge<V> {
 
 impl<V: IntoView + 'static> IntoView for Badge<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
 
     fn into_view(self) -> Self::V {
@@ -105,16 +104,15 @@ impl<V: IntoView + 'static> IntoView for Badge<V> {
 }
 
 fn build_badge_style(s: Style, variant: BadgeVariant) -> Style {
-    // Base styles using floem-tailwind
-    // Use rounded_xl (12px) for pill shape - half the badge height (~22px)
+    // Base styles using floem-tailwind utilities
     let s = s
         .flex()
         .items_center()
-        .rounded_full() // 12px radius for pill shape
+        .rounded_full()
         .border_1()
-        .px_2() // 8px horizontal padding
-        .py_0p5() // 2px vertical padding
-        .text_xs() // 12px font size
+        .px_2()
+        .py_0p5()
+        .text_xs()
         .font_medium()
         .transition(
             floem::style::Background,

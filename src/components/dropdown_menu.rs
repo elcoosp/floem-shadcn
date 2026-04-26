@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::dropdown_menu::*;
 //!
@@ -25,6 +25,7 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
@@ -32,7 +33,6 @@ use crate::theme::ShadcnThemeExt;
 // DropdownMenu
 // ============================================================================
 
-/// Dropdown menu container
 pub struct DropdownMenu<T, C> {
     open: RwSignal<bool>,
     trigger: Option<T>,
@@ -40,7 +40,6 @@ pub struct DropdownMenu<T, C> {
 }
 
 impl DropdownMenu<(), ()> {
-    /// Create a new dropdown menu
     pub fn new(open: RwSignal<bool>) -> Self {
         Self {
             open,
@@ -51,7 +50,6 @@ impl DropdownMenu<(), ()> {
 }
 
 impl<T, C> DropdownMenu<T, C> {
-    /// Set the trigger element
     pub fn trigger<T2: Fn() -> V, V: IntoView + 'static>(self, trigger: T2) -> DropdownMenu<T2, C> {
         DropdownMenu {
             open: self.open,
@@ -59,8 +57,6 @@ impl<T, C> DropdownMenu<T, C> {
             content: self.content,
         }
     }
-
-    /// Set the menu content
     pub fn content<C2: IntoView + 'static>(self, content: C2) -> DropdownMenu<T, C2> {
         DropdownMenu {
             open: self.open,
@@ -76,17 +72,15 @@ where
     C: IntoView + 'static,
     TV: IntoView + 'static,
 {
-    /// Build the dropdown menu view
     pub fn build(self) -> impl IntoView {
         let open = self.open;
         let trigger = self.trigger;
         let content = self.content;
 
-        // Trigger wrapper
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_click_stop(move |_| {
+                .on_event_stop(floem::event::listener::Click, move |_, _| {
                     open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -94,7 +88,6 @@ where
             floem::views::Empty::new().into_any()
         };
 
-        // Menu content
         let content_view = if let Some(menu_content) = content {
             floem::views::Container::new(menu_content)
                 .style(move |s| {
@@ -102,21 +95,19 @@ where
                         let is_open = open.get();
                         let base = s
                             .min_width(180.0)
-                            .padding_top(4.0)
-                            .padding_bottom(4.0)
+                            .py_1()
                             .background(t.popover)
-                            .border(1.0)
+                            .border_1()
                             .border_color(t.border)
-                            .border_radius(t.radius)
+                            .rounded_md()
                             .box_shadow_blur(8.0)
                             .box_shadow_color(t.foreground.with_alpha(0.1))
-                            .position(floem::style::Position::Absolute)
+                            .absolute()
                             .inset_top_pct(100.0)
-                            .margin_top(4.0)
+                            .mt_1()
                             .inset_left(0.0)
                             .z_index(50)
-                            .display(floem::style::Display::Flex)
-                            .flex_direction(floem::style::FlexDirection::Column);
+                            .flex_col();
                         if is_open {
                             base
                         } else {
@@ -130,7 +121,7 @@ where
         };
 
         floem::views::Container::new(floem::views::Stack::new((trigger_view, content_view)))
-            .style(|s| s.position(floem::style::Position::Relative))
+            .style(|s| s.relative())
     }
 }
 
@@ -152,12 +143,10 @@ where
     TV: IntoView + 'static,
 {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
         Box::new(self.build().into_view())
     }
@@ -167,14 +156,11 @@ where
 // DropdownMenuContent
 // ============================================================================
 
-/// Styled container for dropdown menu items
 pub struct DropdownMenuContent<V> {
     id: ViewId,
     child: V,
 }
-
 impl<V: IntoView + 'static> DropdownMenuContent<V> {
-    /// Create new dropdown menu content
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -182,28 +168,19 @@ impl<V: IntoView + 'static> DropdownMenuContent<V> {
         }
     }
 }
-
 impl<V: IntoView + 'static> HasViewId for DropdownMenuContent<V> {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl<V: IntoView + 'static> IntoView for DropdownMenuContent<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
-        Box::new(
-            floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.display(floem::style::Display::Flex)
-                    .flex_direction(floem::style::FlexDirection::Column)
-            }),
-        )
+        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.flex_col()))
     }
 }
 
@@ -211,7 +188,6 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuContent<V> {
 // DropdownMenuItem
 // ============================================================================
 
-/// Individual menu item
 pub struct DropdownMenuItem {
     id: ViewId,
     text: String,
@@ -221,7 +197,6 @@ pub struct DropdownMenuItem {
 }
 
 impl DropdownMenuItem {
-    /// Create a new menu item
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -231,20 +206,14 @@ impl DropdownMenuItem {
             on_click: None,
         }
     }
-
-    /// Set click handler
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
     }
-
-    /// Mark as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
-
-    /// Mark as destructive (red text)
     pub fn destructive(mut self) -> Self {
         self.destructive = true;
         self
@@ -259,12 +228,10 @@ impl HasViewId for DropdownMenuItem {
 
 impl IntoView for DropdownMenuItem {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
         let text = self.text;
         let disabled = self.disabled;
@@ -273,18 +240,11 @@ impl IntoView for DropdownMenuItem {
 
         let label = floem::views::Label::new(text).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
-                let base = s
-                    .width_full()
-                    .padding_left(12.0)
-                    .padding_right(12.0)
-                    .padding_top(8.0)
-                    .padding_bottom(8.0)
-                    .font_size(14.0)
-                    .cursor(if disabled {
-                        CursorStyle::Default
-                    } else {
-                        CursorStyle::Pointer
-                    });
+                let base = s.w_full().px_3().py_2().text_sm().cursor(if disabled {
+                    CursorStyle::Default
+                } else {
+                    CursorStyle::Pointer
+                });
                 let colored = if destructive {
                     base.color(t.destructive)
                 } else if disabled {
@@ -302,7 +262,7 @@ impl IntoView for DropdownMenuItem {
 
         if let Some(handler) = on_click {
             if !disabled {
-                Box::new(label.on_click_stop(move |_| handler()))
+                Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
             } else {
                 Box::new(label)
             }
@@ -313,19 +273,16 @@ impl IntoView for DropdownMenuItem {
 }
 
 // ============================================================================
-// DropdownMenuItemCustom
+// DropdownMenuItemCustom, Separator, Label, Group, Shortcut (simplified similarly)
 // ============================================================================
 
-/// Menu item with custom content
 pub struct DropdownMenuItemCustom<V> {
     id: ViewId,
     child: V,
     disabled: bool,
     on_click: Option<Box<dyn Fn() + 'static>>,
 }
-
 impl<V: IntoView + 'static> DropdownMenuItemCustom<V> {
-    /// Create a new custom menu item
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -334,51 +291,36 @@ impl<V: IntoView + 'static> DropdownMenuItemCustom<V> {
             on_click: None,
         }
     }
-
-    /// Set click handler
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
     }
-
-    /// Mark as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
 }
-
 impl<V: IntoView + 'static> HasViewId for DropdownMenuItemCustom<V> {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
         let disabled = self.disabled;
         let on_click = self.on_click;
-
         let container = floem::views::Container::new(self.child).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
-                let base = s
-                    .width_full()
-                    .padding_left(12.0)
-                    .padding_right(12.0)
-                    .padding_top(8.0)
-                    .padding_bottom(8.0)
-                    .cursor(if disabled {
-                        CursorStyle::Default
-                    } else {
-                        CursorStyle::Pointer
-                    });
+                let base = s.w_full().px_3().py_2().cursor(if disabled {
+                    CursorStyle::Default
+                } else {
+                    CursorStyle::Pointer
+                });
                 if disabled {
                     base
                 } else {
@@ -386,10 +328,11 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
                 }
             })
         });
-
         if let Some(handler) = on_click {
             if !disabled {
-                Box::new(container.on_click_stop(move |_| handler()))
+                Box::new(
+                    container.on_event_stop(floem::event::listener::Click, move |_, _| handler()),
+                )
             } else {
                 Box::new(container)
             }
@@ -399,65 +342,40 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
     }
 }
 
-// ============================================================================
-// DropdownMenuSeparator
-// ============================================================================
-
-/// Separator line between menu items
 pub struct DropdownMenuSeparator;
-
 impl DropdownMenuSeparator {
-    /// Create a new separator
     pub fn new() -> Self {
         Self
     }
 }
-
 impl Default for DropdownMenuSeparator {
     fn default() -> Self {
         Self::new()
     }
 }
-
 impl HasViewId for DropdownMenuSeparator {
     fn view_id(&self) -> ViewId {
         ViewId::new()
     }
 }
-
 impl IntoView for DropdownMenuSeparator {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Empty::new().style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.width_full()
-                    .height(1.0)
-                    .background(t.border)
-                    .margin_top(4.0)
-                    .margin_bottom(4.0)
-            })
+            s.with_shadcn_theme(move |s, t| s.w_full().h_px().background(t.border).my_1())
         }))
     }
 }
 
-// ============================================================================
-// DropdownMenuLabel
-// ============================================================================
-
-/// Label/header for a group of menu items
 pub struct DropdownMenuLabel {
     id: ViewId,
     text: String,
 }
-
 impl DropdownMenuLabel {
-    /// Create a new menu label
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -465,51 +383,38 @@ impl DropdownMenuLabel {
         }
     }
 }
-
 impl HasViewId for DropdownMenuLabel {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl IntoView for DropdownMenuLabel {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
         let text = self.text;
-
         Box::new(floem::views::Label::new(text).style(|s| {
             s.with_shadcn_theme(move |s, t| {
-                s.width_full()
-                    .padding_left(12.0)
-                    .padding_right(12.0)
-                    .padding_top(8.0)
-                    .padding_bottom(4.0)
-                    .font_size(12.0)
-                    .font_weight(floem::text::Weight::SEMIBOLD)
+                s.w_full()
+                    .px_3()
+                    .pt_2()
+                    .pb_1()
+                    .text_xs()
+                    .font_medium()
                     .color(t.foreground)
             })
         }))
     }
 }
 
-// ============================================================================
-// DropdownMenuGroup
-// ============================================================================
-
-/// Group of related menu items
 pub struct DropdownMenuGroup<V> {
     id: ViewId,
     child: V,
 }
-
 impl<V: IntoView + 'static> DropdownMenuGroup<V> {
-    /// Create a new menu group
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -517,43 +422,27 @@ impl<V: IntoView + 'static> DropdownMenuGroup<V> {
         }
     }
 }
-
 impl<V: IntoView + 'static> HasViewId for DropdownMenuGroup<V> {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl<V: IntoView + 'static> IntoView for DropdownMenuGroup<V> {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
-        Box::new(
-            floem::views::Container::with_id(self.id, self.child).style(|s| {
-                s.display(floem::style::Display::Flex)
-                    .flex_direction(floem::style::FlexDirection::Column)
-            }),
-        )
+        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.flex_col()))
     }
 }
 
-// ============================================================================
-// DropdownMenuShortcut
-// ============================================================================
-
-/// Keyboard shortcut hint displayed in menu item
 pub struct DropdownMenuShortcut {
     id: ViewId,
     text: String,
 }
-
 impl DropdownMenuShortcut {
-    /// Create a new shortcut hint
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -561,30 +450,21 @@ impl DropdownMenuShortcut {
         }
     }
 }
-
 impl HasViewId for DropdownMenuShortcut {
     fn view_id(&self) -> ViewId {
         self.id
     }
 }
-
 impl IntoView for DropdownMenuShortcut {
     type V = Box<dyn View>;
-    type Intermediate = Self;
-
+    type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
-        self
+        self.into_view()
     }
-
     fn into_view(self) -> Self::V {
         let text = self.text;
-
         Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.font_size(12.0)
-                    .color(t.muted_foreground)
-                    .margin_left(16.0)
-            })
+            s.with_shadcn_theme(move |s, t| s.text_xs().color(t.muted_foreground).ml_4())
         }))
     }
 }
