@@ -1,81 +1,112 @@
 //! Shared keymap types and builder for text editing components.
-//!
-//! This module provides common types and utilities used by both TextInput and TextArea.
 
 use std::collections::HashMap;
 
 use floem_editor_core::command::{EditCommand, MoveCommand};
 use ui_events::keyboard::{Key, Modifiers, NamedKey};
 
-/// Cursor blink interval in milliseconds
 pub const CURSOR_BLINK_INTERVAL_MS: u64 = 500;
 
-/// A command that can be executed on a text editor
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Command {
     Edit(EditCommand),
     Move(MoveCommand),
-    /// Select all text
     SelectAll,
-    /// Copy selected text to clipboard
     Copy,
-    /// Cut selected text to clipboard
     Cut,
-    /// Paste text from clipboard
     Paste,
 }
 
-/// A key press with modifiers
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct KeyPress {
     pub key: Key,
     pub modifiers: Modifiers,
 }
 
-/// Builder for creating keymaps with various binding sets.
 pub struct KeymapBuilder {
     keymaps: HashMap<KeyPress, Command>,
 }
 
 impl KeymapBuilder {
-    /// Create a new empty keymap builder.
-    pub fn new() -> Self {
-        Self {
-            keymaps: HashMap::new(),
-        }
-    }
-
-    /// Add common bindings shared by all text editors.
+    pub fn new() -> Self { Self { keymaps: HashMap::new() } }
     pub fn with_common_bindings(mut self) -> Self {
-        #[cfg(target_os = "macos")]
-        let cmd_or_ctrl = Modifiers::META;
-        #[cfg(not(target_os = "macos"))]
-        let cmd_or_ctrl = Modifiers::CONTROL;
+        #[cfg(target_os = "macos")] let cmd_or_ctrl = Modifiers::META;
+        #[cfg(not(target_os = "macos"))] let cmd_or_ctrl = Modifiers::CONTROL;
 
-        // Basic navigation
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowLeft), modifiers: Modifiers::default() }, Command::Move(MoveCommand::Left));
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowRight), modifiers: Modifiers::default() }, Command::Move(MoveCommand::Right));
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowLeft), modifiers: Modifiers::ALT }, Command::Move(MoveCommand::WordBackward));
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowRight), modifiers: Modifiers::ALT }, Command::Move(MoveCommand::WordForward));
+        #[cfg(not(target_os = "macos"))]
+        {
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowLeft), modifiers: Modifiers::CONTROL }, Command::Move(MoveCommand::WordBackward));
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowRight), modifiers: Modifiers::CONTROL }, Command::Move(MoveCommand::WordForward));
+        }
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Backspace), modifiers: Modifiers::default() }, Command::Edit(EditCommand::DeleteBackward));
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Delete), modifiers: Modifiers::default() }, Command::Edit(EditCommand::DeleteForward));
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Backspace), modifiers: Modifiers::ALT }, Command::Edit(EditCommand::DeleteWordBackward));
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Delete), modifiers: Modifiers::ALT }, Command::Edit(EditCommand::DeleteWordForward));
+        #[cfg(not(target_os = "macos"))]
+        {
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Backspace), modifiers: Modifiers::CONTROL }, Command::Edit(EditCommand::DeleteWordBackward));
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Delete), modifiers: Modifiers::CONTROL }, Command::Edit(EditCommand::DeleteWordForward));
+        }
+        #[cfg(target_os = "macos")]
+        self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Backspace), modifiers: Modifiers::META }, Command::Edit(EditCommand::DeleteToBeginningOfLine));
         self.keymaps.insert(KeyPress { key: Key::Character("a".into()), modifiers: cmd_or_ctrl }, Command::SelectAll);
         self.keymaps.insert(KeyPress { key: Key::Character("c".into()), modifiers: cmd_or_ctrl }, Command::Copy);
         self.keymaps.insert(KeyPress { key: Key::Character("x".into()), modifiers: cmd_or_ctrl }, Command::Cut);
         self.keymaps.insert(KeyPress { key: Key::Character("v".into()), modifiers: cmd_or_ctrl }, Command::Paste);
         self
     }
-
     pub fn with_single_line_bindings(mut self) -> Self {
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Home), modifiers: Modifiers::default() }, Command::Move(MoveCommand::DocumentStart));
         self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::End), modifiers: Modifiers::default() }, Command::Move(MoveCommand::DocumentEnd));
+        #[cfg(target_os = "macos")]
+        {
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowLeft), modifiers: Modifiers::META }, Command::Move(MoveCommand::DocumentStart));
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowRight), modifiers: Modifiers::META }, Command::Move(MoveCommand::DocumentEnd));
+        }
         self
     }
-
-    pub fn with_multi_line_bindings(mut self) -> Self { self }
-    pub fn with_emacs_bindings(self, _ml: bool) -> Self { self }
+    pub fn with_multi_line_bindings(mut self) -> Self {
+        self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowUp), modifiers: Modifiers::default() }, Command::Move(MoveCommand::Up));
+        self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowDown), modifiers: Modifiers::default() }, Command::Move(MoveCommand::Down));
+        self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Home), modifiers: Modifiers::default() }, Command::Move(MoveCommand::LineStart));
+        self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::End), modifiers: Modifiers::default() }, Command::Move(MoveCommand::LineEnd));
+        #[cfg(target_os = "macos")]
+        {
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowLeft), modifiers: Modifiers::META }, Command::Move(MoveCommand::LineStart));
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowRight), modifiers: Modifiers::META }, Command::Move(MoveCommand::LineEnd));
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowUp), modifiers: Modifiers::META }, Command::Move(MoveCommand::DocumentStart));
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::ArrowDown), modifiers: Modifiers::META }, Command::Move(MoveCommand::DocumentEnd));
+        }
+        #[cfg(not(target_os = "macos"))]
+        {
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Home), modifiers: Modifiers::CONTROL }, Command::Move(MoveCommand::DocumentStart));
+            self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::End), modifiers: Modifiers::CONTROL }, Command::Move(MoveCommand::DocumentEnd));
+        }
+        self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Enter), modifiers: Modifiers::default() }, Command::Edit(EditCommand::InsertNewLine));
+        self.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Tab), modifiers: Modifiers::default() }, Command::Edit(EditCommand::InsertTab));
+        self
+    }
+    #[cfg(any(target_os = "macos", target_os = "linux"))]
+    pub fn with_emacs_bindings(mut self, multiline: bool) -> Self {
+        self.keymaps.insert(KeyPress { key: Key::Character("h".into()), modifiers: Modifiers::CONTROL }, Command::Edit(EditCommand::DeleteBackward));
+        self.keymaps.insert(KeyPress { key: Key::Character("d".into()), modifiers: Modifiers::CONTROL }, Command::Edit(EditCommand::DeleteForward));
+        self.keymaps.insert(KeyPress { key: Key::Character("a".into()), modifiers: Modifiers::CONTROL }, Command::Move(if multiline { MoveCommand::LineStart } else { MoveCommand::DocumentStart }));
+        self.keymaps.insert(KeyPress { key: Key::Character("e".into()), modifiers: Modifiers::CONTROL }, Command::Move(if multiline { MoveCommand::LineEnd } else { MoveCommand::DocumentEnd }));
+        self.keymaps.insert(KeyPress { key: Key::Character("f".into()), modifiers: Modifiers::CONTROL }, Command::Move(MoveCommand::Right));
+        self.keymaps.insert(KeyPress { key: Key::Character("b".into()), modifiers: Modifiers::CONTROL }, Command::Move(MoveCommand::Left));
+        self.keymaps.insert(KeyPress { key: Key::Character("k".into()), modifiers: Modifiers::CONTROL }, Command::Edit(EditCommand::DeleteToEndOfLine));
+        if multiline {
+            self.keymaps.insert(KeyPress { key: Key::Character("n".into()), modifiers: Modifiers::CONTROL }, Command::Move(MoveCommand::Down));
+            self.keymaps.insert(KeyPress { key: Key::Character("p".into()), modifiers: Modifiers::CONTROL }, Command::Move(MoveCommand::Up));
+        }
+        self
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "linux")))]
+    pub fn with_emacs_bindings(self, _multiline: bool) -> Self { self }
     pub fn build(self) -> Keymap { Keymap { keymaps: self.keymaps } }
 }
 
@@ -87,9 +118,21 @@ impl Keymap {
     pub fn single_line() -> Self {
         KeymapBuilder::new().with_common_bindings().with_single_line_bindings().with_emacs_bindings(false).build()
     }
-    pub fn multi_line() -> Self { todo!() }
-    pub fn chat_mode() -> Self { todo!() }
-    pub fn get(&self, key: &Key, mods: &Modifiers) -> Option<&Command> {
-        self.keymaps.get(&KeyPress { key: key.clone(), modifiers: *mods })
+    pub fn multi_line() -> Self {
+        KeymapBuilder::new().with_common_bindings().with_multi_line_bindings().with_emacs_bindings(true).build()
+    }
+    pub fn chat_mode() -> Self {
+        let mut keymap = KeymapBuilder::new().with_common_bindings().with_multi_line_bindings().with_emacs_bindings(true).build();
+        keymap.keymaps.remove(&KeyPress { key: Key::Named(NamedKey::Enter), modifiers: Modifiers::default() });
+        keymap.keymaps.insert(KeyPress { key: Key::Named(NamedKey::Enter), modifiers: Modifiers::SHIFT }, Command::Edit(EditCommand::InsertNewLine));
+        keymap
+    }
+    pub fn get(&self, key: &Key, modifiers: &Modifiers) -> Option<&Command> {
+        let keypress = KeyPress { key: key.clone(), modifiers: *modifiers };
+        self.keymaps.get(&keypress).or_else(|| {
+            let mut modified = keypress.clone();
+            modified.modifiers.set(Modifiers::SHIFT, false);
+            self.keymaps.get(&modified)
+        })
     }
 }

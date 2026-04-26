@@ -21,7 +21,7 @@
 
 pub mod components;
 pub mod styled;
-// pub mod text; // removed: use floem built-in views
+pub mod text; // removed: use floem built-in views
 pub mod theme;
 
 pub mod prelude {
