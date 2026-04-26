@@ -1,3 +1,26 @@
+//! Command palette component with builder-style API
+//!
+//! Based on shadcn/ui Command - a command palette for quick actions and search.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem::reactive::RwSignal;
+//! use floem_shadcn::components::command::*;
+//!
+//! let search = RwSignal::new(String::new());
+//!
+//! Command::new(search)
+//!     .placeholder("Type a command or search...")
+//!     .child(
+//!         CommandList::new()
+//!             .child(
+//!                 CommandGroup::new("Suggestions")
+//!                     .child(CommandItem::new("calendar", "Calendar"))
+//!                     .child(CommandItem::new("search", "Search Emoji"))
+//!             )
+//!     );
+//! ```
 #[allow(dead_code)]
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;

@@ -1,3 +1,21 @@
+//! Slider component with builder-style API
+//!
+//! Based on shadcn/ui Slider - a range input for selecting values.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem::reactive::RwSignal;
+//! use floem_shadcn::components::slider::Slider;
+//!
+//! let value = RwSignal::new(50.0);
+//!
+//! // Basic slider (0-100)
+//! let slider = Slider::new(value);
+//!
+//! // Custom range
+//! let slider = Slider::new(value).min(0.0).max(200.0);
+//! ```
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};

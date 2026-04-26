@@ -1,3 +1,16 @@
+//! Hover Card component with builder-style API
+//!
+//! Based on shadcn/ui Hover Card - displays rich content on hover.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem_shadcn::components::hover_card::HoverCard;
+//!
+//! HoverCard::new()
+//!     .trigger(|| label(|| "Hover me"))
+//!     .content(|| label(|| "Card content"));
+//! ```
 use crate::theme::ShadcnThemeExt;
 /// Hover Card component with builder-style API
 /// (tailwind-enhanced – complete file)

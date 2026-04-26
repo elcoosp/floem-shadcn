@@ -1,3 +1,26 @@
+//! Input component with builder-style API
+//!
+//! Based on shadcn/ui Input component with styled text input.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem::reactive::RwSignal;
+//! use floem_shadcn::components::input::Input;
+//!
+//! let text = RwSignal::new(String::new());
+//!
+//! // Basic input with reactive value
+//! let input = Input::new()
+//!     .value(move || text.get())
+//!     .on_update(move |s| text.set(s.to_string()));
+//!
+//! // With placeholder
+//! let input = Input::new().placeholder("Enter your email");
+//!
+//! // With initial text
+//! let input = Input::with_text("Hello");
+//! ```
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::{Effect, RwSignal, SignalGet, SignalUpdate};

@@ -1,3 +1,31 @@
+//! Combobox component with builder-style API
+//!
+//! Based on shadcn/ui Combobox - autocomplete/searchable select.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem::reactive::RwSignal;
+//! use floem::view::ParentView;
+//! use floem_shadcn::components::combobox::*;
+//!
+//! let selected = RwSignal::new(None::<String>);
+//! let search = RwSignal::new(String::new());
+//!
+//! Combobox::new(selected, search)
+//!     .child(ComboboxTrigger::new("Select framework..."))
+//!     .child(
+//!         ComboboxContent::new()
+//!             .child(ComboboxInput::new())
+//!             .child(
+//!                 ComboboxList::new()
+//!                     .child(ComboboxItem::new("next", "Next.js"))
+//!                     .child(ComboboxItem::new("sveltekit", "SvelteKit"))
+//!                     .child(ComboboxItem::new("nuxt", "Nuxt.js")),
+//!             )
+//!             .child(ComboboxEmpty::new("No results found.")),
+//!     );
+//! ```
 use crate::theme::ShadcnThemeExt;
 use floem::context::LayoutChanged;
 use floem::prelude::*;

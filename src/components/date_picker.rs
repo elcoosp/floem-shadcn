@@ -1,3 +1,19 @@
+//! Date Picker component with builder-style API
+//!
+//! Based on shadcn/ui Date Picker - a date selection component with calendar popup.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem::reactive::RwSignal;
+//! use floem_shadcn::components::date_picker::DatePicker;
+//! use floem_shadcn::components::calendar::SimpleDate;
+//!
+//! let selected = RwSignal::new(None::<SimpleDate>);
+//!
+//! DatePicker::new(selected)
+//!     .placeholder("Select a date...");
+//! ```
 use crate::components::calendar::SimpleDate;
 use crate::theme::ShadcnThemeExt;
 use floem::context::LayoutChanged;

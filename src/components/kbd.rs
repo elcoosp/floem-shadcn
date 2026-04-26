@@ -1,3 +1,14 @@
+//! Kbd component – keyboard shortcut indicator
+//!
+//! Based on shadcn/ui Kbd.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem_shadcn::components::kbd::Kbd;
+//!
+//! let shortcut = Kbd::new("⌘K");
+//! ```
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::views::Decorators;

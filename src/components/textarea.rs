@@ -1,3 +1,21 @@
+//! Textarea component with builder-style API
+//!
+//! Based on shadcn/ui Textarea - a multi-line text input.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem_shadcn::components::textarea::Textarea;
+//!
+//! // Basic textarea
+//! let textarea = Textarea::new("Initial text");
+//!
+//! // With placeholder, rows, and change handler
+//! let textarea = Textarea::new("")
+//!     .placeholder("Enter your message...")
+//!     .rows(5)
+//!     .on_change(|text| println!("Text changed: {}", text));
+//! ```
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::{Effect, RwSignal, SignalGet, SignalUpdate};

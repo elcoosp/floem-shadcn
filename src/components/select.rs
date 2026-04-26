@@ -1,3 +1,23 @@
+//! Select component with builder-style API
+//!
+//! Based on shadcn/ui Select component - a dropdown for selecting from a list.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem::reactive::RwSignal;
+//! use floem_shadcn::components::select::*;
+//!
+//! let selected = RwSignal::new(Some("option1".to_string()));
+//!
+//! Select::new(selected)
+//!     .placeholder("Select an option...")
+//!     .items(vec![
+//!         SelectItemData::new("option1", "Option 1"),
+//!         SelectItemData::new("option2", "Option 2"),
+//!         SelectItemData::new("option3", "Option 3"),
+//!     ]);
+//! ```
 use crate::theme::ShadcnThemeExt;
 use floem::context::LayoutChanged;
 use floem::prelude::*;
