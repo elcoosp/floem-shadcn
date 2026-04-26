@@ -432,7 +432,11 @@ impl IntoView for CommandSeparator {
     fn into_view(self) -> Self::V {
         Box::new(floem::views::Empty::new().style(|s| {
             s.with_shadcn_theme(move |s, t| {
-                s.w_full().h_px().background(t.border).margin_left(-4.0).margin_right(-4.0)
+                s.w_full()
+                    .h_px()
+                    .background(t.border)
+                    .margin_left(-4.0)
+                    .margin_right(-4.0)
             })
         }))
     }

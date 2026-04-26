@@ -93,8 +93,7 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
 
         // Use Overlay with fixed positioning
         let sheet_overlay = Overlay::new(
-            floem::views::Stack::new((backdrop, content_wrapper))
-                .style(|s| s.w_full().h_full()),
+            floem::views::Stack::new((backdrop, content_wrapper)).style(|s| s.w_full().h_full()),
         )
         .style(move |s| {
             let is_open = open.get();
@@ -321,9 +320,10 @@ impl IntoView for SheetDescription {
 
     fn into_view(self) -> Self::V {
         let text = self.text;
-        Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
-            s.with_shadcn_theme(move |s, t| s.text_sm().color(t.muted_foreground))
-        }))
+        Box::new(
+            floem::views::Label::with_id(self.id, text)
+                .style(|s| s.with_shadcn_theme(move |s, t| s.text_sm().color(t.muted_foreground))),
+        )
     }
 }
 

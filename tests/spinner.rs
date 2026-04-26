@@ -18,8 +18,16 @@ fn test_spinner_default_md_size() {
 
     let layout = id.get_layout().expect("Spinner layout should exist");
     // Default Md size: 20x20
-    assert!((layout.size.width - 20.0).abs() < 0.1, "Width should be 20, got {}", layout.size.width);
-    assert!((layout.size.height - 20.0).abs() < 0.1, "Height should be 20, got {}", layout.size.height);
+    assert!(
+        (layout.size.width - 20.0).abs() < 0.1,
+        "Width should be 20, got {}",
+        layout.size.width
+    );
+    assert!(
+        (layout.size.height - 20.0).abs() < 0.1,
+        "Height should be 20, got {}",
+        layout.size.height
+    );
 }
 
 #[test]
@@ -34,7 +42,11 @@ fn test_spinner_sm_size() {
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");
-    assert!((layout.size.width - 16.0).abs() < 0.1, "Width should be 16, got {}", layout.size.width);
+    assert!(
+        (layout.size.width - 16.0).abs() < 0.1,
+        "Width should be 16, got {}",
+        layout.size.width
+    );
 }
 
 #[test]
@@ -49,5 +61,9 @@ fn test_spinner_lg_size() {
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");
-    assert!((layout.size.width - 24.0).abs() < 0.1, "Width should be 24, got {}", layout.size.width);
+    assert!(
+        (layout.size.width - 24.0).abs() < 0.1,
+        "Width should be 24, got {}",
+        layout.size.width
+    );
 }

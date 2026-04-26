@@ -200,12 +200,7 @@ impl IntoView for SidebarHeader {
 
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
-            s.with_shadcn_theme(|s, t| {
-                s.w_full()
-                    .p_4()
-                    .border_bottom(1.0)
-                    .border_color(t.border)
-            })
+            s.with_shadcn_theme(|s, t| s.w_full().p_4().border_bottom(1.0).border_color(t.border))
         })
     }
 }
@@ -255,12 +250,9 @@ impl IntoView for SidebarContent {
                 .gap_2()
         });
 
-        Box::new(Scroll::new(inner).style(|s| {
-            s.flex_grow(1.0)
-                .flex_basis(0.0)
-                .min_height(0.0)
-                .w_full()
-        }))
+        Box::new(
+            Scroll::new(inner).style(|s| s.flex_grow(1.0).flex_basis(0.0).min_height(0.0).w_full()),
+        )
     }
 }
 
@@ -303,12 +295,7 @@ impl IntoView for SidebarFooter {
 
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
-            s.with_shadcn_theme(|s, t| {
-                s.w_full()
-                    .p_4()
-                    .border_top(1.0)
-                    .border_color(t.border)
-            })
+            s.with_shadcn_theme(|s, t| s.w_full().p_4().border_top(1.0).border_color(t.border))
         })
     }
 }

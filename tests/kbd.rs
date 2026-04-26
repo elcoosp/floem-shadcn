@@ -34,5 +34,8 @@ fn test_kbd_group() {
     harness.rebuild();
 
     let layout = id.get_layout().expect("KbdGroup layout should exist");
-    assert!(layout.size.width > 20.0, "KbdGroup should have width for multiple keys");
+    assert!(
+        layout.size.width > 20.0,
+        "KbdGroup should have width for multiple keys"
+    );
 }

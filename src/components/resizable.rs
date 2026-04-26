@@ -95,10 +95,7 @@ impl<V: IntoView + 'static> IntoView for ResizablePanelGroup<V> {
 
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(move |s| {
-                let base = s
-                    .w_full()
-                    .h_full()
-                    .display(floem::style::Display::Flex);
+                let base = s.w_full().h_full().display(floem::style::Display::Flex);
 
                 match direction {
                     ResizableDirection::Horizontal => {

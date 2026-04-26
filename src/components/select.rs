@@ -4,7 +4,7 @@ use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
-use floem_tailwind::TailwindExt;
+
 #[derive(Clone)]
 pub struct SelectItemData {
     pub value: String,
@@ -24,7 +24,6 @@ impl SelectItemData {
         self
     }
 }
-
 pub struct Select {
     id: ViewId,
     selected: RwSignal<Option<String>>,
@@ -62,7 +61,6 @@ impl HasViewId for Select {
 }
 impl IntoView for Select {
     type V = Box<dyn View>;
-
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
@@ -89,7 +87,7 @@ impl IntoView for Select {
             .style(move |s| {
                 s.with_shadcn_theme(move |s, t| {
                     let hv = sel.get().is_some();
-                    s.flex_grow(1.0).text_sm().color(if hv {
+                    s.flex_grow(1.0).font_size(14.0).color(if hv {
                         t.foreground
                     } else {
                         t.muted_foreground
@@ -105,16 +103,16 @@ impl IntoView for Select {
         .style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 s.min_width(120.0)
-                    .h_9()
+                    .height(36.0)
                     .padding_left(12.0)
                     .padding_right(12.0)
                     .padding_top(8.0)
                     .padding_bottom(8.0)
-                    .gap_2()
+                    .gap(8.0)
                     .items_center()
-                    .border_1()
+                    .border(1.0)
                     .border_color(t.input)
-                    .rounded_md()
+                    .border_radius(6.0)
                     .background(t.background)
                     .box_shadow_blur(2.0)
                     .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
@@ -148,13 +146,13 @@ impl IntoView for Select {
                 Box::new(
                     floem::views::Container::new(
                         floem::views::Stack::horizontal((
-                            floem::views::Label::new(l).style(|s| s.text_sm().flex_grow(1.0)),
+                            floem::views::Label::new(l).style(|s| s.font_size(14.0).flex_grow(1.0)),
                             floem::views::Label::new("✓").style(move |s| {
                                 let v = vc.clone();
                                 s.with_shadcn_theme(move |s, t| {
                                     let is_sel = sel2.get() == Some(v.clone());
-                                    s.size_4()
-                                        .text_sm()
+                                    s.size(16.0, 16.0)
+                                        .font_size(14.0)
                                         .color(t.foreground)
                                         .items_center()
                                         .justify_center()
@@ -165,14 +163,14 @@ impl IntoView for Select {
                                 })
                             }),
                         ))
-                        .style(|s| s.w_full().items_center().gap_2()),
+                        .style(|s| s.width_full().items_center().gap(8.0)),
                     )
                     .style(move |s| {
                         let v = vs.clone();
                         s.with_shadcn_theme(move |s, t| {
                             let is_sel = sel2.get() == Some(v.clone());
                             let base = s
-                                .w_full()
+                                .width_full()
                                 .padding_top(6.0)
                                 .padding_bottom(6.0)
                                 .padding_left(8.0)
@@ -187,7 +185,7 @@ impl IntoView for Select {
                             if is_sel {
                                 base.background(t.accent).color(t.accent_foreground)
                             } else if d {
-                                base.color(t.muted_foreground).opacity_50()
+                                base.color(t.muted_foreground).opacity(0.5)
                             } else {
                                 base.color(t.foreground)
                                     .hover(|s| s.background(t.accent).color(t.accent_foreground))
@@ -207,7 +205,7 @@ impl IntoView for Select {
             })
             .collect();
         let items_container = floem::views::Stack::vertical_from_iter(item_views)
-            .style(|s| s.w_full().max_height(300.0));
+            .style(|s| s.width_full().max_height(300.0));
         let dropdown = floem::views::Container::new(items_container).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 s.position(floem::style::Position::Absolute)
@@ -215,12 +213,12 @@ impl IntoView for Select {
                     .inset_left(0.0)
                     .inset_right(0.0)
                     .margin_top(6.0)
-                    .p_1()
+                    .padding(4.0)
                     .background(t.popover)
                     .color(t.popover_foreground)
-                    .border_1()
+                    .border(1.0)
                     .border_color(t.border)
-                    .rounded_md()
+                    .border_radius(6.0)
                     .box_shadow_blur(4.0)
                     .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 40))
                     .z_index(100)
@@ -231,7 +229,6 @@ impl IntoView for Select {
         Box::new(floem::views::Stack::new((trigger, dropdown)))
     }
 }
-
 pub struct SelectTrigger<V> {
     id: ViewId,
     child: V,
@@ -263,16 +260,16 @@ impl<V: IntoView + 'static> IntoView for SelectTrigger<V> {
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| {
                     s.with_shadcn_theme(move |s, t| {
-                        s.h_9()
+                        s.height(36.0)
                             .padding_left(12.0)
                             .padding_right(12.0)
                             .padding_top(8.0)
                             .padding_bottom(8.0)
-                            .gap_2()
+                            .gap(8.0)
                             .items_center()
-                            .border_1()
+                            .border(1.0)
                             .border_color(t.input)
-                            .rounded_md()
+                            .border_radius(6.0)
                             .background(t.background)
                             .box_shadow_blur(2.0)
                             .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
@@ -286,7 +283,6 @@ impl<V: IntoView + 'static> IntoView for SelectTrigger<V> {
         )
     }
 }
-
 pub struct SelectContent<V> {
     id: ViewId,
     child: V,
@@ -323,12 +319,12 @@ impl<V: IntoView + 'static> IntoView for SelectContent<V> {
                         .inset_left(0.0)
                         .inset_right(0.0)
                         .margin_top(6.0)
-                        .p_1()
+                        .padding(4.0)
                         .background(t.popover)
                         .color(t.popover_foreground)
-                        .border_1()
+                        .border(1.0)
                         .border_color(t.border)
-                        .rounded_md()
+                        .border_radius(6.0)
                         .box_shadow_blur(4.0)
                         .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 40))
                         .z_index(100)
@@ -343,8 +339,6 @@ impl<V: IntoView + 'static> IntoView for SelectContent<V> {
         )
     }
 }
-
-// Re-export stubs that lib.rs expects
 pub struct SelectItem;
 impl SelectItem {
     #[allow(dead_code)]
@@ -379,7 +373,6 @@ impl IntoView for SelectItem {
         Box::new(floem::views::Empty::new())
     }
 }
-
 pub struct SelectLabel;
 impl SelectLabel {
     #[allow(dead_code)]
@@ -402,7 +395,6 @@ impl IntoView for SelectLabel {
         Box::new(floem::views::Empty::new())
     }
 }
-
 pub struct SelectSeparator;
 impl SelectSeparator {
     pub fn new() -> Self {
@@ -429,7 +421,6 @@ impl IntoView for SelectSeparator {
         Box::new(floem::views::Empty::new())
     }
 }
-
 pub struct SelectGroup<V> {
     id: ViewId,
     child: V,

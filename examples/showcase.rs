@@ -196,8 +196,7 @@ fn demo_section<V: IntoView + 'static>(
     content: V,
 ) -> impl IntoView {
     Stack::vertical((
-        Label::derived(move || title)
-            .style(|s| s.text_2xl().font_weight(FontWeight::BOLD).mb_2()),
+        Label::derived(move || title).style(|s| s.text_2xl().font_weight(FontWeight::BOLD).mb_2()),
         Label::derived(move || desc).style(|s| {
             s.text_sm()
                 .mb_6()

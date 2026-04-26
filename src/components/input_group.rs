@@ -39,7 +39,10 @@ pub struct InputGroup {
 impl InputGroup {
     /// Create a new input group
     pub fn new() -> Self {
-        Self { id: ViewId::new(), disabled: false }
+        Self {
+            id: ViewId::new(),
+            disabled: false,
+        }
     }
 
     /// Set the group as disabled (propagates to children)
@@ -64,9 +67,9 @@ impl HasViewId for InputGroup {
 impl IntoView for InputGroup {
     type V = Container;
     type Intermediate = Container;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Container::with_id(self.id, ()).style(|s| {
@@ -89,7 +92,11 @@ pub struct InputGroupAddon<V> {
 impl<V: IntoView + 'static> InputGroupAddon<V> {
     /// Create a new addon
     pub fn new(position: AddonPosition, child: V) -> Self {
-        Self { id: ViewId::new(), position, child }
+        Self {
+            id: ViewId::new(),
+            position,
+            child,
+        }
     }
 }
 
@@ -102,24 +109,25 @@ impl<V: IntoView + 'static> HasViewId for InputGroupAddon<V> {
 impl<V: IntoView + 'static> IntoView for InputGroupAddon<V> {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
-    fn into_intermediate(self) -> Self::Intermediate { self.into_view() }
-
-
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
 
     fn into_view(self) -> Self::V {
         Box::new(
-            floem::views::Container::with_id(self.id, self.child)
-                .style(|s| {
-                    s.with_shadcn_theme(|s, t| {
-                        s.padding_left(8.0).padding_right(8.0)
-                            .padding_top(6.0).padding_bottom(6.0)
-                            .font_size(14.0)
-                            .background(t.muted)
-                            .color(t.muted_foreground)
-                            .border(1.0)
-                            .border_color(t.input)
-                    })
-                }),
+            floem::views::Container::with_id(self.id, self.child).style(|s| {
+                s.with_shadcn_theme(|s, t| {
+                    s.padding_left(8.0)
+                        .padding_right(8.0)
+                        .padding_top(6.0)
+                        .padding_bottom(6.0)
+                        .font_size(14.0)
+                        .background(t.muted)
+                        .color(t.muted_foreground)
+                        .border(1.0)
+                        .border_color(t.input)
+                })
+            }),
         )
     }
 }

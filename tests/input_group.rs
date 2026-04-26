@@ -1,6 +1,6 @@
-use floem::views::Decorators;
 use floem::reactive::SignalGet;
 use floem::reactive::SignalUpdate;
+use floem::views::Decorators;
 use floem_test::TestRoot;
 // Tests for Input Group component
 

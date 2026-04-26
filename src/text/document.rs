@@ -4,7 +4,7 @@ use floem::{
     kurbo::Point,
     peniko::Color,
     reactive::{RwSignal, SignalGet, SignalUpdate, SignalWith},
-    text::{Attrs, AttrsList, FamilyOwned, LineHeightValue, TextLayout, FontWeight},
+    text::{Attrs, AttrsList, FamilyOwned, FontWeight, LineHeightValue, TextLayout},
 };
 use floem_editor_core::{
     buffer::{
@@ -95,44 +95,66 @@ impl Document {
     }
 
     pub fn set_width(&self, width: f64) {
-        if self.width.get_untracked() == width { return; }
+        if self.width.get_untracked() == width {
+            return;
+        }
         self.width.set(width);
         self.rebuild_layouts(width);
     }
 
     pub fn set_text_color(&self, color: Color) {
-        if self.text_color.get_untracked() == color { return; }
+        if self.text_color.get_untracked() == color {
+            return;
+        }
         self.text_color.set(color);
         let width = self.width.get_untracked();
-        if width > 0.0 { self.rebuild_layouts(width); }
+        if width > 0.0 {
+            self.rebuild_layouts(width);
+        }
     }
 
     pub fn set_font_size(&self, size: f32) {
-        if self.font_size.get_untracked() == size { return; }
+        if self.font_size.get_untracked() == size {
+            return;
+        }
         self.font_size.set(size);
         let width = self.width.get_untracked();
-        if width > 0.0 { self.rebuild_layouts(width); }
+        if width > 0.0 {
+            self.rebuild_layouts(width);
+        }
     }
 
     pub fn set_line_height(&self, line_height: LineHeightValue) {
-        if self.line_height.get_untracked() == line_height { return; }
+        if self.line_height.get_untracked() == line_height {
+            return;
+        }
         self.line_height.set(line_height);
         let width = self.width.get_untracked();
-        if width > 0.0 { self.rebuild_layouts(width); }
+        if width > 0.0 {
+            self.rebuild_layouts(width);
+        }
     }
 
     pub fn set_font_weight(&self, weight: FontWeight) {
-        if self.font_weight.get_untracked() == weight { return; }
+        if self.font_weight.get_untracked() == weight {
+            return;
+        }
         self.font_weight.set(weight);
         let width = self.width.get_untracked();
-        if width > 0.0 { self.rebuild_layouts(width); }
+        if width > 0.0 {
+            self.rebuild_layouts(width);
+        }
     }
 
     pub fn set_font_family(&self, family: Vec<FamilyOwned>) {
-        if self.font_family.get_untracked() == family { return; }
+        if self.font_family.get_untracked() == family {
+            return;
+        }
         self.font_family.set(family);
         let width = self.width.get_untracked();
-        if width > 0.0 { self.rebuild_layouts(width); }
+        if width > 0.0 {
+            self.rebuild_layouts(width);
+        }
     }
 
     fn rebuild_layouts(&self, width: f64) {
@@ -148,7 +170,9 @@ impl Document {
             .weight(font_weight)
             .color(text_color);
 
-        if !font_family.is_empty() { attrs = attrs.family(&font_family); }
+        if !font_family.is_empty() {
+            attrs = attrs.family(&font_family);
+        }
 
         let attrs = AttrsList::new(attrs);
         let mut builder = TextLayoutLines::builder();
@@ -170,11 +194,19 @@ impl Document {
     }
 
     pub fn edit<'a, I>(&self, edits: I, edit_type: EditType)
-    where I: IntoIterator<Item = (SelRegion, &'a str)> {
+    where
+        I: IntoIterator<Item = (SelRegion, &'a str)>,
+    {
         let edits = edits.into_iter().map(|(region, s)| {
-            (Selection::region(region.start, region.end, CursorAffinity::Forward), s)
+            (
+                Selection::region(region.start, region.end, CursorAffinity::Forward),
+                s,
+            )
         });
-        let delta = self.buffer.try_update(|b| b.edit(edits, edit_type)).unwrap();
+        let delta = self
+            .buffer
+            .try_update(|b| b.edit(edits, edit_type))
+            .unwrap();
         self.apply_delta(&delta);
     }
 
@@ -191,7 +223,9 @@ impl Document {
             .line_height(line_height)
             .weight(font_weight)
             .color(text_color);
-        if !font_family.is_empty() { attrs = attrs.family(&font_family); }
+        if !font_family.is_empty() {
+            attrs = attrs.family(&font_family);
+        }
         let attrs = AttrsList::new(attrs);
 
         let (rope, rope_delta, inval_lines) = delta;
@@ -217,11 +251,15 @@ impl Document {
         self.cursor.update(|c| {
             let selection = Selection::region(c.start, c.end, c.affinity);
             let new_selection = selection.apply_delta(rope_delta, true, InsertDrift::Default);
-            if let Some(region) = new_selection.regions().first() { *c = *region; }
+            if let Some(region) = new_selection.regions().first() {
+                *c = *region;
+            }
         });
         self.buffer.with_untracked(|buffer| {
             let text = &buffer.text().slice_to_cow(..);
-            for on_update in self.on_update.borrow().iter() { on_update(text); }
+            for on_update in self.on_update.borrow().iter() {
+                on_update(text);
+            }
         });
     }
 
@@ -230,16 +268,22 @@ impl Document {
             MoveCommand::Left => {
                 let region = self.cursor.get_untracked();
                 let new_offset = if modify || region.is_caret() {
-                    self.buffer.with_untracked(|b| b.move_left(region.end, Mode::Insert, 1))
-                } else { region.min() };
+                    self.buffer
+                        .with_untracked(|b| b.move_left(region.end, Mode::Insert, 1))
+                } else {
+                    region.min()
+                };
                 self.set_offset(new_offset, modify);
                 self.horiz.set(None);
             }
             MoveCommand::Right => {
                 let region = self.cursor.get_untracked();
                 let new_offset = if modify || region.is_caret() {
-                    self.buffer.with_untracked(|b| b.move_right(region.end, Mode::Insert, 1))
-                } else { region.max() };
+                    self.buffer
+                        .with_untracked(|b| b.move_right(region.end, Mode::Insert, 1))
+                } else {
+                    region.max()
+                };
                 self.set_offset(new_offset, modify);
                 self.horiz.set(None);
             }
@@ -264,7 +308,11 @@ impl Document {
                         ColPosition::Start => lines.offset_of_vline(vline),
                         ColPosition::End => {
                             let next_vline_offset = lines.offset_of_vline(vline + 1);
-                            if next_vline_offset > 0 { next_vline_offset - 1 } else { 0 }
+                            if next_vline_offset > 0 {
+                                next_vline_offset - 1
+                            } else {
+                                0
+                            }
                         }
                         ColPosition::Col(x) => {
                             let offset = lines.offset_of_vline(vline);
@@ -298,7 +346,11 @@ impl Document {
                         ColPosition::Start => lines.offset_of_vline(vline),
                         ColPosition::End => {
                             let next_vline_offset = lines.offset_of_vline(vline + 1);
-                            if next_vline_offset > 0 { next_vline_offset - 1 } else { lines.utf8_len() }
+                            if next_vline_offset > 0 {
+                                next_vline_offset - 1
+                            } else {
+                                lines.utf8_len()
+                            }
                         }
                         ColPosition::Col(x) => {
                             let offset = lines.offset_of_vline(vline);
@@ -346,13 +398,17 @@ impl Document {
             }
             MoveCommand::WordBackward => {
                 let region = self.cursor.get_untracked();
-                let new_offset = self.buffer.with_untracked(|b| b.move_word_backward(region.end, Mode::Insert));
+                let new_offset = self
+                    .buffer
+                    .with_untracked(|b| b.move_word_backward(region.end, Mode::Insert));
                 self.set_offset(new_offset, modify);
                 self.horiz.set(None);
             }
             MoveCommand::WordForward => {
                 let region = self.cursor.get_untracked();
-                let new_offset = self.buffer.with_untracked(|b| b.move_word_forward(region.end));
+                let new_offset = self
+                    .buffer
+                    .with_untracked(|b| b.move_word_forward(region.end));
                 self.set_offset(new_offset, modify);
                 self.horiz.set(None);
             }
@@ -362,38 +418,61 @@ impl Document {
 
     pub fn run_edit_command(&self, command: &EditCommand) {
         match command {
-            EditCommand::InsertNewLine => { self.edit([(self.cursor.get_untracked(), "\n")], EditType::InsertNewline); }
-            EditCommand::InsertTab => { self.edit([(self.cursor.get_untracked(), "\t")], EditType::InsertChars); }
+            EditCommand::InsertNewLine => {
+                self.edit(
+                    [(self.cursor.get_untracked(), "\n")],
+                    EditType::InsertNewline,
+                );
+            }
+            EditCommand::InsertTab => {
+                self.edit([(self.cursor.get_untracked(), "\t")], EditType::InsertChars);
+            }
             EditCommand::DeleteBackward => {
                 let region = self.cursor.get_untracked();
                 let region = if region.is_caret() {
-                    let new_offset = self.buffer.with_untracked(|b| b.move_left(region.start, Mode::Insert, 1));
+                    let new_offset = self
+                        .buffer
+                        .with_untracked(|b| b.move_left(region.start, Mode::Insert, 1));
                     SelRegion::new(region.start, new_offset, CursorAffinity::Forward, None)
-                } else { region };
+                } else {
+                    region
+                };
                 self.edit([(region, "")], EditType::Delete);
             }
             EditCommand::DeleteForward => {
                 let region = self.cursor.get_untracked();
                 let region = if region.is_caret() {
-                    let new_offset = self.buffer.with_untracked(|b| b.move_right(region.start, Mode::Insert, 1));
+                    let new_offset = self
+                        .buffer
+                        .with_untracked(|b| b.move_right(region.start, Mode::Insert, 1));
                     SelRegion::new(region.start, new_offset, CursorAffinity::Forward, None)
-                } else { region };
+                } else {
+                    region
+                };
                 self.edit([(region, "")], EditType::Delete);
             }
             EditCommand::DeleteWordBackward => {
                 let region = self.cursor.get_untracked();
                 let region = if region.is_caret() {
-                    let new_offset = self.buffer.with_untracked(|b| b.move_word_backward(region.start, Mode::Insert));
+                    let new_offset = self
+                        .buffer
+                        .with_untracked(|b| b.move_word_backward(region.start, Mode::Insert));
                     SelRegion::new(region.start, new_offset, CursorAffinity::Forward, None)
-                } else { region };
+                } else {
+                    region
+                };
                 self.edit([(region, "")], EditType::Delete);
             }
             EditCommand::DeleteWordForward => {
                 let region = self.cursor.get_untracked();
                 let region = if region.is_caret() {
-                    let new_offset = self.buffer.with_untracked(|b| b.move_word_forward(region.start));
+                    let new_offset = self
+                        .buffer
+                        .with_untracked(|b| b.move_word_forward(region.start));
                     SelRegion::new(region.start, new_offset, CursorAffinity::Forward, None)
-                } else { region };
+                } else {
+                    region
+                };
                 self.edit([(region, "")], EditType::Delete);
             }
             EditCommand::DeleteToBeginningOfLine => {
@@ -403,7 +482,8 @@ impl Document {
                 let line_start = lines.offset_of_vline(vline);
                 drop(lines);
                 if region.end > line_start {
-                    let delete_region = SelRegion::new(line_start, region.end, CursorAffinity::Forward, None);
+                    let delete_region =
+                        SelRegion::new(line_start, region.end, CursorAffinity::Forward, None);
                     self.edit([(delete_region, "")], EditType::Delete);
                 }
             }
@@ -429,39 +509,71 @@ impl Document {
 
     pub fn copy(&self) -> bool {
         let region = self.cursor.get_untracked();
-        if region.is_caret() { return false; }
-        let start = region.min(); let end = region.max();
-        let text = self.buffer.with_untracked(|b| b.text().slice_to_cow(start..end).into_owned());
-        if text.is_empty() { return false; }
+        if region.is_caret() {
+            return false;
+        }
+        let start = region.min();
+        let end = region.max();
+        let text = self
+            .buffer
+            .with_untracked(|b| b.text().slice_to_cow(start..end).into_owned());
+        if text.is_empty() {
+            return false;
+        }
         floem::Clipboard::set_contents(text).is_ok()
     }
 
     pub fn cut(&self) -> bool {
         let region = self.cursor.get_untracked();
-        if region.is_caret() { return false; }
-        let start = region.min(); let end = region.max();
-        let text = self.buffer.with_untracked(|b| b.text().slice_to_cow(start..end).into_owned());
-        if text.is_empty() { return false; }
-        if floem::Clipboard::set_contents(text).is_ok() { self.edit([(region, "")], EditType::Delete); true } else { false }
+        if region.is_caret() {
+            return false;
+        }
+        let start = region.min();
+        let end = region.max();
+        let text = self
+            .buffer
+            .with_untracked(|b| b.text().slice_to_cow(start..end).into_owned());
+        if text.is_empty() {
+            return false;
+        }
+        if floem::Clipboard::set_contents(text).is_ok() {
+            self.edit([(region, "")], EditType::Delete);
+            true
+        } else {
+            false
+        }
     }
 
     pub fn paste(&self, filter_newlines: bool) -> bool {
-        let mut content = match floem::Clipboard::get_contents() { Ok(c) => c, Err(_) => return false };
-        if filter_newlines { content.retain(|c| c != '\n' && c != '\r'); }
-        if content.is_empty() { return false; }
+        let mut content = match floem::Clipboard::get_contents() {
+            Ok(c) => c,
+            Err(_) => return false,
+        };
+        if filter_newlines {
+            content.retain(|c| c != '\n' && c != '\r');
+        }
+        if content.is_empty() {
+            return false;
+        }
         let region = self.cursor.get_untracked();
         self.edit([(region, content.as_str())], EditType::InsertChars);
         true
     }
 
     pub fn pointer_down(&self, event: &PointerButtonEvent) {
-        if event.button == Some(PointerButton::Primary) { self.left_click(&event.state); }
-        else if event.button == Some(PointerButton::Secondary) { self.double_click(&event.state); }
+        if event.button == Some(PointerButton::Primary) {
+            self.left_click(&event.state);
+        } else if event.button == Some(PointerButton::Secondary) {
+            self.double_click(&event.state);
+        }
     }
 
     fn left_click(&self, state: &PointerState) {
         match state.count {
-            1 => { self.active.set(true); self.single_click(state); }
+            1 => {
+                self.active.set(true);
+                self.single_click(state);
+            }
             2 => self.double_click(state),
             3 => self.triple_click(state),
             _ => {}
@@ -482,7 +594,8 @@ impl Document {
         let pos = state.logical_point();
         let mouse_offset = lines.offset_of_point(pos);
         let (start, end) = self.buffer.with_untracked(|b| b.select_word(mouse_offset));
-        self.cursor.set(SelRegion::new(start, end, CursorAffinity::Forward, None));
+        self.cursor
+            .set(SelRegion::new(start, end, CursorAffinity::Forward, None));
         self.horiz.set(None);
     }
 
@@ -493,7 +606,8 @@ impl Document {
         let vline = lines.vline_of_offset(mouse_offset);
         let start = lines.offset_of_vline(vline);
         let end = lines.offset_of_vline(vline + 1);
-        self.cursor.set(SelRegion::new(start, end, CursorAffinity::Forward, None));
+        self.cursor
+            .set(SelRegion::new(start, end, CursorAffinity::Forward, None));
         self.horiz.set(None);
     }
 
@@ -504,10 +618,17 @@ impl Document {
             let offset = lines.offset_of_point(pos);
             let cursor = self.cursor.get_untracked();
             if cursor.end != offset {
-                self.cursor.set(SelRegion::new(cursor.start, offset, CursorAffinity::Forward, None));
+                self.cursor.set(SelRegion::new(
+                    cursor.start,
+                    offset,
+                    CursorAffinity::Forward,
+                    None,
+                ));
             }
         }
     }
 
-    pub fn pointer_up(&self, _event: &PointerButtonEvent) { self.active.set(false); }
+    pub fn pointer_up(&self, _event: &PointerButtonEvent) {
+        self.active.set(false);
+    }
 }
