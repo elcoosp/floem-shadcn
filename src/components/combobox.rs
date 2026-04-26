@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ``````rust
 //! use floem::reactive::RwSignal;
 //! use floem::view::ParentView;
 //! use floem_shadcn::components::combobox::*;
@@ -26,6 +26,7 @@
 //!             .child(ComboboxEmpty::new("No results found.")),
 //!     );
 //! ```
+
 use crate::theme::ShadcnThemeExt;
 use floem::context::LayoutChanged;
 use floem::prelude::*;
@@ -35,14 +36,25 @@ use floem::view::ParentView;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
+/// Combobox context that holds the shared signals.
+///
+/// Provided via `Scope::provide_context` and accessed by child components
+/// using `Context::get::<ComboboxContext>()`.
 #[derive(Clone, Copy)]
 pub struct ComboboxContext {
     pub selected: RwSignal<Option<String>>,
     pub search: RwSignal<String>,
     pub is_open: RwSignal<bool>,
+    /// Trigger position (window coordinates) – set by ComboboxTrigger
     pub trigger_origin: RwSignal<floem::kurbo::Point>,
+    /// Trigger size – set by ComboboxTrigger
     pub trigger_size: RwSignal<floem::kurbo::Size>,
 }
+
+/// Combobox root component that provides context to children.
+///
+/// Contains trigger and content. Implements ParentView so children can be
+/// added with `.child()`.
 pub struct Combobox {
     id: ViewId,
     selected: RwSignal<Option<String>>,
@@ -104,6 +116,10 @@ impl ParentView for Combobox {
     }
 }
 
+/// Trigger button that opens/closes the combobox dropdown.
+///
+/// Reads the combobox signals from context and displays the selected value
+/// or placeholder text.
 pub struct ComboboxTrigger {
     id: ViewId,
     placeholder: String,
@@ -228,6 +244,10 @@ impl IntoView for ComboboxTrigger {
     }
 }
 
+/// Dropdown content container with overlay positioning.
+///
+/// Creates an overlay with backdrop for click-outside-to-close behavior.
+/// Use `.child()` to add children. Context is automatically available.
 pub struct ComboboxContent {
     id: ViewId,
 }
@@ -287,6 +307,7 @@ impl IntoView for ComboboxContent {
 }
 impl ParentView for ComboboxContent {}
 
+/// Search input for filtering items.
 pub struct ComboboxInput {
     id: ViewId,
     placeholder: String,
@@ -341,6 +362,9 @@ impl IntoView for ComboboxInput {
     }
 }
 
+/// Scrollable list container for combobox items.
+///
+/// Use `.child()` to add items. Context is automatically available to children.
 pub struct ComboboxList {
     id: ViewId,
     max_height: f64,
@@ -381,6 +405,7 @@ impl IntoView for ComboboxList {
 }
 impl ParentView for ComboboxList {}
 
+/// Individual combobox item that reads selection from context.
 pub struct ComboboxItem {
     id: ViewId,
     value: String,
@@ -490,6 +515,7 @@ impl IntoView for ComboboxItem {
     }
 }
 
+/// Empty state shown when no items match the search.
 pub struct ComboboxEmpty {
     id: ViewId,
     text: String,
@@ -532,6 +558,7 @@ impl IntoView for ComboboxEmpty {
     }
 }
 
+/// Group of related combobox items with a label.
 pub struct ComboboxGroup {
     id: ViewId,
 }
@@ -562,6 +589,7 @@ impl IntoView for ComboboxGroup {
 }
 impl ParentView for ComboboxGroup {}
 
+/// Label for a combobox group.
 pub struct ComboboxLabel {
     id: ViewId,
     text: String,
@@ -599,6 +627,7 @@ impl IntoView for ComboboxLabel {
     }
 }
 
+/// Separator between combobox items.
 pub struct ComboboxSeparator;
 impl ComboboxSeparator {
     pub fn new() -> Self {

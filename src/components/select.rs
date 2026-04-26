@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ``````rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::select::*;
 //!
@@ -18,6 +18,7 @@
 //!         SelectItemData::new("option3", "Option 3"),
 //!     ]);
 //! ```
+
 use crate::theme::ShadcnThemeExt;
 use floem::context::LayoutChanged;
 use floem::prelude::*;
@@ -26,6 +27,7 @@ use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
+/// Data for a select item.
 #[derive(Clone)]
 pub struct SelectItemData {
     pub value: String,
@@ -45,6 +47,8 @@ impl SelectItemData {
         self
     }
 }
+
+/// A styled select dropdown.
 pub struct Select {
     id: ViewId,
     selected: RwSignal<Option<String>>,
@@ -267,6 +271,8 @@ impl IntoView for Select {
         Box::new(floem::views::Stack::new((trigger, dropdown)))
     }
 }
+
+/// Standalone trigger for select.
 pub struct SelectTrigger<V> {
     id: ViewId,
     child: V,
@@ -321,6 +327,8 @@ impl<V: IntoView + 'static> IntoView for SelectTrigger<V> {
         )
     }
 }
+
+/// Content container for select dropdown.
 pub struct SelectContent<V> {
     id: ViewId,
     child: V,
@@ -377,6 +385,8 @@ impl<V: IntoView + 'static> IntoView for SelectContent<V> {
         )
     }
 }
+
+// Standalone stubs for compatibility with prelude
 pub struct SelectItem;
 impl SelectItem {
     #[allow(dead_code)]
@@ -411,6 +421,7 @@ impl IntoView for SelectItem {
         Box::new(floem::views::Empty::new())
     }
 }
+
 pub struct SelectLabel;
 impl SelectLabel {
     #[allow(dead_code)]
@@ -433,6 +444,7 @@ impl IntoView for SelectLabel {
         Box::new(floem::views::Empty::new())
     }
 }
+
 pub struct SelectSeparator;
 impl SelectSeparator {
     pub fn new() -> Self {
@@ -459,6 +471,7 @@ impl IntoView for SelectSeparator {
         Box::new(floem::views::Empty::new())
     }
 }
+
 pub struct SelectGroup<V> {
     id: ViewId,
     child: V,

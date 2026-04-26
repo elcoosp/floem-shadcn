@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ``````rust
 //! use floem_shadcn::components::textarea::Textarea;
 //!
 //! // Basic textarea
@@ -16,12 +16,15 @@
 //!     .rows(5)
 //!     .on_change(|text| println!("Text changed: {}", text));
 //! ```
+
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::{Effect, RwSignal, SignalGet, SignalUpdate};
 use floem::views::{Decorators, TextInput};
 use floem::{HasViewId, ViewId};
 
+/// A styled multi-line text area.
+/// Uses floem's TextInput internally with a minimum height.
 pub struct Textarea {
     id: ViewId,
     buffer: RwSignal<String>,

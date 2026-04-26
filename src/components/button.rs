@@ -26,6 +26,8 @@ use crate::theme::{ShadcnTheme, ShadcnThemeExt};
 /// Button variants following shadcn/ui conventions
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum ButtonVariant {
+/// Button variants following shadcn/ui conventions.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
     #[default]
     Default,
     Destructive,
@@ -38,6 +40,8 @@ pub enum ButtonVariant {
 /// Button sizes
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum ButtonSize {
+/// Button sizes.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
     Sm,
     #[default]
     Default,
@@ -47,6 +51,20 @@ pub enum ButtonSize {
 
 /// A styled button builder
 pub struct Button<V> {
+/// A styled button builder.
+///
+/// Use the builder methods to set variant, size, and attach event handlers.
+///
+/// # Example
+///
+/// ```rust
+/// use floem_shadcn::components::button::Button;
+///
+/// let btn = Button::new("Click me")
+///     .secondary()
+///     .sm()
+///     .on_event_stop(floem::event::listener::Click, move |_, _| println!("clicked"));
+/// ```
     id: ViewId,
     child: V,
     variant: ButtonVariant,

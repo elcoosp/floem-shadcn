@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ``````rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::input::Input;
 //!
@@ -21,19 +21,21 @@
 //! // With initial text
 //! let input = Input::with_text("Hello");
 //! ```
+
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::{Effect, RwSignal, SignalGet, SignalUpdate};
 use floem::views::{Decorators, TextInput, TextInputEnter};
 use floem::{HasViewId, ViewId};
 
+/// A styled input builder with support for reactive value binding,
+/// placeholder, on_update, and on_enter callbacks.
 pub struct Input {
     id: ViewId,
     buffer: RwSignal<String>,
     placeholder: Option<String>,
     on_enter: Option<Box<dyn Fn(&str)>>,
 }
-
 impl Input {
     pub fn new() -> Self {
         Self::with_text("")
@@ -93,7 +95,6 @@ impl HasViewId for Input {
         self.id
     }
 }
-
 impl IntoView for Input {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
