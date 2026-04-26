@@ -32,7 +32,6 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
-DOC-INSERT-1777232318767061000
 pub struct ContextMenu<T, C> {
     id: ViewId,
     open: RwSignal<bool>,
