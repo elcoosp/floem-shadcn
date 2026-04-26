@@ -135,6 +135,7 @@ pub struct ToggleGroupMultiple<V> {
     selected: RwSignal<Vec<String>>,
     child: V,
     variant: ToggleGroupVariant,
+    #[allow(dead_code)]
     size: ToggleGroupSize,
 }
 
