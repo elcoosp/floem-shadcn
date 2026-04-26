@@ -1,5 +1,19 @@
 //! Empty state component – placeholder for empty content
-//! (tailwind-enhanced)
+//!
+//! Based on shadcn/ui Empty.
+//!
+//! # Example
+//!
+//! ```rust
+//! use floem::view::ParentView;
+//! use floem_shadcn::components::empty::*;
+//!
+//! Empty::new()
+//!     .child(EmptyMedia::new().child(svg_icon))
+//!     .child(EmptyContent::new()
+//!         .child(EmptyTitle::new("No results"))
+//!         .child(EmptyDescription::new("Try adjusting your search")));
+//! ```
 
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
@@ -8,6 +22,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+/// Main empty state container – centers its children vertically.
 pub struct Empty {
     id: ViewId,
 }
@@ -39,6 +54,7 @@ impl IntoView for Empty {
 }
 impl ParentView for Empty {}
 
+/// Media slot for the empty state (icons, images).
 pub struct EmptyMedia {
     id: ViewId,
 }
@@ -69,6 +85,7 @@ impl IntoView for EmptyMedia {
 }
 impl ParentView for EmptyMedia {}
 
+/// Content slot for the empty state (title, description, actions).
 pub struct EmptyContent {
     id: ViewId,
 }
@@ -100,6 +117,7 @@ impl IntoView for EmptyContent {
 }
 impl ParentView for EmptyContent {}
 
+/// Title text inside the empty state.
 pub struct EmptyTitle {
     id: ViewId,
     text: String,
@@ -132,6 +150,7 @@ impl IntoView for EmptyTitle {
     }
 }
 
+/// Description text inside the empty state.
 pub struct EmptyDescription {
     id: ViewId,
     text: String,
@@ -164,6 +183,7 @@ impl IntoView for EmptyDescription {
     }
 }
 
+/// Actions slot for the empty state (buttons, links).
 pub struct EmptyActions {
     id: ViewId,
 }

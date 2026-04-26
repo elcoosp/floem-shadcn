@@ -9,10 +9,13 @@
 //!
 //! let shortcut = Kbd::new("⌘K");
 //! ```
+
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+
+/// Renders a keyboard key (or key combination) with styled border and background.
 pub struct Kbd {
     id: ViewId,
     key: String,
@@ -54,6 +57,8 @@ impl IntoView for Kbd {
         }))
     }
 }
+
+/// A group of Kbd elements displayed inline.
 pub struct KbdGroup;
 impl KbdGroup {
     #[allow(dead_code)]

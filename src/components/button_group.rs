@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem::view::ParentView;
 //! use floem_shadcn::components::button::Button;
 //! use floem_shadcn::components::button_group::{ButtonGroup, ButtonGroupSeparator};
@@ -22,6 +22,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+/// A container that groups buttons horizontally with no gap between them.
 pub struct ButtonGroup {
     id: ViewId,
 }
@@ -52,6 +53,7 @@ impl IntoView for ButtonGroup {
 }
 impl ParentView for ButtonGroup {}
 
+/// A vertical separator line placed between buttons in a group.
 pub struct ButtonGroupSeparator {
     id: ViewId,
 }

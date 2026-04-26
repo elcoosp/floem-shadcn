@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem::view::ParentView;
 //! use floem_shadcn::components::item::*;
 //!
@@ -21,6 +21,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+/// Main item container – renders as a horizontal row.
 pub struct Item {
     id: ViewId,
 }
@@ -52,6 +53,7 @@ impl IntoView for Item {
 }
 impl ParentView for Item {}
 
+/// Content area inside an Item.
 pub struct ItemContent {
     id: ViewId,
 }
@@ -82,6 +84,7 @@ impl IntoView for ItemContent {
 }
 impl ParentView for ItemContent {}
 
+/// Title text inside an ItemContent.
 pub struct ItemTitle {
     id: ViewId,
     text: String,
@@ -111,6 +114,7 @@ impl IntoView for ItemTitle {
     }
 }
 
+/// Description text inside an ItemContent.
 pub struct ItemDescription {
     id: ViewId,
     text: String,
