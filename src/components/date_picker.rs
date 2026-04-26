@@ -173,7 +173,7 @@ impl IntoView for DatePicker {
     }
 }
 fn create_calendar_content(
-    selected: RwSignal<Option<SimpleDate>>,
+    #[allow(unused_variables)] selected: RwSignal<Option<SimpleDate>>,
     view_year: RwSignal<i32>,
     view_month: RwSignal<u32>,
     _is_open: RwSignal<bool>,
