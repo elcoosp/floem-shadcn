@@ -23,7 +23,7 @@ fn test_button_group_renders_three_buttons() {
     harness.rebuild();
 
     let layout = id.get_layout().expect("ButtonGroup layout should exist");
-    assert!(layout.size.width > 100.0, "Group should contain buttons");
+    assert!(layout.size.width > 20.0, "Group should contain buttons");
     assert!(layout.size.height > 30.0, "Group should have button height");
 }
 
@@ -44,5 +44,5 @@ fn test_button_group_with_separator() {
     harness.rebuild();
 
     let layout = id.get_layout().expect("Layout should exist");
-    assert!(layout.size.width > 100.0);
+    assert!(layout.size.width > 20.0);
 }

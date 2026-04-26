@@ -4,7 +4,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! use floem_shadcn::components::typography::*;
 //!
 //! let heading = TypographyH1::new("Title");
@@ -18,7 +18,7 @@ use floem_tailwind::TailwindExt;
 
 use crate::styled::ShadcnStyleExt;
 
-/// H1 heading
+/// H1 heading – largest font size (3xl).
 pub struct TypographyH1 {
     id: ViewId,
     text: String,
@@ -52,7 +52,7 @@ impl IntoView for TypographyH1 {
     }
 }
 
-/// H2 heading
+/// H2 heading – second largest (2xl).
 pub struct TypographyH2 {
     id: ViewId,
     text: String,
@@ -86,7 +86,7 @@ impl IntoView for TypographyH2 {
     }
 }
 
-/// H3 heading
+/// H3 heading – xl size.
 pub struct TypographyH3 {
     id: ViewId,
     text: String,
@@ -120,7 +120,7 @@ impl IntoView for TypographyH3 {
     }
 }
 
-/// H4 heading – uses explicit 16px since text_lg is 18px and no text_base exists
+/// H4 heading – 16px, medium weight.
 pub struct TypographyH4 {
     id: ViewId,
     text: String,
@@ -156,7 +156,7 @@ impl IntoView for TypographyH4 {
     }
 }
 
-/// Paragraph
+/// Paragraph – standard body text (sm).
 pub struct TypographyP {
     id: ViewId,
     text: String,
@@ -190,7 +190,7 @@ impl IntoView for TypographyP {
     }
 }
 
-/// Lead paragraph (larger intro text)
+/// Lead paragraph – larger intro text (lg).
 pub struct TypographyLead {
     id: ViewId,
     text: String,
@@ -224,7 +224,7 @@ impl IntoView for TypographyLead {
     }
 }
 
-/// Muted text (small, subdued)
+/// Muted text – small, subdued (xs).
 pub struct TypographyMuted {
     id: ViewId,
     text: String,
@@ -258,7 +258,7 @@ impl IntoView for TypographyMuted {
     }
 }
 
-/// Inline code
+/// Inline code – monospaced, bordered.
 pub struct TypographyCode {
     id: ViewId,
     text: String,
@@ -298,7 +298,7 @@ impl IntoView for TypographyCode {
     }
 }
 
-/// Blockquote
+/// Blockquote – indented left border.
 pub struct TypographyBlockquote {
     id: ViewId,
     text: String,
@@ -338,7 +338,7 @@ impl IntoView for TypographyBlockquote {
     }
 }
 
-/// Unordered/ordered list
+/// Ordered or unordered list.
 pub struct TypographyList {
     id: ViewId,
     items: Vec<String>,

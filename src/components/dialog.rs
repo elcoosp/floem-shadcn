@@ -233,7 +233,7 @@ impl IntoView for DialogContent {
             Box::new(
                 Overlay::with_id(id).child(
                     floem::views::Stack::new((
-                        floem::views::Empty::new()
+                        floem::views::Container::new(())
                             .style(move |s| {
                                 s.absolute()
                                     .inset_0()

@@ -21,7 +21,7 @@
 //!             )
 //!     );
 //! ```
-#[allow(dead_code)]
+
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::RwSignal;
@@ -31,9 +31,9 @@ use floem::views::{Decorators, Stem};
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
-#[allow(dead_code)]
 pub struct Command {
     content_id: ViewId,
+    #[allow(dead_code)]
     search: RwSignal<String>,
     placeholder: String,
 }
@@ -94,9 +94,9 @@ impl IntoView for Command {
 }
 impl ParentView for Command {}
 
-#[allow(dead_code)]
 pub struct CommandInput {
     id: ViewId,
+    #[allow(dead_code)]
     search: RwSignal<String>,
     placeholder: String,
 }
@@ -260,9 +260,9 @@ impl IntoView for CommandGroup {
 }
 impl ParentView for CommandGroup {}
 
-#[allow(dead_code)]
 pub struct CommandItem {
     id: ViewId,
+    #[allow(dead_code)]
     value: String,
     text: String,
     disabled: bool,

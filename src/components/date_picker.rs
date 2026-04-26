@@ -14,6 +14,7 @@
 //! DatePicker::new(selected)
 //!     .placeholder("Select a date...");
 //! ```
+
 use crate::components::calendar::SimpleDate;
 use crate::theme::ShadcnThemeExt;
 use floem::context::LayoutChanged;

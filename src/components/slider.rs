@@ -16,6 +16,7 @@
 //! // Custom range
 //! let slider = Slider::new(value).min(0.0).max(200.0);
 //! ```
+
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
