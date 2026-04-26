@@ -81,7 +81,6 @@ impl<V: IntoView + 'static> IntoView for NavigationMenuList<V> {
 
 // NavigationMenuItem
 #[allow(dead_code)]
-#[allow(dead_code)]
 pub struct NavigationMenuItem<C> {
     id: ViewId,
     label: String,
