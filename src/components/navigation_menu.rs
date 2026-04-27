@@ -3,6 +3,7 @@
 
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
+use floem::reactive::{RwSignal, SignalGet, SignalUpdate};
 use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
@@ -116,8 +117,75 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        /* simplified; real impl would include dropdown */
-        Box::new(floem::views::Empty::new())
+        let label = self.label.clone();
+        let is_open = RwSignal::new(false);
+        let trigger = floem::views::Label::new(label)
+            .style(|s| {
+                s.with_shadcn_theme(move |s, t| {
+                    s.px_3()
+                        .py_2()
+                        .text_sm()
+                        .font_medium()
+                        .color(t.foreground)
+                        .rounded_md()
+                        .cursor(CursorStyle::Pointer)
+                        .hover(|s| s.background(t.accent).color(t.accent_foreground))
+                })
+            })
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
+                is_open.update(|v| *v = !*v);
+            });
+        let dropdown = if let Some(content) = self.content {
+            floem::views::Container::new(content)
+                .style(move |s| {
+                    s.with_shadcn_theme(move |s, t| {
+                        let open = is_open.get();
+                        let base = s
+                            .absolute()
+                            .inset_top_pct(100.0)
+                            .inset_left(0.0)
+                            .mt_1()
+                            .min_width(180.0)
+                            .py_1()
+                            .background(t.popover)
+                            .border_1()
+                            .border_color(t.border)
+                            .rounded_md()
+                            .box_shadow_blur(8.0)
+                            .box_shadow_color(t.foreground.with_alpha(0.1))
+                            .z_index(100)
+                            .flex_col();
+                        if open {
+                            base
+                        } else {
+                            base.display(floem::style::Display::None)
+                        }
+                    })
+                })
+                .into_any()
+        } else {
+            floem::views::Empty::new().into_any()
+        };
+        let backdrop = floem::views::Empty::new()
+            .style(move |s| {
+                let open = is_open.get();
+                if open {
+                    s.absolute()
+                        .inset(-1000.0)
+                        .width(3000.0)
+                        .height(3000.0)
+                        .z_index(99)
+                } else {
+                    s.display(floem::style::Display::None)
+                }
+            })
+            .on_event_stop(floem::event::listener::Click, move |_, _| {
+                is_open.set(false);
+            });
+        Box::new(
+            floem::views::Container::new(floem::views::Stack::new((trigger, backdrop, dropdown)))
+                .style(|s| s.relative()),
+        )
     }
 }
 
