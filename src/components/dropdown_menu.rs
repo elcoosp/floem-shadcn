@@ -58,23 +58,29 @@ impl<T, C> DropdownMenu<T, C> {
     }
 
     /// Provide the menu items to show when open.
-    pub fn content<C2: IntoView + 'static>(self, content: C2) -> DropdownMenu<T, C2> {
+    /// Eagerly converts content to Box<dyn View> so it can be captured in closures.
+    pub fn content<C2: IntoView + 'static>(self, content: C2) -> DropdownMenu<T, Box<dyn View>> {
         DropdownMenu {
             open: self.open,
             trigger: self.trigger,
-            content: Some(content),
+            content: Some(Box::new(content.into_view())),
         }
     }
 }
 
-impl<T, C, TV> DropdownMenu<T, C>
+impl<T, C> HasViewId for DropdownMenu<T, C> {
+    fn view_id(&self) -> ViewId {
+        ViewId::new()
+    }
+}
+
+impl<T, TV> DropdownMenu<T, Box<dyn View>>
 where
     T: Fn() -> TV + 'static,
-    C: IntoView + 'static,
     TV: IntoView + 'static,
 {
     /// Build the view: trigger + dropdown overlay.
-    pub fn build(self) -> impl IntoView {
+    fn build(self) -> impl IntoView {
         let open = self.open;
         let trigger = self.trigger;
         let content = self.content;
@@ -127,21 +133,9 @@ where
     }
 }
 
-impl<T, C, TV> HasViewId for DropdownMenu<T, C>
+impl<T, TV> IntoView for DropdownMenu<T, Box<dyn View>>
 where
     T: Fn() -> TV + 'static,
-    C: IntoView + 'static,
-    TV: IntoView + 'static,
-{
-    fn view_id(&self) -> ViewId {
-        ViewId::new()
-    }
-}
-
-impl<T, C, TV> IntoView for DropdownMenu<T, C>
-where
-    T: Fn() -> TV + 'static,
-    C: IntoView + 'static,
     TV: IntoView + 'static,
 {
     type V = Box<dyn View>;

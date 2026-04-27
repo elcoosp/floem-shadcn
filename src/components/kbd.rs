@@ -8,6 +8,9 @@
 //! use floem_shadcn::components::kbd::Kbd;
 //!
 //! let shortcut = Kbd::new("⌘K");
+//!
+//! // Multiple keys in a group
+//! let shortcut = KbdGroup::new(vec!["⌘", "Shift", "K"]);
 //! ```
 
 use crate::theme::ShadcnThemeExt;
@@ -58,26 +61,73 @@ impl IntoView for Kbd {
     }
 }
 
-/// A group of Kbd elements displayed inline.
-pub struct KbdGroup;
+/// A group of Kbd elements displayed inline with "+" separator spacing.
+///
+/// # Example
+///
+/// ```rust
+/// let group = KbdGroup::new(vec!["⌘", "Shift", "K"]);
+/// ```
+pub struct KbdGroup {
+    id: ViewId,
+    keys: Vec<String>,
+}
+
 impl KbdGroup {
-    #[allow(dead_code)]
-    pub fn new(_: Vec<String>) -> Self {
-        Self
+    /// Create a group of keyboard shortcuts to display inline.
+    ///
+    /// The keys are joined with "+" separators for a clean inline look,
+    /// or displayed as individual `Kbd` elements with spacing.
+    pub fn new(keys: Vec<String>) -> Self {
+        Self {
+            id: ViewId::new(),
+            keys,
+        }
     }
 }
+
 impl HasViewId for KbdGroup {
     fn view_id(&self) -> ViewId {
-        ViewId::new()
+        self.id
     }
 }
+
 impl IntoView for KbdGroup {
     type V = Box<dyn View>;
     type Intermediate = Box<dyn View>;
     fn into_intermediate(self) -> Self::Intermediate {
         self.into_view()
     }
+
     fn into_view(self) -> Self::V {
-        Box::new(floem::views::Empty::new())
+        if self.keys.is_empty() {
+            return Box::new(floem::views::Empty::new());
+        }
+
+        let len = self.keys.len();
+        let children: Vec<Box<dyn View>> = self
+            .keys
+            .into_iter()
+            .enumerate()
+            .map(|(i, key)| {
+                let kbd = Kbd::new(key);
+                let kbd_view = kbd.into_view();
+                // Add "+" separator between keys (but not after the last one)
+                if i < len - 1 {
+                    let separator = floem::views::Label::new("+")
+                        .style(|s| s.font_size(11.0).padding_left(2.0).padding_right(2.0));
+                    let row = floem::views::Stack::horizontal((kbd_view, separator))
+                        .style(|s| s.items_center());
+                    Box::new(row)
+                } else {
+                    kbd_view
+                }
+            })
+            .collect();
+
+        Box::new(
+            floem::views::Stack::horizontal_from_iter(children)
+                .style(|s| s.items_center().gap(1.0)),
+        )
     }
 }
