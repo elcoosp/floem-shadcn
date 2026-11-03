@@ -6,23 +6,25 @@
 //!
 //! ```
 //! use floem_shadcn::components::aspect_ratio::AspectRatio;
+//! use floem::views::Label;
 //!
 //! // 16:9 aspect ratio
 //! AspectRatio::new(16.0 / 9.0)
-//!     .child(|| img("photo.jpg"));
+//!     .child(|| Label::derived(|| "photo"));
 //!
 //! // Square (1:1)
 //! AspectRatio::square()
-//!     .child(|| avatar);
+//!     .child(|| Label::derived(|| "avatar"));
 //!
 //! // Video (16:9)
 //! AspectRatio::video()
-//!     .child(|| video_player);
+//!     .child(|| Label::derived(|| "video"));
 //! ```
 
 use floem::prelude::*;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
+use num_traits::ToPrimitive;
 
 // ============================================================================
 // AspectRatio
@@ -36,6 +38,7 @@ pub struct AspectRatio<C> {
 }
 
 impl AspectRatio<()> {
+    #[must_use]
     /// Create a new aspect ratio container with specified ratio (width/height)
     pub fn new(ratio: f64) -> Self {
         Self {
@@ -45,26 +48,31 @@ impl AspectRatio<()> {
         }
     }
 
+    #[must_use]
     /// Create a square (1:1) aspect ratio
     pub fn square() -> Self {
         Self::new(1.0)
     }
 
+    #[must_use]
     /// Create a video (16:9) aspect ratio
     pub fn video() -> Self {
         Self::new(16.0 / 9.0)
     }
 
+    #[must_use]
     /// Create a widescreen (21:9) aspect ratio
     pub fn widescreen() -> Self {
         Self::new(21.0 / 9.0)
     }
 
+    #[must_use]
     /// Create a portrait (3:4) aspect ratio
     pub fn portrait() -> Self {
         Self::new(3.0 / 4.0)
     }
 
+    #[must_use]
     /// Create a photo (4:3) aspect ratio
     pub fn photo() -> Self {
         Self::new(4.0 / 3.0)
@@ -81,6 +89,7 @@ impl<C> AspectRatio<C> {
         }
     }
 
+    #[must_use]
     /// Change the aspect ratio
     pub fn ratio(mut self, ratio: f64) -> Self {
         self.ratio = ratio;
@@ -109,7 +118,7 @@ where
         floem::views::Container::new(inner).style(move |s| {
             s.position(floem::style::Position::Relative)
                 .width_full()
-                .aspect_ratio(ratio as f32)
+                .aspect_ratio(ratio.to_f32().unwrap_or(1.0))
         })
     }
 }
@@ -172,6 +181,7 @@ impl<V: IntoView + 'static> AspectRatioSimple<V> {
         Self::new(16.0 / 9.0, child)
     }
 
+    #[must_use]
     /// Change the aspect ratio
     pub fn ratio(mut self, ratio: f64) -> Self {
         self.ratio = ratio;
@@ -201,7 +211,7 @@ impl<V: IntoView + 'static> IntoView for AspectRatioSimple<V> {
         Box::new(floem::views::Container::new(inner).style(move |s| {
             s.position(floem::style::Position::Relative)
                 .width_full()
-                .aspect_ratio(ratio as f32)
+                .aspect_ratio(ratio.to_f32().unwrap_or(1.0))
         }))
     }
 }

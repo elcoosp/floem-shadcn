@@ -31,7 +31,9 @@ use crate::theme::ShadcnThemeExt;
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum AlertVariant {
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Destructive,
 }
 
@@ -44,6 +46,7 @@ pub struct Alert {
 }
 
 impl Alert {
+    #[must_use]
     /// Create a new alert
     pub fn new() -> Self {
         Self {
@@ -54,24 +57,28 @@ impl Alert {
         }
     }
 
+    #[must_use]
     /// Set the alert variant to destructive
     pub fn destructive(mut self) -> Self {
         self.variant = AlertVariant::Destructive;
         self
     }
 
+    #[must_use]
     /// Set the alert title
     pub fn title(mut self, title: impl Into<String>) -> Self {
         self.title = Some(title.into());
         self
     }
 
+    #[must_use]
     /// Set the alert description
     pub fn description(mut self, description: impl Into<String>) -> Self {
         self.description = Some(description.into());
         self
     }
 
+    #[must_use]
     /// Build the alert view
     pub fn build(self) -> impl IntoView {
         let variant = self.variant;
@@ -86,7 +93,7 @@ impl Alert {
         children.push(Box::new(
             floem::views::svg(move || icon_svg.to_string()).style(move |s| {
                 s.size_4() // w-4 h-4 = 16px
-                    .flex_shrink(0.0)
+                    .flex_shrink(0.0_f32)
                     .with_shadcn_theme(move |s, t| {
                         let color = match variant {
                             AlertVariant::Default => t.foreground,
@@ -124,7 +131,7 @@ impl Alert {
 
         children.push(Box::new(
             floem::views::Stack::vertical_from_iter(content_children)
-                .style(|s| s.gap_1().flex_grow(1.0)),
+                .style(|s| s.gap_1().flex_grow(1.0_f32)),
         ));
 
         floem::views::Stack::horizontal_from_iter(children).style(move |s| {
@@ -138,7 +145,7 @@ impl Alert {
                     let (bg, border_color) = match variant {
                         AlertVariant::Default => (t.background, t.border),
                         AlertVariant::Destructive => {
-                            let destructive_bg = peniko::Color::from_rgba8(
+                            let destructive_bg = floem::peniko::Color::from_rgba8(
                                 t.destructive.to_rgba8().r,
                                 t.destructive.to_rgba8().g,
                                 t.destructive.to_rgba8().b,

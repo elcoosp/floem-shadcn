@@ -33,6 +33,7 @@ pub struct Progress {
 }
 
 impl Progress {
+    #[must_use]
     /// Create a new progress bar with the given value signal (0-100)
     pub fn new(value: RwSignal<f64>) -> Self {
         Self {
@@ -42,6 +43,7 @@ impl Progress {
         }
     }
 
+    #[must_use]
     /// Create an indeterminate progress bar (no specific value)
     pub fn indeterminate() -> Self {
         Self {
@@ -51,12 +53,14 @@ impl Progress {
         }
     }
 
+    #[must_use]
     /// Set the maximum value (default: 100)
     pub fn max(mut self, max: f64) -> Self {
         self.max = max;
         self
     }
 
+    #[must_use]
     /// Build the progress bar view
     pub fn build(self) -> impl IntoView {
         let value = self.value;

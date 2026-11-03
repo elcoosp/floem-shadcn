@@ -7,6 +7,9 @@
 //! ```rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::resizable::*;
+//! # use floem::views::text;
+//! # let panel1_content = text("Left");
+//! # let panel2_content = text("Right");
 //!
 //! let size = RwSignal::new(50.0); // percentage
 //!
@@ -29,7 +32,9 @@ use floem_tailwind::TailwindExt;
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ResizableDirection {
     #[default]
+    /// The item.
     Horizontal,
+    /// The item.
     Vertical,
 }
 
@@ -63,6 +68,7 @@ impl<V: IntoView + 'static> ResizablePanelGroup<V> {
         }
     }
 
+    #[must_use]
     /// Set the direction
     pub fn direction(mut self, direction: ResizableDirection) -> Self {
         self.direction = direction;
@@ -137,24 +143,28 @@ impl<V: IntoView + 'static> ResizablePanel<V> {
         }
     }
 
+    #[must_use]
     /// Set default size (percentage 0-100)
     pub fn default_size(mut self, size: f64) -> Self {
         self.default_size = Some(size);
         self
     }
 
+    #[must_use]
     /// Set minimum size (percentage)
     pub fn min_size(mut self, size: f64) -> Self {
         self.min_size = Some(size);
         self
     }
 
+    #[must_use]
     /// Set maximum size (percentage)
     pub fn max_size(mut self, size: f64) -> Self {
         self.max_size = Some(size);
         self
     }
 
+    #[must_use]
     /// Connect to a size signal for controlled sizing
     pub fn size(mut self, signal: RwSignal<f64>) -> Self {
         self.size_signal = Some(signal);
@@ -178,12 +188,12 @@ impl<V: IntoView + 'static> IntoView for ResizablePanel<V> {
 
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(move |s| {
-                let size = size_signal.map(|sig| sig.get()).unwrap_or(default_size);
+                let size = size_signal.map_or(default_size, |sig| sig.get());
 
                 let base = s
                     .flex_basis(floem::unit::LengthAuto::Pct(size))
-                    .flex_grow(0.0)
-                    .flex_shrink(0.0);
+                    .flex_grow(0.0_f32)
+                    .flex_shrink(0.0_f32);
 
                 let with_min = if let Some(min) = min_size {
                     base.min_width_pct(min)
@@ -213,6 +223,7 @@ pub struct ResizableHandle {
 }
 
 impl ResizableHandle {
+    #[must_use]
     /// Create a new resize handle
     pub fn new() -> Self {
         Self {
@@ -222,12 +233,14 @@ impl ResizableHandle {
         }
     }
 
+    #[must_use]
     /// Set the direction (determines cursor and styling)
     pub fn direction(mut self, direction: ResizableDirection) -> Self {
         self.direction = direction;
         self
     }
 
+    #[must_use]
     /// Show a visual handle indicator
     pub fn with_handle(mut self) -> Self {
         self.with_handle = true;

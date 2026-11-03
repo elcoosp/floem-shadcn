@@ -7,8 +7,10 @@
 //! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::carousel::*;
+//! # use floem::views::text;
 //!
 //! let current = RwSignal::new(0);
+//! # let content_view = text("Slide 1");
 //!
 //! Carousel::new(current, 3)
 //!     .items(content_view);
@@ -26,7 +28,9 @@ use floem_tailwind::TailwindExt;
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum CarouselOrientation {
     #[default]
+    /// The item.
     Horizontal,
+    /// The item.
     Vertical,
 }
 
@@ -34,6 +38,7 @@ pub enum CarouselOrientation {
 // Carousel
 // ============================================================================
 
+/// The Carousel.
 pub struct Carousel<I> {
     id: ViewId,
     current: RwSignal<usize>,
@@ -44,6 +49,8 @@ pub struct Carousel<I> {
 }
 
 impl Carousel<()> {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(current: RwSignal<usize>, total: usize) -> Self {
         Self {
             id: ViewId::new(),
@@ -57,6 +64,7 @@ impl Carousel<()> {
 }
 
 impl<I> Carousel<I> {
+    /// The items.
     pub fn items<I2: IntoView + 'static>(self, items: I2) -> Carousel<I2> {
         Carousel {
             id: self.id,
@@ -68,21 +76,29 @@ impl<I> Carousel<I> {
         }
     }
 
+    #[must_use]
+    /// The orientation.
     pub fn orientation(mut self, orientation: CarouselOrientation) -> Self {
         self.orientation = orientation;
         self
     }
 
+    #[must_use]
+    /// The horizontal.
     pub fn horizontal(mut self) -> Self {
         self.orientation = CarouselOrientation::Horizontal;
         self
     }
 
+    #[must_use]
+    /// The vertical.
     pub fn vertical(mut self) -> Self {
         self.orientation = CarouselOrientation::Vertical;
         self
     }
 
+    #[must_use]
+    /// The arrows.
     pub fn arrows(mut self, show: bool) -> Self {
         self.show_arrows = show;
         self
@@ -130,7 +146,7 @@ impl<I: IntoView + 'static> IntoView for Carousel<I> {
                         .hover(|s| s.background(t.accent))
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 current.update(|c| {
                     if *c > 0 {
                         *c -= 1;
@@ -166,7 +182,7 @@ impl<I: IntoView + 'static> IntoView for Carousel<I> {
                         .hover(|s| s.background(t.accent))
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 current.update(|c| {
                     if *c < total.saturating_sub(1) {
                         *c += 1;
@@ -181,7 +197,7 @@ impl<I: IntoView + 'static> IntoView for Carousel<I> {
         };
 
         let content = floem::views::Container::new(self.items)
-            .style(|s| s.flex_grow(1.0).flex().items_center().justify_center());
+            .style(|s| s.flex_grow(1.0_f32).flex().items_center().justify_center());
 
         let carousel_body = match orientation {
             CarouselOrientation::Horizontal => {
@@ -204,12 +220,14 @@ impl<I: IntoView + 'static> IntoView for Carousel<I> {
 // CarouselItem
 // ============================================================================
 
+/// The `CarouselItem`.
 pub struct CarouselItem<V> {
     id: ViewId,
     child: V,
 }
 
 impl<V: IntoView + 'static> CarouselItem<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -243,9 +261,12 @@ impl<V: IntoView + 'static> IntoView for CarouselItem<V> {
 // CarouselContent - Shows content based on current index using visibility
 // ============================================================================
 
+/// The `CarouselContent`.
 pub struct CarouselContent;
 
 impl CarouselContent {
+    #[must_use]
+    /// The usage hint.
     pub fn usage_hint() -> &'static str {
         "Use Label::reactive or conditional rendering based on current signal"
     }
@@ -255,6 +276,7 @@ impl CarouselContent {
 // CarouselPrevious / CarouselNext (standalone buttons)
 // ============================================================================
 
+/// The `CarouselPrevious`.
 pub struct CarouselPrevious {
     id: ViewId,
     current: RwSignal<usize>,
@@ -263,6 +285,8 @@ pub struct CarouselPrevious {
 }
 
 impl CarouselPrevious {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(current: RwSignal<usize>, total: usize) -> Self {
         Self {
             id: ViewId::new(),
@@ -272,6 +296,8 @@ impl CarouselPrevious {
         }
     }
 
+    #[must_use]
+    /// The wrap.
     pub fn wrap(mut self, wrap: bool) -> Self {
         self.wrap = wrap;
         self
@@ -315,7 +341,7 @@ impl IntoView for CarouselPrevious {
                             .hover(|s| s.background(t.accent))
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     current.update(|c| {
                         if *c > 0 {
                             *c -= 1;
@@ -328,6 +354,7 @@ impl IntoView for CarouselPrevious {
     }
 }
 
+/// The `CarouselNext`.
 pub struct CarouselNext {
     id: ViewId,
     current: RwSignal<usize>,
@@ -336,6 +363,8 @@ pub struct CarouselNext {
 }
 
 impl CarouselNext {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(current: RwSignal<usize>, total: usize) -> Self {
         Self {
             id: ViewId::new(),
@@ -345,6 +374,8 @@ impl CarouselNext {
         }
     }
 
+    #[must_use]
+    /// The wrap.
     pub fn wrap(mut self, wrap: bool) -> Self {
         self.wrap = wrap;
         self
@@ -388,7 +419,7 @@ impl IntoView for CarouselNext {
                             .hover(|s| s.background(t.accent))
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     current.update(|c| {
                         if *c < total.saturating_sub(1) {
                             *c += 1;

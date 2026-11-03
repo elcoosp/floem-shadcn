@@ -24,6 +24,7 @@ use floem_tailwind::TailwindExt;
 use crate::styled::ShadcnStyleExt;
 use crate::theme::ShadcnThemeExt;
 
+/// The `FormLabel`.
 pub struct FormLabel {
     id: ViewId,
     text: String,
@@ -33,6 +34,7 @@ pub struct FormLabel {
 }
 
 impl FormLabel {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -42,14 +44,20 @@ impl FormLabel {
             error: false,
         }
     }
+    #[must_use]
+    /// The required.
     pub fn required(mut self) -> Self {
         self.required = true;
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
+    #[must_use]
+    /// The error.
     pub fn error(mut self, error: bool) -> Self {
         self.error = error;
         self
@@ -73,11 +81,7 @@ impl IntoView for FormLabel {
         let required = self.required;
         let disabled = self.disabled;
         let error = self.error;
-        let display_text = if required {
-            format!("{} *", text)
-        } else {
-            text
-        };
+        let display_text = if required { format!("{text} *") } else { text };
 
         Box::new(floem::views::Label::new(display_text).style(move |s| {
             s.text_sm()
@@ -96,6 +100,7 @@ impl IntoView for FormLabel {
     }
 }
 
+/// The `LabelWithIcon`.
 pub struct LabelWithIcon<V> {
     id: ViewId,
     icon: V,
@@ -105,6 +110,7 @@ pub struct LabelWithIcon<V> {
 }
 
 impl<V: IntoView + 'static> LabelWithIcon<V> {
+    /// Creates a new it.
     pub fn new(icon: V, text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -114,10 +120,14 @@ impl<V: IntoView + 'static> LabelWithIcon<V> {
             disabled: false,
         }
     }
+    #[must_use]
+    /// The required.
     pub fn required(mut self) -> Self {
         self.required = true;
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
@@ -140,11 +150,7 @@ impl<V: IntoView + 'static> IntoView for LabelWithIcon<V> {
         let text = self.text;
         let required = self.required;
         let disabled = self.disabled;
-        let display_text = if required {
-            format!("{} *", text)
-        } else {
-            text
-        };
+        let display_text = if required { format!("{text} *") } else { text };
 
         let label = floem::views::Label::new(display_text).style(move |s| {
             s.text_sm()
@@ -166,6 +172,7 @@ impl<V: IntoView + 'static> IntoView for LabelWithIcon<V> {
     }
 }
 
+/// The `FormField`.
 pub struct FormField<L, I> {
     id: ViewId,
     label: L,
@@ -175,6 +182,7 @@ pub struct FormField<L, I> {
 }
 
 impl<L: IntoView + 'static, I: IntoView + 'static> FormField<L, I> {
+    /// Creates a new it.
     pub fn new(label: L, input: I) -> Self {
         Self {
             id: ViewId::new(),
@@ -184,10 +192,14 @@ impl<L: IntoView + 'static, I: IntoView + 'static> FormField<L, I> {
             error_message: None,
         }
     }
+    #[must_use]
+    /// The description.
     pub fn description(mut self, desc: impl Into<String>) -> Self {
         self.description = Some(desc.into());
         self
     }
+    #[must_use]
+    /// The error.
     pub fn error(mut self, message: impl Into<String>) -> Self {
         self.error_message = Some(message.into());
         self

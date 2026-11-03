@@ -35,6 +35,7 @@ pub struct Checkbox {
 }
 
 impl Checkbox {
+    #[must_use]
     /// Create a new checkbox with the given checked signal
     pub fn new(checked: RwSignal<bool>) -> Self {
         Self {
@@ -45,18 +46,21 @@ impl Checkbox {
         }
     }
 
+    #[must_use]
     /// Set the label text
     pub fn label(mut self, text: impl Into<String>) -> Self {
         self.label_text = Some(text.into());
         self
     }
 
+    #[must_use]
     /// Set the checkbox as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
 
+    #[must_use]
     /// Build the checkbox view
     pub fn build(self) -> impl IntoView {
         let checked = self.checked;
@@ -86,11 +90,11 @@ impl Checkbox {
             s.with_shadcn_theme(move |s, t| {
                 let is_checked = checked.get();
                 s.size_4() // size-4 = 16px
-                    .flex_shrink(0.0) // shrink-0
+                    .flex_shrink(0.0_f32) // shrink-0
                     .rounded() // rounded-[4px] = 4px
                     .border_1() // border (1px)
                     .box_shadow_blur(2.0)
-                    .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25)) // shadow-xs
+                    .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 25)) // shadow-xs
                     .flex()
                     .items_center()
                     .justify_center()
@@ -99,7 +103,7 @@ impl Checkbox {
                         s.background(t.primary).border_color(t.primary)
                     })
                     .apply_if(!is_checked, |s| {
-                        s.background(peniko::Color::TRANSPARENT)
+                        s.background(floem::peniko::Color::TRANSPARENT)
                             .border_color(t.input)
                     })
                     // Disabled state: cursor-not-allowed, opacity-50
@@ -108,14 +112,14 @@ impl Checkbox {
             })
         });
 
-        let checkbox_box = if !disabled {
+        let checkbox_box = if disabled {
+            checkbox_box.into_any()
+        } else {
             checkbox_box
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     checked.update(|c| *c = !*c);
                 })
                 .into_any()
-        } else {
-            checkbox_box.into_any()
         };
 
         // With or without label
@@ -135,14 +139,14 @@ impl Checkbox {
                 })
             });
 
-            let label_view = if !disabled {
+            let label_view = if disabled {
+                label_view.into_any()
+            } else {
                 label_view
-                    .on_event_stop(floem::event::listener::Click, move |_, _| {
+                    .on_event_stop(floem::event::listener::Click, move |_, ()| {
                         checked.update(|c| *c = !*c);
                     })
                     .into_any()
-            } else {
-                label_view.into_any()
             };
 
             floem::views::Stack::horizontal((checkbox_box, label_view))

@@ -17,11 +17,14 @@ use floem::prelude::*;
 use floem::views::Decorators;
 use floem_tailwind::TailwindExt;
 
+/// The `TooltipExt`.
 pub trait TooltipExt: IntoView + Sized + 'static {
+    /// The tooltip styled.
     fn tooltip_styled(self, text: impl Into<String>) -> impl IntoView {
         let text = text.into();
         floem::views::TooltipExt::tooltip(self, move || tooltip_content(text.clone()))
     }
+    /// The tooltip view.
     fn tooltip_view<V: IntoView + 'static>(
         self,
         content: impl Fn() -> V + 'static,

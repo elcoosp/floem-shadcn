@@ -4,18 +4,25 @@ use floem::reactive::{Effect, RwSignal, SignalGet, SignalUpdate};
 use floem::views::{Decorators, TextInput, TextInputEnter};
 use floem::{HasViewId, ViewId};
 
+/// Callback invoked with the element's text when it changes.
+pub type TextChangeCallback = Box<dyn Fn(&str)>;
+
+/// Single-line text input styled after shadcn/ui Input.
 pub struct Input {
     id: ViewId,
     buffer: RwSignal<String>,
     placeholder: Option<String>,
-    on_enter: Option<Box<dyn Fn(&str)>>,
+    on_enter: Option<TextChangeCallback>,
 }
 
 impl Input {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self::with_text("")
     }
 
+    /// Configures text.
     pub fn with_text(initial: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -25,11 +32,15 @@ impl Input {
         }
     }
 
+    #[must_use]
+    /// The placeholder.
     pub fn placeholder(mut self, text: impl Into<String>) -> Self {
         self.placeholder = Some(text.into());
         self
     }
 
+    #[must_use]
+    /// Adds a handler for update.
     pub fn on_update(self, f: impl Fn(&str) + 'static) -> Self {
         let buf = self.buffer;
         Effect::new(move |_| {
@@ -39,11 +50,15 @@ impl Input {
         self
     }
 
+    #[must_use]
+    /// Adds a handler for enter.
     pub fn on_enter(mut self, f: impl Fn(&str) + 'static) -> Self {
         self.on_enter = Some(Box::new(f));
         self
     }
 
+    #[must_use]
+    /// The value.
     pub fn value(self, getter: impl Fn() -> String + 'static) -> Self {
         let buf = self.buffer;
         Effect::new(move |_| {
@@ -55,6 +70,8 @@ impl Input {
         self
     }
 
+    #[must_use]
+    /// The buffer.
     pub fn buffer(&self) -> RwSignal<String> {
         self.buffer
     }

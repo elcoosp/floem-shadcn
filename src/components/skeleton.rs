@@ -23,6 +23,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+/// The Skeleton.
 pub struct Skeleton {
     id: ViewId,
     width: Option<f64>,
@@ -31,6 +32,8 @@ pub struct Skeleton {
 }
 
 impl Skeleton {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
@@ -39,6 +42,8 @@ impl Skeleton {
             border_radius: None,
         }
     }
+    #[must_use]
+    /// The text.
     pub fn text() -> Self {
         Self {
             id: ViewId::new(),
@@ -47,18 +52,26 @@ impl Skeleton {
             border_radius: Some(4.0),
         }
     }
+    #[must_use]
+    /// The width.
     pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
         self
     }
+    #[must_use]
+    /// The height.
     pub fn height(mut self, height: f64) -> Self {
         self.height = Some(height);
         self
     }
+    #[must_use]
+    /// The radius.
     pub fn radius(mut self, radius: f64) -> Self {
         self.border_radius = Some(radius);
         self
     }
+    #[must_use]
+    /// The circle.
     pub fn circle(mut self, size: f64) -> Self {
         self.width = Some(size);
         self.height = Some(size);
@@ -66,6 +79,8 @@ impl Skeleton {
         self
     }
 
+    #[must_use]
+    /// Builds it.
     pub fn build(self) -> impl IntoView {
         let width = self.width;
         let height = self.height;

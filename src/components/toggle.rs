@@ -6,7 +6,7 @@
 //!
 //! ```rust
 //! use floem::reactive::RwSignal;
-//! use floem_shadcn::components::toggle::Toggle;
+//! use floem_shadcn::components::toggle::{Toggle, ToggleVariant};
 //!
 //! let bold = RwSignal::new(false);
 //!
@@ -26,16 +26,21 @@ use floem_tailwind::TailwindExt;
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToggleVariant {
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Outline,
 }
 
 /// Toggle size
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToggleSize {
+    /// The item.
     Sm,
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Lg,
 }
 
@@ -66,36 +71,42 @@ impl Toggle {
         }
     }
 
+    #[must_use]
     /// Set the variant
     pub fn variant(mut self, variant: ToggleVariant) -> Self {
         self.variant = variant;
         self
     }
 
+    #[must_use]
     /// Use outline variant
     pub fn outline(mut self) -> Self {
         self.variant = ToggleVariant::Outline;
         self
     }
 
+    #[must_use]
     /// Set the size
     pub fn size(mut self, size: ToggleSize) -> Self {
         self.size = size;
         self
     }
 
+    #[must_use]
     /// Use small size
     pub fn sm(mut self) -> Self {
         self.size = ToggleSize::Sm;
         self
     }
 
+    #[must_use]
     /// Use large size
     pub fn lg(mut self) -> Self {
         self.size = ToggleSize::Lg;
         self
     }
 
+    #[must_use]
     /// Set as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
@@ -182,7 +193,7 @@ impl IntoView for Toggle {
             Box::new(label)
         } else {
             Box::new(
-                label.on_event_stop(floem::event::listener::Click, move |_, _| {
+                label.on_event_stop(floem::event::listener::Click, move |_, ()| {
                     pressed.update(|v| *v = !*v);
                 }),
             )
@@ -217,36 +228,42 @@ impl<V: IntoView + 'static> ToggleCustom<V> {
         }
     }
 
+    #[must_use]
     /// Set the variant
     pub fn variant(mut self, variant: ToggleVariant) -> Self {
         self.variant = variant;
         self
     }
 
+    #[must_use]
     /// Use outline variant
     pub fn outline(mut self) -> Self {
         self.variant = ToggleVariant::Outline;
         self
     }
 
+    #[must_use]
     /// Set the size
     pub fn size(mut self, size: ToggleSize) -> Self {
         self.size = size;
         self
     }
 
+    #[must_use]
     /// Use small size
     pub fn sm(mut self) -> Self {
         self.size = ToggleSize::Sm;
         self
     }
 
+    #[must_use]
     /// Use large size
     pub fn lg(mut self) -> Self {
         self.size = ToggleSize::Lg;
         self
     }
 
+    #[must_use]
     /// Set as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
@@ -325,7 +342,7 @@ impl<V: IntoView + 'static> IntoView for ToggleCustom<V> {
             Box::new(container)
         } else {
             Box::new(
-                container.on_event_stop(floem::event::listener::Click, move |_, _| {
+                container.on_event_stop(floem::event::listener::Click, move |_, ()| {
                     pressed.update(|v| *v = !*v);
                 }),
             )

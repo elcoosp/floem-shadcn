@@ -9,11 +9,13 @@ use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
 // NavigationMenu
+/// The `NavigationMenu`.
 pub struct NavigationMenu<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> NavigationMenu<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -48,11 +50,13 @@ impl<V: IntoView + 'static> IntoView for NavigationMenu<V> {
 }
 
 // NavigationMenuList
+/// The `NavigationMenuList`.
 pub struct NavigationMenuList<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> NavigationMenuList<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -80,14 +84,21 @@ impl<V: IntoView + 'static> IntoView for NavigationMenuList<V> {
 }
 
 // NavigationMenuItem
-#[allow(dead_code)]
-#[allow(dead_code)]
+/// The `NavigationMenuItem`.
 pub struct NavigationMenuItem<C> {
     id: ViewId,
     label: String,
     content: Option<C>,
 }
+impl<C> NavigationMenuItem<C> {
+    /// The menu item's content view, if one was provided.
+    pub fn content_view(&self) -> Option<&C> {
+        self.content.as_ref()
+    }
+}
+
 impl NavigationMenuItem<()> {
+    /// Creates a new it.
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -97,6 +108,7 @@ impl NavigationMenuItem<()> {
     }
 }
 impl<C> NavigationMenuItem<C> {
+    /// The content.
     pub fn content<C2: IntoView + 'static>(self, content: C2) -> NavigationMenuItem<C2> {
         NavigationMenuItem {
             id: self.id,
@@ -123,11 +135,13 @@ impl<C: IntoView + 'static> IntoView for NavigationMenuItem<C> {
 }
 
 // NavigationMenuTrigger
+/// The `NavigationMenuTrigger`.
 pub struct NavigationMenuTrigger {
     id: ViewId,
     label: String,
 }
 impl NavigationMenuTrigger {
+    /// Creates a new it.
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -165,11 +179,13 @@ impl IntoView for NavigationMenuTrigger {
 }
 
 // NavigationMenuContent
+/// The `NavigationMenuContent`.
 pub struct NavigationMenuContent<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> NavigationMenuContent<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -196,6 +212,7 @@ impl<V: IntoView + 'static> IntoView for NavigationMenuContent<V> {
 }
 
 // NavigationMenuLink
+/// The `NavigationMenuLink`.
 pub struct NavigationMenuLink {
     id: ViewId,
     label: String,
@@ -203,6 +220,7 @@ pub struct NavigationMenuLink {
     on_click: Option<Box<dyn Fn() + 'static>>,
 }
 impl NavigationMenuLink {
+    /// Creates a new it.
     pub fn new(label: impl Into<String>, _href: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -211,6 +229,7 @@ impl NavigationMenuLink {
             on_click: None,
         }
     }
+    /// The simple.
     pub fn simple(label: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -219,10 +238,14 @@ impl NavigationMenuLink {
             on_click: None,
         }
     }
+    #[must_use]
+    /// The description.
     pub fn description(mut self, desc: impl Into<String>) -> Self {
         self.description = Some(desc.into());
         self
     }
+    #[must_use]
+    /// Adds a handler for click.
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
@@ -266,7 +289,7 @@ impl IntoView for NavigationMenuLink {
             })
         });
         if let Some(handler) = on_click {
-            Box::new(container.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
+            Box::new(container.on_event_stop(floem::event::listener::Click, move |_, ()| handler()))
         } else {
             Box::new(container)
         }
@@ -274,8 +297,11 @@ impl IntoView for NavigationMenuLink {
 }
 
 // NavigationMenuIndicator
+/// The `NavigationMenuIndicator`.
 pub struct NavigationMenuIndicator;
 impl NavigationMenuIndicator {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self
     }
@@ -302,11 +328,13 @@ impl IntoView for NavigationMenuIndicator {
 }
 
 // NavigationMenuViewport
+/// The `NavigationMenuViewport`.
 pub struct NavigationMenuViewport<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> NavigationMenuViewport<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -331,12 +359,12 @@ impl<V: IntoView + 'static> IntoView for NavigationMenuViewport<V> {
                 s.absolute()
                     .inset_top_pct(100.0)
                     .inset_left(0.0)
-                    .background(peniko::Color::WHITE)
+                    .background(floem::peniko::Color::WHITE)
                     .border_1()
-                    .border_color(peniko::Color::BLACK)
+                    .border_color(floem::peniko::Color::BLACK)
                     .rounded_md()
                     .box_shadow_blur(8.0)
-                    .box_shadow_color(peniko::Color::BLACK.with_alpha(0.1))
+                    .box_shadow_color(floem::peniko::Color::BLACK.with_alpha(0.1))
             }),
         )
     }

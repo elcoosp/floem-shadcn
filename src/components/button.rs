@@ -6,6 +6,8 @@
 //!
 //! ```
 //! use floem_shadcn::components::button::Button;
+//! # use floem::views::text;
+//! # let icon_view = text("icon");
 //!
 //! // Default button
 //! let btn = Button::new("Click me");
@@ -27,21 +29,31 @@ use crate::theme::{ShadcnTheme, ShadcnThemeExt};
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum ButtonVariant {
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Destructive,
+    /// The item.
     Outline,
+    /// The item.
     Secondary,
+    /// The item.
     Ghost,
+    /// The item.
     Link,
 }
 
 /// Button sizes
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum ButtonSize {
+    /// The item.
     Sm,
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Lg,
+    /// The item.
     Icon,
 }
 
@@ -66,18 +78,21 @@ impl<V: IntoView + 'static> Button<V> {
 
     // === Size methods ===
 
+    #[must_use]
     /// Set button to small size
     pub fn sm(mut self) -> Self {
         self.size = ButtonSize::Sm;
         self
     }
 
+    #[must_use]
     /// Set button to large size
     pub fn lg(mut self) -> Self {
         self.size = ButtonSize::Lg;
         self
     }
 
+    #[must_use]
     /// Set button to icon size (square)
     pub fn icon(mut self) -> Self {
         self.size = ButtonSize::Icon;
@@ -86,30 +101,42 @@ impl<V: IntoView + 'static> Button<V> {
 
     // === Variant methods ===
 
+    #[must_use]
+    /// Set button to primary variant (solid, the shadcn/ui "default" style)
+    pub fn primary(mut self) -> Self {
+        self.variant = ButtonVariant::Default;
+        self
+    }
+
+    #[must_use]
     /// Set button to destructive variant (red/danger)
     pub fn destructive(mut self) -> Self {
         self.variant = ButtonVariant::Destructive;
         self
     }
 
+    #[must_use]
     /// Set button to outline variant (bordered)
     pub fn outline(mut self) -> Self {
         self.variant = ButtonVariant::Outline;
         self
     }
 
+    #[must_use]
     /// Set button to secondary variant
     pub fn secondary(mut self) -> Self {
         self.variant = ButtonVariant::Secondary;
         self
     }
 
+    #[must_use]
     /// Set button to ghost variant (transparent background)
     pub fn ghost(mut self) -> Self {
         self.variant = ButtonVariant::Ghost;
         self
     }
 
+    #[must_use]
     /// Set button to link variant (looks like a link)
     pub fn link(mut self) -> Self {
         self.variant = ButtonVariant::Link;
@@ -118,12 +145,14 @@ impl<V: IntoView + 'static> Button<V> {
 
     // === Explicit setters ===
 
+    #[must_use]
     /// Set the button variant explicitly
     pub fn with_variant(mut self, variant: ButtonVariant) -> Self {
         self.variant = variant;
         self
     }
 
+    #[must_use]
     /// Set the button size explicitly
     pub fn with_size(mut self, size: ButtonSize) -> Self {
         self.size = size;
@@ -164,7 +193,7 @@ fn build_button_style(s: Style, size: ButtonSize, variant: ButtonVariant) -> Sty
         .flex()
         .items_center()
         .justify_center()
-        .flex_grow(0.0)
+        .flex_grow(0.0_f32)
         .cursor(floem::style::CursorStyle::Pointer)
         .transition(
             floem::style::Background,
@@ -199,12 +228,12 @@ fn apply_variant_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Sty
             .background(t.primary)
             .color(t.primary_foreground)
             .border_1()
-            .border_color(peniko::Color::TRANSPARENT),
+            .border_color(floem::peniko::Color::TRANSPARENT),
         ButtonVariant::Destructive => s
             .background(t.destructive)
             .color(t.destructive_foreground)
             .border_1()
-            .border_color(peniko::Color::TRANSPARENT),
+            .border_color(floem::peniko::Color::TRANSPARENT),
         ButtonVariant::Outline => s
             .background(t.background)
             .color(t.foreground)
@@ -214,17 +243,17 @@ fn apply_variant_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Sty
             .background(t.secondary)
             .color(t.secondary_foreground)
             .border_1()
-            .border_color(peniko::Color::TRANSPARENT),
+            .border_color(floem::peniko::Color::TRANSPARENT),
         ButtonVariant::Ghost => s
-            .background(peniko::Color::TRANSPARENT)
+            .background(floem::peniko::Color::TRANSPARENT)
             .color(t.foreground)
             .border_1()
-            .border_color(peniko::Color::TRANSPARENT),
+            .border_color(floem::peniko::Color::TRANSPARENT),
         ButtonVariant::Link => s
-            .background(peniko::Color::TRANSPARENT)
+            .background(floem::peniko::Color::TRANSPARENT)
             .color(t.primary)
             .border_1()
-            .border_color(peniko::Color::TRANSPARENT),
+            .border_color(floem::peniko::Color::TRANSPARENT),
     }
 }
 
@@ -238,9 +267,10 @@ fn apply_hover_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Style
     s.hover(move |s| match variant {
         ButtonVariant::Default => s.background(hover_primary),
         ButtonVariant::Destructive => s.background(hover_destructive),
-        ButtonVariant::Outline => s.background(accent).color(accent_foreground),
+        ButtonVariant::Outline | ButtonVariant::Ghost => {
+            s.background(accent).color(accent_foreground)
+        }
         ButtonVariant::Secondary => s.background(hover_secondary),
-        ButtonVariant::Ghost => s.background(accent).color(accent_foreground),
         ButtonVariant::Link => s,
     })
 }
@@ -255,15 +285,16 @@ fn apply_active_style(s: Style, variant: ButtonVariant, t: &ShadcnTheme) -> Styl
     s.active(move |s| match variant {
         ButtonVariant::Default => s.background(active_primary),
         ButtonVariant::Destructive => s.background(active_destructive),
-        ButtonVariant::Outline => s.background(active_accent).color(accent_foreground),
+        ButtonVariant::Outline | ButtonVariant::Ghost => {
+            s.background(active_accent).color(accent_foreground)
+        }
         ButtonVariant::Secondary => s.background(active_secondary),
-        ButtonVariant::Ghost => s.background(active_accent).color(accent_foreground),
         ButtonVariant::Link => s,
     })
 }
 
 /// Apply alpha/opacity to a color
-fn with_alpha(color: peniko::Color, alpha: f32) -> peniko::Color {
+fn with_alpha(color: floem::peniko::Color, alpha: f32) -> floem::peniko::Color {
     color.with_alpha(alpha)
 }
 

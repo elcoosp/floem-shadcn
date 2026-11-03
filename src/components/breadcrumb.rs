@@ -28,12 +28,14 @@ use crate::theme::ShadcnThemeExt;
 // Breadcrumb
 // ============================================================================
 
+/// The Breadcrumb.
 pub struct Breadcrumb<V> {
     id: ViewId,
     child: V,
 }
 
 impl<V: IntoView + 'static> Breadcrumb<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -70,12 +72,14 @@ impl<V: IntoView + 'static> IntoView for Breadcrumb<V> {
 // BreadcrumbList
 // ============================================================================
 
+/// The `BreadcrumbList`.
 pub struct BreadcrumbList<V> {
     id: ViewId,
     child: V,
 }
 
 impl<V: IntoView + 'static> BreadcrumbList<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -112,6 +116,7 @@ impl<V: IntoView + 'static> IntoView for BreadcrumbList<V> {
 // BreadcrumbItem
 // ============================================================================
 
+/// The `BreadcrumbItem`.
 pub struct BreadcrumbItem {
     id: ViewId,
     text: String,
@@ -121,6 +126,7 @@ pub struct BreadcrumbItem {
 }
 
 impl BreadcrumbItem {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -131,14 +137,20 @@ impl BreadcrumbItem {
         }
     }
 
+    #[must_use]
+    /// The href.
     pub fn href(mut self, href: impl Into<String>) -> Self {
         self.href = Some(href.into());
         self
     }
+    #[must_use]
+    /// The current.
     pub fn current(mut self) -> Self {
         self.is_current = true;
         self
     }
+    #[must_use]
+    /// Adds a handler for click.
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
@@ -179,7 +191,7 @@ impl IntoView for BreadcrumbItem {
         });
 
         if let Some(handler) = on_click {
-            Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
+            Box::new(label.on_event_stop(floem::event::listener::Click, move |_, ()| handler()))
         } else {
             Box::new(label)
         }
@@ -190,6 +202,7 @@ impl IntoView for BreadcrumbItem {
 // BreadcrumbLink
 // ============================================================================
 
+/// The `BreadcrumbLink`.
 pub struct BreadcrumbLink<V> {
     id: ViewId,
     child: V,
@@ -197,6 +210,7 @@ pub struct BreadcrumbLink<V> {
 }
 
 impl<V: IntoView + 'static> BreadcrumbLink<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -204,6 +218,8 @@ impl<V: IntoView + 'static> BreadcrumbLink<V> {
             on_click: None,
         }
     }
+    #[must_use]
+    /// Adds a handler for click.
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
@@ -233,7 +249,7 @@ impl<V: IntoView + 'static> IntoView for BreadcrumbLink<V> {
         });
 
         if let Some(handler) = on_click {
-            Box::new(container.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
+            Box::new(container.on_event_stop(floem::event::listener::Click, move |_, ()| handler()))
         } else {
             Box::new(container)
         }
@@ -244,12 +260,14 @@ impl<V: IntoView + 'static> IntoView for BreadcrumbLink<V> {
 // BreadcrumbPage
 // ============================================================================
 
+/// The `BreadcrumbPage`.
 pub struct BreadcrumbPage {
     id: ViewId,
     text: String,
 }
 
 impl BreadcrumbPage {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -282,24 +300,30 @@ impl IntoView for BreadcrumbPage {
 // BreadcrumbSeparator
 // ============================================================================
 
+/// The `BreadcrumbSeparator`.
 pub struct BreadcrumbSeparator {
     id: ViewId,
     separator: String,
 }
 
 impl BreadcrumbSeparator {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
             separator: "/".to_string(),
         }
     }
+    #[must_use]
+    /// The chevron.
     pub fn chevron() -> Self {
         Self {
             id: ViewId::new(),
             separator: ">".to_string(),
         }
     }
+    /// The custom.
     pub fn custom(separator: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -338,18 +362,23 @@ impl IntoView for BreadcrumbSeparator {
 // BreadcrumbEllipsis
 // ============================================================================
 
+/// The `BreadcrumbEllipsis`.
 pub struct BreadcrumbEllipsis {
     id: ViewId,
     on_click: Option<Box<dyn Fn() + 'static>>,
 }
 
 impl BreadcrumbEllipsis {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
             on_click: None,
         }
     }
+    #[must_use]
+    /// Adds a handler for click.
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self

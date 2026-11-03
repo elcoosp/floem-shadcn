@@ -6,6 +6,7 @@
 //!
 //! ```rust
 //! use floem_shadcn::components::scroll_area::ScrollArea;
+//! # use floem::prelude::*;
 //!
 //! // Vertical scroll
 //! ScrollArea::new(Stack::vertical((
@@ -32,8 +33,11 @@ use floem_tailwind::TailwindExt;
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ScrollOrientation {
     #[default]
+    /// The item.
     Vertical,
+    /// The item.
     Horizontal,
+    /// The item.
     Both,
 }
 
@@ -62,36 +66,42 @@ impl<V: IntoView + 'static> ScrollArea<V> {
         }
     }
 
+    #[must_use]
     /// Set scroll orientation
     pub fn orientation(mut self, orientation: ScrollOrientation) -> Self {
         self.orientation = orientation;
         self
     }
 
+    #[must_use]
     /// Set to horizontal scrolling
     pub fn horizontal(mut self) -> Self {
         self.orientation = ScrollOrientation::Horizontal;
         self
     }
 
+    #[must_use]
     /// Set to vertical scrolling
     pub fn vertical(mut self) -> Self {
         self.orientation = ScrollOrientation::Vertical;
         self
     }
 
+    #[must_use]
     /// Set to both horizontal and vertical scrolling
     pub fn both(mut self) -> Self {
         self.orientation = ScrollOrientation::Both;
         self
     }
 
+    #[must_use]
     /// Set fixed width
     pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
         self
     }
 
+    #[must_use]
     /// Set fixed height
     pub fn height(mut self, height: f64) -> Self {
         self.height = Some(height);
@@ -123,7 +133,7 @@ impl<V: IntoView + 'static> IntoView for ScrollArea<V> {
             ScrollOrientation::Vertical => floem::views::Scroll::new(self.child)
                 .style(move |s| {
                     s.with_shadcn_theme(move |s, t| {
-                        let base = s.border_radius(t.radius).flex_grow(1.0).flex_basis(0.0);
+                        let base = s.border_radius(t.radius).flex_grow(1.0_f32).flex_basis(0.0);
 
                         match (width, height) {
                             (Some(w), Some(h)) => base.width(w).height(h),
@@ -137,7 +147,7 @@ impl<V: IntoView + 'static> IntoView for ScrollArea<V> {
             ScrollOrientation::Horizontal => floem::views::Scroll::new(self.child)
                 .style(move |s| {
                     s.with_shadcn_theme(move |s, t| {
-                        let base = s.border_radius(t.radius).flex_grow(1.0).flex_basis(0.0);
+                        let base = s.border_radius(t.radius).flex_grow(1.0_f32).flex_basis(0.0);
 
                         match (width, height) {
                             (Some(w), Some(h)) => base.width(w).height(h),
@@ -151,7 +161,7 @@ impl<V: IntoView + 'static> IntoView for ScrollArea<V> {
             ScrollOrientation::Both => floem::views::Scroll::new(self.child)
                 .style(move |s| {
                     s.with_shadcn_theme(move |s, t| {
-                        let base = s.border_radius(t.radius).flex_grow(1.0).flex_basis(0.0);
+                        let base = s.border_radius(t.radius).flex_grow(1.0_f32).flex_basis(0.0);
 
                         match (width, height) {
                             (Some(w), Some(h)) => base.width(w).height(h),
@@ -193,18 +203,21 @@ impl<V: IntoView + 'static> ScrollAreaWithBar<V> {
         }
     }
 
+    #[must_use]
     /// Set fixed height
     pub fn height(mut self, height: f64) -> Self {
         self.height = Some(height);
         self
     }
 
+    #[must_use]
     /// Set fixed width
     pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
         self
     }
 
+    #[must_use]
     /// Toggle scrollbar visibility
     pub fn show_scrollbar(mut self, show: bool) -> Self {
         self.show_scrollbar = show;
@@ -236,7 +249,7 @@ impl<V: IntoView + 'static> IntoView for ScrollAreaWithBar<V> {
                     .border_1()
                     .border_color(t.border)
                     .border_radius(t.radius)
-                    .flex_grow(1.0)
+                    .flex_grow(1.0_f32)
                     .flex_basis(0.0);
 
                 match (width, height) {
@@ -254,30 +267,23 @@ impl<V: IntoView + 'static> IntoView for ScrollAreaWithBar<V> {
 // VirtualList helper
 // ============================================================================
 
-/// A virtualized list for large datasets (uses floem's virtual_stack)
+/// A virtualized list for large datasets (uses floem's `virtual_stack`)
 pub struct VirtualScrollArea;
 
 impl VirtualScrollArea {
-    /// Create a hint for using floem's virtual_stack
-    /// Note: Virtual scrolling requires using floem's virtual_stack directly
-    /// with an im::Vector and a closure for rendering items.
+    /// Create a hint for using floem's `virtual_stack`
+    /// Note: Virtual scrolling requires using floem's `virtual_stack` directly
+    /// with an `im::Vector` and a closure for rendering items.
     ///
     /// Example:
     /// ```rust
-    /// use floem::views::virtual_stack;
-    /// use im::Vector;
+    /// use floem::prelude::*;
     ///
-    /// let items: Vector<String> = (0..10000)
-    ///     .map(|i| format!("Item {}", i))
-    ///     .collect();
-    ///
-    /// virtual_stack(
-    ///     floem::views::VirtualDirection::Vertical,
-    ///     floem::views::VirtualItemSize::Fixed(Box::new(|| 32.0)),
-    ///     move || items.clone(),
-    ///     move |item| item.clone(),
-    ///     move |item| label(move || item.clone()),
-    /// )
+    /// // For very large lists use floem's VirtualStack, which lazily
+    /// // renders only the visible items (any `VirtualVector` source):
+    /// let _list = floem::views::VirtualStack::new(move || 1..=100_000)
+    ///     .style(|s| s.size(200.0, 500.0));
+    #[must_use]
     /// ```
     pub fn usage_hint() -> &'static str {
         "Use floem::views::virtual_stack for virtualized scrolling of large lists"

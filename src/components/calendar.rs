@@ -22,23 +22,32 @@ use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// The `SimpleDate`.
 pub struct SimpleDate {
+    /// The item.
     pub year: i32,
+    /// The item.
     pub month: u32,
+    /// The item.
     pub day: u32,
 }
 
 impl SimpleDate {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(year: i32, month: u32, day: u32) -> Self {
         Self { year, month, day }
     }
+    #[must_use]
+    /// The today.
     pub fn today() -> Self {
         Self::new(2025, 1, 1)
     }
+    #[must_use]
+    /// The days in month.
     pub fn days_in_month(year: i32, month: u32) -> u32 {
         match month {
             1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-            4 | 6 | 9 | 11 => 30,
             2 => {
                 if (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) {
                     29
@@ -49,19 +58,29 @@ impl SimpleDate {
             _ => 30,
         }
     }
+    #[must_use]
+    /// The first day of week.
     pub fn first_day_of_week(year: i32, month: u32) -> u32 {
-        let mut y = year;
-        let mut m = month as i32;
-        if m < 3 {
-            m += 12;
-            y -= 1;
-        }
-        let q = 1;
-        let k = y % 100;
-        let j = y / 100;
-        let h = (q + (13 * (m + 1)) / 5 + k + k / 4 + j / 4 + 5 * j) % 7;
-        ((h + 6) % 7) as u32
+        let month_i = i32::try_from(month).unwrap_or(1);
+        let (year_adj, month_adj) = if month_i < 3 {
+            (year - 1, month_i + 12)
+        } else {
+            (year, month_i)
+        };
+        let day_of_month = 1;
+        let year_of_century = year_adj % 100;
+        let century = year_adj / 100;
+        let weekday = (day_of_month
+            + (13 * (month_adj + 1)) / 5
+            + year_of_century
+            + year_of_century / 4
+            + century / 4
+            + 5 * century)
+            % 7;
+        u32::try_from((weekday + 6) % 7).unwrap_or(0)
     }
+    #[must_use]
+    /// The month name.
     pub fn month_name(month: u32) -> &'static str {
         match month {
             1 => "January",
@@ -81,6 +100,7 @@ impl SimpleDate {
     }
 }
 
+/// The Calendar.
 pub struct Calendar {
     id: ViewId,
     selected: RwSignal<Option<SimpleDate>>,
@@ -88,6 +108,8 @@ pub struct Calendar {
     view_month: RwSignal<u32>,
 }
 impl Calendar {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(selected: RwSignal<Option<SimpleDate>>) -> Self {
         let today = SimpleDate::today();
         Self {
@@ -97,10 +119,14 @@ impl Calendar {
             view_month: RwSignal::new(today.month),
         }
     }
+    #[must_use]
+    /// The year.
     pub fn year(self, year: i32) -> Self {
         self.view_year.set(year);
         self
     }
+    #[must_use]
+    /// The month.
     pub fn month(self, month: u32) -> Self {
         self.view_month.set(month);
         self
@@ -133,7 +159,7 @@ impl IntoView for Calendar {
                         .hover(|s| s.background(t.muted))
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 let m = view_month.get();
                 if m == 1 {
                     view_month.set(12);
@@ -153,7 +179,7 @@ impl IntoView for Calendar {
                         .hover(|s| s.background(t.muted))
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 let m = view_month.get();
                 if m == 12 {
                     view_month.set(1);
@@ -171,7 +197,7 @@ impl IntoView for Calendar {
         })
         .style(|s| {
             s.with_shadcn_theme(move |s, t| {
-                s.flex_grow(1.0)
+                s.flex_grow(1.0_f32)
                     .text_sm()
                     .font_medium()
                     .color(t.foreground)
@@ -200,7 +226,7 @@ impl IntoView for Calendar {
             create_week_row(4, selected, view_year, view_month),
             create_week_row(5, selected, view_year, view_month),
         ))
-        .style(|s| s.gap_0p5());
+        .style(floem_tailwind::TailwindExt::gap_0p5);
 
         Box::new(
             floem::views::Stack::vertical((header, day_names, grid)).style(|s| {
@@ -246,7 +272,7 @@ fn create_week_row(
         create_day_cell(week * 7 + 5, selected, view_year, view_month),
         create_day_cell(week * 7 + 6, selected, view_year, view_month),
     ))
-    .style(|s| s.w_full())
+    .style(floem_tailwind::TailwindExt::w_full)
 }
 
 fn create_day_cell(
@@ -258,8 +284,8 @@ fn create_day_cell(
     floem::views::Label::derived(move || {
         let year = view_year.get();
         let month = view_month.get();
-        let first_day = SimpleDate::first_day_of_week(year, month) as i32;
-        let days_in_month = SimpleDate::days_in_month(year, month) as i32;
+        let first_day = i32::try_from(SimpleDate::first_day_of_week(year, month)).unwrap_or(0);
+        let days_in_month = i32::try_from(SimpleDate::days_in_month(year, month)).unwrap_or(0);
         let day_num = cell_index - first_day + 1;
         if day_num < 1 || day_num > days_in_month {
             String::new()
@@ -272,14 +298,16 @@ fn create_day_cell(
             let year = view_year.get();
             let month = view_month.get();
             let sel = selected.get();
-            let first_day = SimpleDate::first_day_of_week(year, month) as i32;
-            let days_in_month = SimpleDate::days_in_month(year, month) as i32;
+            let first_day = i32::try_from(SimpleDate::first_day_of_week(year, month)).unwrap_or(0);
+            let days_in_month = i32::try_from(SimpleDate::days_in_month(year, month)).unwrap_or(0);
             let day_num = cell_index - first_day + 1;
             let is_valid = day_num >= 1 && day_num <= days_in_month;
             let is_selected = is_valid
-                && sel
-                    .map(|d| d.year == year && d.month == month && d.day == day_num as u32)
-                    .unwrap_or(false);
+                && sel.is_some_and(|d| {
+                    d.year == year
+                        && d.month == month
+                        && d.day == u32::try_from(day_num).unwrap_or_default()
+                });
             let base = s
                 .w_8()
                 .h_8()
@@ -301,24 +329,31 @@ fn create_day_cell(
             }
         })
     })
-    .on_event_stop(floem::event::listener::Click, move |_, _| {
+    .on_event_stop(floem::event::listener::Click, move |_, ()| {
         let year = view_year.get();
         let month = view_month.get();
-        let first_day = SimpleDate::first_day_of_week(year, month) as i32;
-        let days_in_month = SimpleDate::days_in_month(year, month) as i32;
+        let first_day = i32::try_from(SimpleDate::first_day_of_week(year, month)).unwrap_or(0);
+        let days_in_month = i32::try_from(SimpleDate::days_in_month(year, month)).unwrap_or(0);
         let day_num = cell_index - first_day + 1;
         if day_num >= 1 && day_num <= days_in_month {
-            selected.set(Some(SimpleDate::new(year, month, day_num as u32)));
+            selected.set(Some(SimpleDate::new(
+                year,
+                month,
+                u32::try_from(day_num).unwrap_or(1),
+            )));
         }
     })
 }
 
+/// The `CalendarSimple`.
 pub struct CalendarSimple {
     id: ViewId,
     year: i32,
     month: u32,
 }
 impl CalendarSimple {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(year: i32, month: u32) -> Self {
         Self {
             id: ViewId::new(),
@@ -362,8 +397,8 @@ impl IntoView for CalendarSimple {
             day_header("Sa"),
         ))
         .style(|s| s.w_full().mb_1());
-        let first_day = SimpleDate::first_day_of_week(year, month) as i32;
-        let days_in_month = SimpleDate::days_in_month(year, month) as i32;
+        let first_day = i32::try_from(SimpleDate::first_day_of_week(year, month)).unwrap_or(0);
+        let days_in_month = i32::try_from(SimpleDate::days_in_month(year, month)).unwrap_or(0);
         let grid = floem::views::Stack::vertical((
             create_static_week(0, first_day, days_in_month),
             create_static_week(1, first_day, days_in_month),
@@ -372,7 +407,7 @@ impl IntoView for CalendarSimple {
             create_static_week(4, first_day, days_in_month),
             create_static_week(5, first_day, days_in_month),
         ))
-        .style(|s| s.gap_0p5());
+        .style(floem_tailwind::TailwindExt::gap_0p5);
         Box::new(
             floem::views::Stack::vertical((title, day_names, grid)).style(|s| {
                 s.with_shadcn_theme(move |s, t| {
@@ -397,7 +432,7 @@ fn create_static_week(week: i32, first_day: i32, days_in_month: i32) -> impl Int
         static_day_cell(week * 7 + 5, first_day, days_in_month),
         static_day_cell(week * 7 + 6, first_day, days_in_month),
     ))
-    .style(|s| s.w_full())
+    .style(floem_tailwind::TailwindExt::w_full)
 }
 
 fn static_day_cell(cell_index: i32, first_day: i32, days_in_month: i32) -> impl IntoView {

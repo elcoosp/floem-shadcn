@@ -7,6 +7,7 @@
 //! ```rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::sheet::{Sheet, SheetContent, SheetSide};
+//! # use floem::prelude::*;
 //!
 //! let open = RwSignal::new(false);
 //!
@@ -29,10 +30,14 @@ use floem_tailwind::TailwindExt;
 /// Which side the sheet slides in from
 #[derive(Clone, Copy, Default)]
 pub enum SheetSide {
+    /// The item.
     Top,
+    /// The item.
     Bottom,
+    /// The item.
     Left,
     #[default]
+    /// The item.
     Right,
 }
 
@@ -84,7 +89,7 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
                         .background(t.foreground.with_alpha(0.5))
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 open.update(|v| *v = false);
             });
 
@@ -102,7 +107,7 @@ impl<V: IntoView + 'static> IntoView for Sheet<V> {
                 .w_full()
                 .h_full()
                 .z_index(50)
-                .apply_if(!is_open, |s| s.hide())
+                .apply_if(!is_open, floem::style::Style::hide)
         });
 
         Box::new(sheet_overlay)
@@ -130,6 +135,7 @@ impl<V: IntoView + 'static> SheetContent<V> {
         }
     }
 
+    #[must_use]
     /// Set which side the sheet appears from
     pub fn side(mut self, side: SheetSide) -> Self {
         self.side = side;
@@ -415,7 +421,7 @@ impl<V: IntoView + 'static> IntoView for SheetClose<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     open.update(|v| *v = false);
                 }),
         )

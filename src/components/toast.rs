@@ -7,6 +7,7 @@
 //! ```rust
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::toast::*;
+//! # use floem::prelude::*;
 //!
 //! // Create a toast state
 //! let toasts = RwSignal::new(Vec::<ToastData>::new());
@@ -30,17 +31,24 @@ use floem_tailwind::TailwindExt;
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToastVariant {
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Success,
+    /// The item.
     Destructive,
 }
 
 /// Data for a single toast notification
 #[derive(Clone)]
 pub struct ToastData {
+    /// The item.
     pub id: u64,
+    /// The item.
     pub title: String,
+    /// The item.
     pub description: Option<String>,
+    /// The item.
     pub variant: ToastVariant,
 }
 
@@ -65,18 +73,21 @@ impl ToastData {
         }
     }
 
+    #[must_use]
     /// Set the variant
     pub fn variant(mut self, variant: ToastVariant) -> Self {
         self.variant = variant;
         self
     }
 
+    #[must_use]
     /// Make it a success toast
     pub fn success(mut self) -> Self {
         self.variant = ToastVariant::Success;
         self
     }
 
+    #[must_use]
     /// Make it a destructive/error toast
     pub fn destructive(mut self) -> Self {
         self.variant = ToastVariant::Destructive;
@@ -87,10 +98,11 @@ impl ToastData {
 /// Simple random ID generator
 fn rand_id() -> u64 {
     use std::time::{SystemTime, UNIX_EPOCH};
-    SystemTime::now()
+    let nanos = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
-        .as_nanos() as u64
+        .as_nanos();
+    u64::try_from(nanos).unwrap_or(0)
 }
 
 // ============================================================================
@@ -104,6 +116,7 @@ pub struct ToastContainer {
 }
 
 impl ToastContainer {
+    #[must_use]
     /// Create a new toast container
     pub fn new(toasts: RwSignal<Vec<ToastData>>) -> Self {
         Self {
@@ -153,7 +166,7 @@ impl IntoView for ToastContainer {
                     .collect();
 
                 floem::views::Stack::vertical_from_iter(views)
-                    .style(|s| s.gap_2())
+                    .style(floem_tailwind::TailwindExt::gap_2)
                     .into_any()
             },
         )
@@ -173,7 +186,7 @@ impl IntoView for ToastContainer {
                 .w_full()
                 .h_full()
                 .pointer_events_none()
-                .apply_if(!has_toasts, |s| s.hide())
+                .apply_if(!has_toasts, floem::style::Style::hide)
         }))
     }
 }
@@ -190,6 +203,7 @@ pub struct Toast {
 }
 
 impl Toast {
+    #[must_use]
     /// Create a new toast from data
     pub fn new(data: ToastData) -> Self {
         Self {
@@ -199,6 +213,7 @@ impl Toast {
         }
     }
 
+    #[must_use]
     /// Set close handler
     pub fn on_close(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_close = Some(Box::new(handler));
@@ -223,8 +238,7 @@ impl IntoView for Toast {
         let title_view = floem::views::Label::new(title).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
                 s.text_sm().color(match variant {
-                    ToastVariant::Default => t.foreground,
-                    ToastVariant::Success => t.foreground,
+                    ToastVariant::Default | ToastVariant::Success => t.foreground,
                     ToastVariant::Destructive => t.destructive_foreground,
                 })
             })
@@ -237,8 +251,7 @@ impl IntoView for Toast {
                     s.with_shadcn_theme(move |s, t| {
                         s.font_size(13.0)
                             .color(match variant {
-                                ToastVariant::Default => t.muted_foreground,
-                                ToastVariant::Success => t.muted_foreground,
+                                ToastVariant::Default | ToastVariant::Success => t.muted_foreground,
                                 ToastVariant::Destructive => {
                                     t.destructive_foreground.with_alpha(0.9)
                                 }
@@ -263,7 +276,7 @@ impl IntoView for Toast {
 
         let close_btn = if let Some(handler) = on_close {
             close_btn
-                .on_event_stop(floem::event::listener::Click, move |_, _| handler())
+                .on_event_stop(floem::event::listener::Click, move |_, ()| handler())
                 .into_any()
         } else {
             close_btn.into_any()
@@ -271,7 +284,7 @@ impl IntoView for Toast {
 
         // Content stack
         let content =
-            floem::views::Stack::vertical((title_view, desc_view)).style(|s| s.flex_grow(1.0));
+            floem::views::Stack::vertical((title_view, desc_view)).style(|s| s.flex_grow(1.0_f32));
 
         Box::new(
             floem::views::Stack::horizontal((content, close_btn)).style(move |s| {
@@ -322,6 +335,7 @@ impl ToastAction {
         }
     }
 
+    #[must_use]
     /// Set click handler
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
@@ -363,7 +377,7 @@ impl IntoView for ToastAction {
         });
 
         if let Some(handler) = on_click {
-            Box::new(btn.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
+            Box::new(btn.on_event_stop(floem::event::listener::Click, move |_, ()| handler()))
         } else {
             Box::new(btn)
         }
@@ -386,5 +400,5 @@ pub fn remove_toast(toasts: RwSignal<Vec<ToastData>>, id: u64) {
 
 /// Helper to clear all toasts
 pub fn clear_toasts(toasts: RwSignal<Vec<ToastData>>) {
-    toasts.update(|t| t.clear());
+    toasts.update(std::vec::Vec::clear);
 }

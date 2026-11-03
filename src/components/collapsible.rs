@@ -12,6 +12,7 @@ use floem_tailwind::TailwindExt;
 // (impl unchanged except style adjustments)
 // ... full file as before but with tailwind methods ...
 // (Due to space, we will use a simplified version that replaces the explicit styles)
+/// The Collapsible.
 pub struct Collapsible<T, C> {
     id: ViewId,
     open: RwSignal<bool>,
@@ -20,6 +21,8 @@ pub struct Collapsible<T, C> {
     disabled: bool,
 }
 impl Collapsible<(), ()> {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -31,6 +34,7 @@ impl Collapsible<(), ()> {
     }
 }
 impl<T, C> Collapsible<T, C> {
+    /// The trigger.
     pub fn trigger<T2: Fn() -> V, V: IntoView + 'static>(self, trigger: T2) -> Collapsible<T2, C> {
         Collapsible {
             id: self.id,
@@ -40,6 +44,7 @@ impl<T, C> Collapsible<T, C> {
             disabled: self.disabled,
         }
     }
+    /// The content.
     pub fn content<C2: Fn() -> V, V: IntoView + 'static>(self, content: C2) -> Collapsible<T, C2> {
         Collapsible {
             id: self.id,
@@ -49,6 +54,8 @@ impl<T, C> Collapsible<T, C> {
             disabled: self.disabled,
         }
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
@@ -61,6 +68,7 @@ where
     TV: IntoView + 'static,
     CV: IntoView + 'static,
 {
+    /// Builds it.
     pub fn build(self) -> impl IntoView {
         let open = self.open;
         let trigger = self.trigger;
@@ -77,7 +85,7 @@ where
             if disabled {
                 view.into_any()
             } else {
-                view.on_event_stop(floem::event::listener::Click, move |_, _| {
+                view.on_event_stop(floem::event::listener::Click, move |_, ()| {
                     open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -103,12 +111,14 @@ where
     }
 }
 // (CollapsibleTrigger, CollapsibleContent follow with tailwind padding and hover)
+/// The `CollapsibleTrigger`.
 pub struct CollapsibleTrigger<V> {
     id: ViewId,
     child: V,
     open: Option<RwSignal<bool>>,
 }
 impl<V: IntoView + 'static> CollapsibleTrigger<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -116,6 +126,8 @@ impl<V: IntoView + 'static> CollapsibleTrigger<V> {
             open: None,
         }
     }
+    #[must_use]
+    /// The open.
     pub fn open(mut self, open: RwSignal<bool>) -> Self {
         self.open = Some(open);
         self
@@ -148,7 +160,7 @@ impl<V: IntoView + 'static> IntoView for CollapsibleTrigger<V> {
         });
         if let Some(signal) = open {
             Box::new(
-                container.on_event_stop(floem::event::listener::Click, move |_, _| {
+                container.on_event_stop(floem::event::listener::Click, move |_, ()| {
                     signal.update(|v| *v = !*v);
                 }),
             )
@@ -157,12 +169,14 @@ impl<V: IntoView + 'static> IntoView for CollapsibleTrigger<V> {
         }
     }
 }
+/// The `CollapsibleContent`.
 pub struct CollapsibleContent<V> {
     id: ViewId,
     child: V,
     open: Option<RwSignal<bool>>,
 }
 impl<V: IntoView + 'static> CollapsibleContent<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -170,6 +184,8 @@ impl<V: IntoView + 'static> CollapsibleContent<V> {
             open: None,
         }
     }
+    #[must_use]
+    /// The open.
     pub fn open(mut self, open: RwSignal<bool>) -> Self {
         self.open = Some(open);
         self
@@ -190,7 +206,7 @@ impl<V: IntoView + 'static> IntoView for CollapsibleContent<V> {
         let open = self.open;
         Box::new(
             floem::views::Container::with_id(self.id, self.child).style(move |s| {
-                let is_open = open.map(|sig| sig.get()).unwrap_or(true);
+                let is_open = open.is_none_or(|sig| sig.get());
                 if is_open {
                     s.pt_2()
                 } else {

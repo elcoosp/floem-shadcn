@@ -25,7 +25,9 @@ use crate::theme::ShadcnThemeExt;
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum SeparatorOrientation {
     #[default]
+    /// The item.
     Horizontal,
+    /// The item.
     Vertical,
 }
 
@@ -36,6 +38,7 @@ pub struct Separator {
 }
 
 impl Separator {
+    #[must_use]
     /// Create a new horizontal separator
     pub fn new() -> Self {
         Self {
@@ -44,24 +47,27 @@ impl Separator {
         }
     }
 
+    #[must_use]
     /// Make the separator vertical
     pub fn vertical(mut self) -> Self {
         self.orientation = SeparatorOrientation::Vertical;
         self
     }
 
+    #[must_use]
     /// Make the separator horizontal (default)
     pub fn horizontal(mut self) -> Self {
         self.orientation = SeparatorOrientation::Horizontal;
         self
     }
 
+    #[must_use]
     /// Build the separator view
     pub fn build(self) -> impl IntoView {
         let orientation = self.orientation;
 
         floem::views::Empty::new().style(move |s| {
-            let base = s.flex_shrink(0.0);
+            let base = s.flex_shrink(0.0_f32);
             let base = match orientation {
                 SeparatorOrientation::Horizontal => base.w_full().h_px(),
                 SeparatorOrientation::Vertical => base.h_full().w_px(),

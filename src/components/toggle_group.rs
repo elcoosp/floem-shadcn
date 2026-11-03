@@ -21,9 +21,9 @@
 //! let selected = RwSignal::new(vec!["bold".to_string()]);
 //!
 //! ToggleGroup::multiple(selected, (
-//!     ToggleGroupItem::new("bold", "B"),
-//!     ToggleGroupItem::new("italic", "I"),
-//!     ToggleGroupItem::new("underline", "U"),
+//!     ToggleGroupItemMultiple::new("bold", "B"),
+//!     ToggleGroupItemMultiple::new("italic", "I"),
+//!     ToggleGroupItemMultiple::new("underline", "U"),
 //! ));
 //! ```
 
@@ -39,16 +39,21 @@ use floem_tailwind::TailwindExt;
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToggleGroupVariant {
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Outline,
 }
 
 /// Toggle group size
 #[derive(Clone, Copy, Default, PartialEq)]
 pub enum ToggleGroupSize {
+    /// The item.
     Sm,
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Lg,
 }
 
@@ -59,7 +64,6 @@ pub enum ToggleGroupSize {
 /// Toggle group with single selection
 pub struct ToggleGroup<V> {
     id: ViewId,
-    #[allow(dead_code)]
     selected: RwSignal<Option<String>>,
     child: V,
     variant: ToggleGroupVariant,
@@ -67,6 +71,11 @@ pub struct ToggleGroup<V> {
 }
 
 impl<V: IntoView + 'static> ToggleGroup<V> {
+    /// The shared selected-value signal, to hand to each toggle item.
+    pub fn selected_signal(&self) -> RwSignal<Option<String>> {
+        self.selected
+    }
+
     /// Create a toggle group with single selection
     pub fn single(selected: RwSignal<Option<String>>, child: V) -> Self {
         Self {
@@ -78,18 +87,29 @@ impl<V: IntoView + 'static> ToggleGroup<V> {
         }
     }
 
+    /// Create a toggle group with multiple selection (returns a [`ToggleGroupMultiple`])
+    ///
+    /// Pair with [`ToggleGroupItemMultiple`] items so each click toggles the
+    /// value in the shared `Vec<String>` selection signal.
+    pub fn multiple(selected: RwSignal<Vec<String>>, child: V) -> ToggleGroupMultiple<V> {
+        ToggleGroupMultiple::new(selected, child)
+    }
+
+    #[must_use]
     /// Set the variant
     pub fn variant(mut self, variant: ToggleGroupVariant) -> Self {
         self.variant = variant;
         self
     }
 
+    #[must_use]
     /// Use outline variant
     pub fn outline(mut self) -> Self {
         self.variant = ToggleGroupVariant::Outline;
         self
     }
 
+    #[must_use]
     /// Set the size
     pub fn size(mut self, size: ToggleGroupSize) -> Self {
         self.size = size;
@@ -142,7 +162,6 @@ impl<V: IntoView + 'static> IntoView for ToggleGroup<V> {
 /// Toggle group with multiple selection
 pub struct ToggleGroupMultiple<V> {
     id: ViewId,
-    #[allow(dead_code)]
     selected: RwSignal<Vec<String>>,
     child: V,
     variant: ToggleGroupVariant,
@@ -150,6 +169,11 @@ pub struct ToggleGroupMultiple<V> {
 }
 
 impl<V: IntoView + 'static> ToggleGroupMultiple<V> {
+    /// The shared selected-values signal, to hand to each toggle item.
+    pub fn selected_signal(&self) -> RwSignal<Vec<String>> {
+        self.selected
+    }
+
     /// Create a toggle group with multiple selection
     pub fn new(selected: RwSignal<Vec<String>>, child: V) -> Self {
         Self {
@@ -161,18 +185,21 @@ impl<V: IntoView + 'static> ToggleGroupMultiple<V> {
         }
     }
 
+    #[must_use]
     /// Set the variant
     pub fn variant(mut self, variant: ToggleGroupVariant) -> Self {
         self.variant = variant;
         self
     }
 
+    #[must_use]
     /// Use outline variant
     pub fn outline(mut self) -> Self {
         self.variant = ToggleGroupVariant::Outline;
         self
     }
 
+    #[must_use]
     /// Set the size
     pub fn size(mut self, size: ToggleGroupSize) -> Self {
         self.size = size;
@@ -243,12 +270,14 @@ impl ToggleGroupItem {
         }
     }
 
+    #[must_use]
     /// Set the selected signal (connects to parent group)
     pub fn selected(mut self, signal: RwSignal<Option<String>>) -> Self {
         self.selected_signal = Some(signal);
         self
     }
 
+    #[must_use]
     /// Set as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
@@ -279,9 +308,8 @@ impl IntoView for ToggleGroupItem {
         let label = floem::views::Label::new(text).style(move |s| {
             let val = value.clone();
             s.with_shadcn_theme(move |s, t| {
-                let is_selected = selected_signal
-                    .map(|sig| sig.get().as_ref() == Some(&val))
-                    .unwrap_or(false);
+                let is_selected =
+                    selected_signal.is_some_and(|sig| sig.get().as_ref() == Some(&val));
                 let base = s
                     .padding_left(12.0)
                     .padding_right(12.0)
@@ -311,7 +339,7 @@ impl IntoView for ToggleGroupItem {
             Box::new(label)
         } else if let Some(signal) = selected_signal {
             Box::new(
-                label.on_event_stop(floem::event::listener::Click, move |_, _| {
+                label.on_event_stop(floem::event::listener::Click, move |_, ()| {
                     signal.update(|v| *v = Some(value_for_click.clone()));
                 }),
             )
@@ -346,12 +374,14 @@ impl ToggleGroupItemMultiple {
         }
     }
 
+    #[must_use]
     /// Set the selected signal (connects to parent group)
     pub fn selected(mut self, signal: RwSignal<Vec<String>>) -> Self {
         self.selected_signal = Some(signal);
         self
     }
 
+    #[must_use]
     /// Set as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
@@ -382,9 +412,7 @@ impl IntoView for ToggleGroupItemMultiple {
         let label = floem::views::Label::new(text).style(move |s| {
             let val = value.clone();
             s.with_shadcn_theme(move |s, t| {
-                let is_selected = selected_signal
-                    .map(|sig| sig.get().contains(&val))
-                    .unwrap_or(false);
+                let is_selected = selected_signal.is_some_and(|sig| sig.get().contains(&val));
                 let base = s
                     .padding_left(12.0)
                     .padding_right(12.0)
@@ -414,7 +442,7 @@ impl IntoView for ToggleGroupItemMultiple {
             Box::new(label)
         } else if let Some(signal) = selected_signal {
             Box::new(
-                label.on_event_stop(floem::event::listener::Click, move |_, _| {
+                label.on_event_stop(floem::event::listener::Click, move |_, ()| {
                     signal.update(|v| {
                         if v.contains(&value_for_click) {
                             v.retain(|x| x != &value_for_click);

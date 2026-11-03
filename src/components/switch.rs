@@ -35,6 +35,7 @@ pub struct Switch {
 }
 
 impl Switch {
+    #[must_use]
     /// Create a new switch with the given checked signal
     pub fn new(checked: RwSignal<bool>) -> Self {
         Self {
@@ -45,18 +46,21 @@ impl Switch {
         }
     }
 
+    #[must_use]
     /// Set the label text
     pub fn label(mut self, text: impl Into<String>) -> Self {
         self.label_text = Some(text.into());
         self
     }
 
+    #[must_use]
     /// Set the switch as disabled
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
 
+    #[must_use]
     /// Build the switch view
     pub fn build(self) -> impl IntoView {
         let checked = self.checked;
@@ -85,12 +89,12 @@ impl Switch {
                 let is_checked = checked.get();
                 s.height(18.0) // h-[1.15rem]
                     .w_8() // w-8 = 32px
-                    .flex_shrink(0.0)
+                    .flex_shrink(0.0_f32)
                     .rounded_full()
                     .border_1()
-                    .border_color(peniko::Color::TRANSPARENT)
+                    .border_color(floem::peniko::Color::TRANSPARENT)
                     .box_shadow_blur(2.0)
-                    .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
+                    .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 25))
                     .position(floem::style::Position::Relative)
                     .transition(
                         floem::style::Background,
@@ -103,14 +107,14 @@ impl Switch {
             })
         });
 
-        let track = if !disabled {
+        let track = if disabled {
+            track.into_any()
+        } else {
             track
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     checked.update(|c| *c = !*c);
                 })
                 .into_any()
-        } else {
-            track.into_any()
         };
 
         // With or without label
@@ -133,14 +137,14 @@ impl Switch {
                 })
             });
 
-            let label_view = if !disabled {
+            let label_view = if disabled {
+                label_view.into_any()
+            } else {
                 label_view
-                    .on_event_stop(floem::event::listener::Click, move |_, _| {
+                    .on_event_stop(floem::event::listener::Click, move |_, ()| {
                         checked.update(|c| *c = !*c);
                     })
                     .into_any()
-            } else {
-                label_view.into_any()
             };
 
             floem::views::Stack::horizontal((track, label_view))

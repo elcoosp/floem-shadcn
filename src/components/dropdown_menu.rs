@@ -7,6 +7,7 @@
 //! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::dropdown_menu::*;
+//! # use floem_shadcn::components::button::Button;
 //!
 //! let open = RwSignal::new(false);
 //!
@@ -33,6 +34,7 @@ use crate::theme::ShadcnThemeExt;
 // DropdownMenu
 // ============================================================================
 
+/// The `DropdownMenu`.
 pub struct DropdownMenu<T, C> {
     open: RwSignal<bool>,
     trigger: Option<T>,
@@ -40,6 +42,8 @@ pub struct DropdownMenu<T, C> {
 }
 
 impl DropdownMenu<(), ()> {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(open: RwSignal<bool>) -> Self {
         Self {
             open,
@@ -50,6 +54,7 @@ impl DropdownMenu<(), ()> {
 }
 
 impl<T, C> DropdownMenu<T, C> {
+    /// The trigger.
     pub fn trigger<T2: Fn() -> V, V: IntoView + 'static>(self, trigger: T2) -> DropdownMenu<T2, C> {
         DropdownMenu {
             open: self.open,
@@ -57,6 +62,7 @@ impl<T, C> DropdownMenu<T, C> {
             content: self.content,
         }
     }
+    /// The content.
     pub fn content<C2: IntoView + 'static>(self, content: C2) -> DropdownMenu<T, C2> {
         DropdownMenu {
             open: self.open,
@@ -72,6 +78,7 @@ where
     C: IntoView + 'static,
     TV: IntoView + 'static,
 {
+    /// Builds it.
     pub fn build(self) -> impl IntoView {
         let open = self.open;
         let trigger = self.trigger;
@@ -80,7 +87,7 @@ where
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -121,7 +128,7 @@ where
         };
 
         floem::views::Container::new(floem::views::Stack::new((trigger_view, content_view)))
-            .style(|s| s.relative())
+            .style(floem_tailwind::TailwindExt::relative)
     }
 }
 
@@ -156,11 +163,13 @@ where
 // DropdownMenuContent
 // ============================================================================
 
+/// The `DropdownMenuContent`.
 pub struct DropdownMenuContent<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> DropdownMenuContent<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -180,7 +189,10 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuContent<V> {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.flex_col()))
+        Box::new(
+            floem::views::Container::with_id(self.id, self.child)
+                .style(floem::style::Style::flex_col),
+        )
     }
 }
 
@@ -188,6 +200,7 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuContent<V> {
 // DropdownMenuItem
 // ============================================================================
 
+/// The `DropdownMenuItem`.
 pub struct DropdownMenuItem {
     id: ViewId,
     text: String,
@@ -197,6 +210,7 @@ pub struct DropdownMenuItem {
 }
 
 impl DropdownMenuItem {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -206,14 +220,20 @@ impl DropdownMenuItem {
             on_click: None,
         }
     }
+    #[must_use]
+    /// Adds a handler for click.
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
+    #[must_use]
+    /// The destructive.
     pub fn destructive(mut self) -> Self {
         self.destructive = true;
         self
@@ -261,10 +281,10 @@ impl IntoView for DropdownMenuItem {
         });
 
         if let Some(handler) = on_click {
-            if !disabled {
-                Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
-            } else {
+            if disabled {
                 Box::new(label)
+            } else {
+                Box::new(label.on_event_stop(floem::event::listener::Click, move |_, ()| handler()))
             }
         } else {
             Box::new(label)
@@ -276,6 +296,7 @@ impl IntoView for DropdownMenuItem {
 // DropdownMenuItemCustom, Separator, Label, Group, Shortcut (simplified similarly)
 // ============================================================================
 
+/// The `DropdownMenuItemCustom`.
 pub struct DropdownMenuItemCustom<V> {
     id: ViewId,
     child: V,
@@ -283,6 +304,7 @@ pub struct DropdownMenuItemCustom<V> {
     on_click: Option<Box<dyn Fn() + 'static>>,
 }
 impl<V: IntoView + 'static> DropdownMenuItemCustom<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -291,10 +313,14 @@ impl<V: IntoView + 'static> DropdownMenuItemCustom<V> {
             on_click: None,
         }
     }
+    #[must_use]
+    /// Adds a handler for click.
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
@@ -329,12 +355,12 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
             })
         });
         if let Some(handler) = on_click {
-            if !disabled {
-                Box::new(
-                    container.on_event_stop(floem::event::listener::Click, move |_, _| handler()),
-                )
-            } else {
+            if disabled {
                 Box::new(container)
+            } else {
+                Box::new(
+                    container.on_event_stop(floem::event::listener::Click, move |_, ()| handler()),
+                )
             }
         } else {
             Box::new(container)
@@ -342,8 +368,11 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuItemCustom<V> {
     }
 }
 
+/// The `DropdownMenuSeparator`.
 pub struct DropdownMenuSeparator;
 impl DropdownMenuSeparator {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self
     }
@@ -371,11 +400,13 @@ impl IntoView for DropdownMenuSeparator {
     }
 }
 
+/// The `DropdownMenuLabel`.
 pub struct DropdownMenuLabel {
     id: ViewId,
     text: String,
 }
 impl DropdownMenuLabel {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -410,11 +441,13 @@ impl IntoView for DropdownMenuLabel {
     }
 }
 
+/// The `DropdownMenuGroup`.
 pub struct DropdownMenuGroup<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> DropdownMenuGroup<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -434,15 +467,20 @@ impl<V: IntoView + 'static> IntoView for DropdownMenuGroup<V> {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.flex_col()))
+        Box::new(
+            floem::views::Container::with_id(self.id, self.child)
+                .style(floem::style::Style::flex_col),
+        )
     }
 }
 
+/// The `DropdownMenuShortcut`.
 pub struct DropdownMenuShortcut {
     id: ViewId,
     text: String,
 }
 impl DropdownMenuShortcut {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),

@@ -21,6 +21,7 @@ use floem_tailwind::TailwindExt;
 
 use crate::styled::ShadcnStyleExt;
 
+/// The Avatar.
 pub struct Avatar {
     id: ViewId,
     fallback_text: Option<String>,
@@ -28,6 +29,8 @@ pub struct Avatar {
 }
 
 impl Avatar {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
@@ -36,16 +39,22 @@ impl Avatar {
         }
     }
 
+    #[must_use]
+    /// The fallback.
     pub fn fallback(mut self, text: impl Into<String>) -> Self {
         self.fallback_text = Some(text.into());
         self
     }
 
+    #[must_use]
+    /// The size.
     pub fn size(mut self, size: f64) -> Self {
         self.size = size;
         self
     }
 
+    #[must_use]
+    /// Builds it.
     pub fn build(self) -> impl IntoView {
         let size = self.size;
         let fallback = self.fallback_text.unwrap_or_default();

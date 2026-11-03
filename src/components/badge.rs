@@ -27,9 +27,13 @@ use crate::theme::{ShadcnTheme, ShadcnThemeExt};
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum BadgeVariant {
     #[default]
+    /// The item.
     Default,
+    /// The item.
     Secondary,
+    /// The item.
     Destructive,
+    /// The item.
     Outline,
 }
 
@@ -52,24 +56,28 @@ impl<V: IntoView + 'static> Badge<V> {
 
     // === Variant methods ===
 
+    #[must_use]
     /// Set badge to secondary variant
     pub fn secondary(mut self) -> Self {
         self.variant = BadgeVariant::Secondary;
         self
     }
 
+    #[must_use]
     /// Set badge to destructive variant (red/danger)
     pub fn destructive(mut self) -> Self {
         self.variant = BadgeVariant::Destructive;
         self
     }
 
+    #[must_use]
     /// Set badge to outline variant (bordered, transparent background)
     pub fn outline(mut self) -> Self {
         self.variant = BadgeVariant::Outline;
         self
     }
 
+    #[must_use]
     /// Set the badge variant explicitly
     pub fn with_variant(mut self, variant: BadgeVariant) -> Self {
         self.variant = variant;
@@ -126,20 +134,20 @@ fn build_badge_style(s: Style, variant: BadgeVariant) -> Style {
 fn apply_variant_style(s: Style, variant: BadgeVariant, t: &ShadcnTheme) -> Style {
     match variant {
         BadgeVariant::Default => s
-            .border_color(peniko::Color::TRANSPARENT)
+            .border_color(floem::peniko::Color::TRANSPARENT)
             .background(t.primary)
             .color(t.primary_foreground),
         BadgeVariant::Secondary => s
-            .border_color(peniko::Color::TRANSPARENT)
+            .border_color(floem::peniko::Color::TRANSPARENT)
             .background(t.secondary)
             .color(t.secondary_foreground),
         BadgeVariant::Destructive => s
-            .border_color(peniko::Color::TRANSPARENT)
+            .border_color(floem::peniko::Color::TRANSPARENT)
             .background(t.destructive)
             .color(t.destructive_foreground),
         BadgeVariant::Outline => s
             .border_color(t.border)
-            .background(peniko::Color::TRANSPARENT)
+            .background(floem::peniko::Color::TRANSPARENT)
             .color(t.foreground),
     }
 }

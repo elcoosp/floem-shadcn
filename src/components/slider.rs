@@ -5,6 +5,7 @@ use floem::style::CursorStyle;
 use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
+/// The Slider.
 pub struct Slider {
     id: ViewId,
     value: RwSignal<f64>,
@@ -14,6 +15,8 @@ pub struct Slider {
     disabled: bool,
 }
 impl Slider {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(value: RwSignal<f64>) -> Self {
         Self {
             id: ViewId::new(),
@@ -24,23 +27,33 @@ impl Slider {
             disabled: false,
         }
     }
+    #[must_use]
+    /// The min.
     pub fn min(mut self, min: f64) -> Self {
         self.min = min;
         self
     }
+    #[must_use]
+    /// The max.
     pub fn max(mut self, max: f64) -> Self {
         self.max = max;
         self
     }
+    #[must_use]
+    /// The step.
     pub fn step(mut self, step: f64) -> Self {
         self.step = step;
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
 
+    #[must_use]
+    /// Builds it.
     pub fn build(self) -> impl IntoView {
         let value = self.value;
         let min = self.min;
@@ -71,13 +84,13 @@ impl Slider {
             s.with_shadcn_theme(move |s, t| {
                 let percent = ((value.get() - min) / (max - min) * 100.0).clamp(0.0, 100.0);
                 s.size(16.0, 16.0)
-                    .flex_shrink(0.0)
+                    .flex_shrink(0.0_f32)
                     .border_radius(9999.0)
-                    .background(peniko::Color::WHITE)
+                    .background(floem::peniko::Color::WHITE)
                     .border(1.0)
                     .border_color(t.primary)
                     .box_shadow_blur(2.0)
-                    .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
+                    .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 25))
                     .position(floem::style::Position::Absolute)
                     .inset_top(-5.0)
                     .inset_left_pct(percent)

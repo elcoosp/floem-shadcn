@@ -26,14 +26,22 @@ use floem_tailwind::TailwindExt;
 
 use crate::theme::ShadcnThemeExt;
 
+/// The `RadioGroup`.
 pub struct RadioGroup<V> {
     id: ViewId,
-    #[allow(dead_code)]
     selected: RwSignal<String>,
     child: V,
 }
 
 impl<V: IntoView + 'static> RadioGroup<V> {
+    /// The shared selected-value signal, to hand to each radio item.
+    pub fn selected_signal(&self) -> RwSignal<String> {
+        self.selected
+    }
+}
+
+impl<V: IntoView + 'static> RadioGroup<V> {
+    /// Creates a new it.
     pub fn new(selected: RwSignal<String>, child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -63,6 +71,7 @@ impl<V: IntoView + 'static> IntoView for RadioGroup<V> {
     }
 }
 
+/// The `RadioGroupItem`.
 pub struct RadioGroupItem {
     id: ViewId,
     value: String,
@@ -72,6 +81,7 @@ pub struct RadioGroupItem {
 }
 
 impl RadioGroupItem {
+    /// Creates a new it.
     pub fn new(value: impl Into<String>, label: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -81,15 +91,21 @@ impl RadioGroupItem {
             disabled: false,
         }
     }
+    #[must_use]
+    /// The selected.
     pub fn selected(mut self, signal: RwSignal<String>) -> Self {
         self.selected_signal = Some(signal);
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
 
+    #[must_use]
+    /// Builds it.
     pub fn build(self) -> impl IntoView {
         let value = self.value.clone();
         let label = self.label.clone();
@@ -102,9 +118,7 @@ impl RadioGroupItem {
             floem::views::Container::new(floem::views::Empty::new().style(move |s| {
                 let val = item_value.clone();
                 s.with_shadcn_theme(move |s, t| {
-                    let is_selected = selected_signal
-                        .map(|sig| sig.get() == val.clone())
-                        .unwrap_or(false);
+                    let is_selected = selected_signal.is_some_and(|sig| sig.get() == val.clone());
                     s.size_2()
                         .rounded_full()
                         .background(t.primary)
@@ -119,11 +133,11 @@ impl RadioGroupItem {
                         .border_1()
                         .border_color(t.input)
                         .box_shadow_blur(2.0)
-                        .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
+                        .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 25))
                         .flex()
                         .items_center()
                         .justify_center()
-                        .background(peniko::Color::TRANSPARENT)
+                        .background(floem::peniko::Color::TRANSPARENT)
                         .apply_if(disabled, |s| s.cursor(CursorStyle::Default))
                         .apply_if(!disabled, |s| s.cursor(CursorStyle::Pointer))
                 })
@@ -147,16 +161,16 @@ impl RadioGroupItem {
         let container = floem::views::Stack::horizontal((radio_circle, label_view))
             .style(|s| s.gap_2().items_center());
 
-        if !disabled {
+        if disabled {
+            container.into_any()
+        } else {
             container
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     if let Some(signal) = selected_signal {
-                        signal.update(|v| *v = item_value_click.clone());
+                        signal.update(|v| v.clone_from(&item_value_click));
                     }
                 })
                 .into_any()
-        } else {
-            container.into_any()
         }
     }
 }

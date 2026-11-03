@@ -4,15 +4,21 @@ use floem::reactive::{Effect, RwSignal, SignalGet, SignalUpdate};
 use floem::views::{Decorators, TextInput};
 use floem::{HasViewId, ViewId};
 
+/// The Textarea.
+/// Callback invoked with the element's text when it changes.
+pub type TextChangeCallback = Box<dyn Fn(&str)>;
+
+/// Multi-line text input styled after shadcn/ui Textarea.
 pub struct Textarea {
     id: ViewId,
     buffer: RwSignal<String>,
     placeholder: Option<String>,
     rows: u32,
-    on_change: Option<Box<dyn Fn(&str)>>,
+    on_change: Option<TextChangeCallback>,
 }
 
 impl Textarea {
+    /// Creates a new it.
     pub fn new(initial: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -23,21 +29,29 @@ impl Textarea {
         }
     }
 
+    #[must_use]
+    /// The placeholder.
     pub fn placeholder(mut self, text: impl Into<String>) -> Self {
         self.placeholder = Some(text.into());
         self
     }
 
+    #[must_use]
+    /// The rows.
     pub fn rows(mut self, rows: u32) -> Self {
         self.rows = rows;
         self
     }
 
+    #[must_use]
+    /// Adds a handler for change.
     pub fn on_change(mut self, f: impl Fn(&str) + 'static) -> Self {
         self.on_change = Some(Box::new(f));
         self
     }
 
+    #[must_use]
+    /// The value.
     pub fn value(self, getter: impl Fn() -> String + 'static) -> Self {
         let buf = self.buffer;
         Effect::new(move |_| {
@@ -49,6 +63,8 @@ impl Textarea {
         self
     }
 
+    #[must_use]
+    /// The buffer.
     pub fn buffer(&self) -> RwSignal<String> {
         self.buffer
     }
@@ -67,12 +83,11 @@ impl IntoView for Textarea {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        let min_height = (self.rows as f64) * 24.0 + 16.0;
+        let min_height = f64::from(self.rows) * 24.0 + 16.0;
         let buf = self.buffer;
 
         // Wire on_change if provided
         if let Some(cb) = self.on_change {
-            let buf = buf;
             Effect::new(move |_| {
                 let text = buf.get_untracked();
                 cb(&text);

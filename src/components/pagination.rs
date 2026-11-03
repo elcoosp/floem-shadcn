@@ -10,6 +10,7 @@ use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
 // Pagination
+/// The Pagination.
 pub struct Pagination {
     id: ViewId,
     current_page: RwSignal<usize>,
@@ -18,6 +19,8 @@ pub struct Pagination {
     siblings: usize,
 }
 impl Pagination {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(current_page: RwSignal<usize>, total_pages: usize) -> Self {
         Self {
             id: ViewId::new(),
@@ -27,10 +30,14 @@ impl Pagination {
             siblings: 1,
         }
     }
+    #[must_use]
+    /// The show edges.
     pub fn show_edges(mut self, show: bool) -> Self {
         self.show_edges = show;
         self
     }
+    #[must_use]
+    /// The siblings.
     pub fn siblings(mut self, count: usize) -> Self {
         self.siblings = count;
         self
@@ -79,7 +86,7 @@ impl IntoView for Pagination {
                     }
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 let page = current_page.get();
                 if page > 1 {
                     current_page.set(page - 1);
@@ -114,7 +121,7 @@ impl IntoView for Pagination {
                     }
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 let page = current_page.get();
                 if page < total_pages {
                     current_page.set(page + 1);
@@ -128,11 +135,13 @@ impl IntoView for Pagination {
 }
 
 // PaginationContent
+/// The `PaginationContent`.
 pub struct PaginationContent<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> PaginationContent<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -160,11 +169,13 @@ impl<V: IntoView + 'static> IntoView for PaginationContent<V> {
 }
 
 // PaginationItem
+/// The `PaginationItem`.
 pub struct PaginationItem<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> PaginationItem<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -189,6 +200,7 @@ impl<V: IntoView + 'static> IntoView for PaginationItem<V> {
 }
 
 // PaginationLink
+/// The `PaginationLink`.
 pub struct PaginationLink {
     id: ViewId,
     page: usize,
@@ -196,6 +208,8 @@ pub struct PaginationLink {
     is_active: bool,
 }
 impl PaginationLink {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(page: usize, current_page: RwSignal<usize>) -> Self {
         Self {
             id: ViewId::new(),
@@ -204,6 +218,8 @@ impl PaginationLink {
             is_active: false,
         }
     }
+    #[must_use]
+    /// The active.
     pub fn active(mut self, is_active: bool) -> Self {
         self.is_active = is_active;
         self
@@ -245,7 +261,7 @@ impl IntoView for PaginationLink {
                         }
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     self.current_page.set(self.page);
                 }),
         )
@@ -253,8 +269,11 @@ impl IntoView for PaginationLink {
 }
 
 // PaginationEllipsis
+/// The `PaginationEllipsis`.
 pub struct PaginationEllipsis;
 impl PaginationEllipsis {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self
     }
@@ -291,12 +310,15 @@ impl IntoView for PaginationEllipsis {
 }
 
 // PaginationPrevious
+/// The `PaginationPrevious`.
 pub struct PaginationPrevious {
     id: ViewId,
     current_page: RwSignal<usize>,
     label: String,
 }
 impl PaginationPrevious {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(current_page: RwSignal<usize>) -> Self {
         Self {
             id: ViewId::new(),
@@ -304,6 +326,8 @@ impl PaginationPrevious {
             label: "Previous".to_string(),
         }
     }
+    #[must_use]
+    /// The label.
     pub fn label(mut self, label: impl Into<String>) -> Self {
         self.label = label.into();
         self
@@ -337,7 +361,7 @@ impl IntoView for PaginationPrevious {
                             .hover(|s| s.background(t.accent))
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     let page = self.current_page.get();
                     if page > 1 {
                         self.current_page.set(page - 1);
@@ -348,6 +372,7 @@ impl IntoView for PaginationPrevious {
 }
 
 // PaginationNext
+/// The `PaginationNext`.
 pub struct PaginationNext {
     id: ViewId,
     current_page: RwSignal<usize>,
@@ -355,6 +380,8 @@ pub struct PaginationNext {
     label: String,
 }
 impl PaginationNext {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(current_page: RwSignal<usize>, total_pages: usize) -> Self {
         Self {
             id: ViewId::new(),
@@ -363,6 +390,8 @@ impl PaginationNext {
             label: "Next".to_string(),
         }
     }
+    #[must_use]
+    /// The label.
     pub fn label(mut self, label: impl Into<String>) -> Self {
         self.label = label.into();
         self
@@ -396,7 +425,7 @@ impl IntoView for PaginationNext {
                             .hover(|s| s.background(t.accent))
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     let page = self.current_page.get();
                     if page < self.total_pages {
                         self.current_page.set(page + 1);

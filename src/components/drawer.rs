@@ -10,15 +10,21 @@ use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
 #[derive(Clone, Copy, Default, PartialEq)]
+/// The `DrawerSide`.
 pub enum DrawerSide {
+    /// The item.
     Top,
+    /// The item.
     Right,
     #[default]
+    /// The item.
     Bottom,
+    /// The item.
     Left,
 }
 
 // Main Drawer
+/// The Drawer.
 pub struct Drawer<V> {
     id: ViewId,
     is_open: RwSignal<bool>,
@@ -26,6 +32,8 @@ pub struct Drawer<V> {
     content: Option<V>,
 }
 impl Drawer<()> {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -36,10 +44,13 @@ impl Drawer<()> {
     }
 }
 impl<V> Drawer<V> {
+    #[must_use]
+    /// The side.
     pub fn side(mut self, side: DrawerSide) -> Self {
         self.side = side;
         self
     }
+    /// The content.
     pub fn content<V2: IntoView + 'static>(self, content: V2) -> Drawer<V2> {
         Drawer {
             id: self.id,
@@ -131,9 +142,9 @@ impl<V: IntoView + 'static> IntoView for Drawer<V> {
             .style(move |s| {
                 s.absolute()
                     .inset(0.0)
-                    .background(peniko::Color::from_rgba8(0, 0, 0, 128))
+                    .background(floem::peniko::Color::from_rgba8(0, 0, 0, 128))
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 is_open.set(false);
             });
         let drawer_overlay = Overlay::new(
@@ -145,19 +156,21 @@ impl<V: IntoView + 'static> IntoView for Drawer<V> {
                 .inset_0()
                 .w_full()
                 .h_full()
-                .apply_if(!open, |s| s.hide())
+                .apply_if(!open, floem::style::Style::hide)
         });
         Box::new(drawer_overlay)
     }
 }
 
 // DrawerTrigger
+/// The `DrawerTrigger`.
 pub struct DrawerTrigger<V> {
     id: ViewId,
     child: V,
     is_open: RwSignal<bool>,
 }
 impl<V: IntoView + 'static> DrawerTrigger<V> {
+    /// Creates a new it.
     pub fn new(child: V, is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -182,7 +195,7 @@ impl<V: IntoView + 'static> IntoView for DrawerTrigger<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     is_open.set(true);
                 }),
         )
@@ -190,11 +203,13 @@ impl<V: IntoView + 'static> IntoView for DrawerTrigger<V> {
 }
 
 // DrawerContent
+/// The `DrawerContent`.
 pub struct DrawerContent<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> DrawerContent<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -222,11 +237,13 @@ impl<V: IntoView + 'static> IntoView for DrawerContent<V> {
 }
 
 // DrawerHeader
+/// The `DrawerHeader`.
 pub struct DrawerHeader<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> DrawerHeader<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -254,11 +271,13 @@ impl<V: IntoView + 'static> IntoView for DrawerHeader<V> {
 }
 
 // DrawerTitle
+/// The `DrawerTitle`.
 pub struct DrawerTitle {
     id: ViewId,
     text: String,
 }
 impl DrawerTitle {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -286,11 +305,13 @@ impl IntoView for DrawerTitle {
 }
 
 // DrawerDescription
+/// The `DrawerDescription`.
 pub struct DrawerDescription {
     id: ViewId,
     text: String,
 }
 impl DrawerDescription {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -318,11 +339,13 @@ impl IntoView for DrawerDescription {
 }
 
 // DrawerFooter
+/// The `DrawerFooter`.
 pub struct DrawerFooter<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> DrawerFooter<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -350,12 +373,14 @@ impl<V: IntoView + 'static> IntoView for DrawerFooter<V> {
 }
 
 // DrawerClose
+/// The `DrawerClose`.
 pub struct DrawerClose<V> {
     id: ViewId,
     child: V,
     is_open: RwSignal<bool>,
 }
 impl<V: IntoView + 'static> DrawerClose<V> {
+    /// Creates a new it.
     pub fn new(child: V, is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -380,7 +405,7 @@ impl<V: IntoView + 'static> IntoView for DrawerClose<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     is_open.set(false);
                 }),
         )

@@ -10,11 +10,13 @@ use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
 // Menubar
+/// The Menubar.
 pub struct Menubar<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> Menubar<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -50,12 +52,14 @@ impl<V: IntoView + 'static> IntoView for Menubar<V> {
 }
 
 // MenubarMenu
+/// The `MenubarMenu`.
 pub struct MenubarMenu<C> {
     id: ViewId,
     label: String,
     content: Option<C>,
 }
 impl MenubarMenu<()> {
+    /// Creates a new it.
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -65,6 +69,7 @@ impl MenubarMenu<()> {
     }
 }
 impl<C> MenubarMenu<C> {
+    /// The content.
     pub fn content<C2: IntoView + 'static>(self, content: C2) -> MenubarMenu<C2> {
         MenubarMenu {
             id: self.id,
@@ -106,7 +111,7 @@ impl<C: IntoView + 'static> IntoView for MenubarMenu<C> {
                     }
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 is_open.update(|v| *v = !*v);
             });
         let dropdown = if let Some(content) = self.content {
@@ -153,22 +158,24 @@ impl<C: IntoView + 'static> IntoView for MenubarMenu<C> {
                     s.display(floem::style::Display::None)
                 }
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 is_open.set(false);
             });
         Box::new(
             floem::views::Container::new(floem::views::Stack::new((trigger, backdrop, dropdown)))
-                .style(|s| s.relative()),
+                .style(floem_tailwind::TailwindExt::relative),
         )
     }
 }
 
 // MenubarTrigger
+/// The `MenubarTrigger`.
 pub struct MenubarTrigger {
     id: ViewId,
     label: String,
 }
 impl MenubarTrigger {
+    /// Creates a new it.
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -206,11 +213,13 @@ impl IntoView for MenubarTrigger {
 }
 
 // MenubarContent
+/// The `MenubarContent`.
 pub struct MenubarContent<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> MenubarContent<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -230,11 +239,15 @@ impl<V: IntoView + 'static> IntoView for MenubarContent<V> {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.flex_col()))
+        Box::new(
+            floem::views::Container::with_id(self.id, self.child)
+                .style(floem::style::Style::flex_col),
+        )
     }
 }
 
 // MenubarItem
+/// The `MenubarItem`.
 pub struct MenubarItem {
     id: ViewId,
     label: String,
@@ -242,6 +255,7 @@ pub struct MenubarItem {
     on_select: Option<Box<dyn Fn() + 'static>>,
 }
 impl MenubarItem {
+    /// Creates a new it.
     pub fn new(label: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -250,10 +264,14 @@ impl MenubarItem {
             on_select: None,
         }
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
     }
+    #[must_use]
+    /// Adds a handler for select.
     pub fn on_select(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_select = Some(Box::new(handler));
         self
@@ -276,7 +294,7 @@ impl IntoView for MenubarItem {
         let on_select = self.on_select;
         let label_view = floem::views::Label::new(label).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
-                let base = s.text_sm().flex_grow(1.0);
+                let base = s.text_sm().flex_grow(1.0_f32);
                 if disabled {
                     base.color(t.muted_foreground)
                 } else {
@@ -299,10 +317,10 @@ impl IntoView for MenubarItem {
             })
         });
         if let Some(handler) = on_select {
-            if !disabled {
-                Box::new(row.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
-            } else {
+            if disabled {
                 Box::new(row)
+            } else {
+                Box::new(row.on_event_stop(floem::event::listener::Click, move |_, ()| handler()))
             }
         } else {
             Box::new(row)
@@ -311,6 +329,7 @@ impl IntoView for MenubarItem {
 }
 
 // MenubarCheckboxItem
+/// The `MenubarCheckboxItem`.
 pub struct MenubarCheckboxItem {
     id: ViewId,
     label: String,
@@ -318,6 +337,7 @@ pub struct MenubarCheckboxItem {
     disabled: bool,
 }
 impl MenubarCheckboxItem {
+    /// Creates a new it.
     pub fn new(label: impl Into<String>, checked: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -326,6 +346,8 @@ impl MenubarCheckboxItem {
             disabled: false,
         }
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
@@ -348,10 +370,10 @@ impl IntoView for MenubarCheckboxItem {
         let disabled = self.disabled;
         let check_indicator =
             floem::views::Label::derived(move || if checked.get() { "✓" } else { " " }.to_string())
-                .style(|s| s.w_4().text_xs().color(peniko::Color::BLACK));
+                .style(|s| s.w_4().text_xs().color(floem::peniko::Color::BLACK));
         let label_view = floem::views::Label::new(label).style(move |s| {
             s.with_shadcn_theme(move |s, t| {
-                let base = s.text_sm().flex_grow(1.0);
+                let base = s.text_sm().flex_grow(1.0_f32);
                 if disabled {
                     base.color(t.muted_foreground)
                 } else {
@@ -377,7 +399,7 @@ impl IntoView for MenubarCheckboxItem {
             Box::new(row)
         } else {
             Box::new(
-                row.on_event_stop(floem::event::listener::Click, move |_, _| {
+                row.on_event_stop(floem::event::listener::Click, move |_, ()| {
                     checked.update(|v| *v = !*v);
                 }),
             )
@@ -386,8 +408,11 @@ impl IntoView for MenubarCheckboxItem {
 }
 
 // MenubarSeparator
+/// The `MenubarSeparator`.
 pub struct MenubarSeparator;
 impl MenubarSeparator {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self
     }
@@ -416,11 +441,13 @@ impl IntoView for MenubarSeparator {
 }
 
 // MenubarShortcut
+/// The `MenubarShortcut`.
 pub struct MenubarShortcut {
     id: ViewId,
     keys: String,
 }
 impl MenubarShortcut {
+    /// Creates a new it.
     pub fn new(keys: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -442,7 +469,7 @@ impl IntoView for MenubarShortcut {
     fn into_view(self) -> Self::V {
         Box::new(
             floem::views::Label::with_id(self.id, self.keys)
-                .style(|s| s.text_xs().color(peniko::Color::BLACK)),
+                .style(|s| s.text_xs().color(floem::peniko::Color::BLACK)),
         )
     }
 }

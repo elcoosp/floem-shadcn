@@ -8,23 +8,33 @@ use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
 #[derive(Clone, Copy, Default)]
+/// The `HoverCardSide`.
 pub enum HoverCardSide {
+    /// The item.
     Top,
     #[default]
+    /// The item.
     Bottom,
+    /// The item.
     Left,
+    /// The item.
     Right,
 }
 
 #[derive(Clone, Copy, Default)]
+/// The `HoverCardAlign`.
 pub enum HoverCardAlign {
+    /// The item.
     Start,
     #[default]
+    /// The item.
     Center,
+    /// The item.
     End,
 }
 
 // Main HoverCard
+/// The `HoverCard`.
 pub struct HoverCard<T, C> {
     trigger: Option<T>,
     content: Option<C>,
@@ -32,6 +42,8 @@ pub struct HoverCard<T, C> {
     align: HoverCardAlign,
 }
 impl HoverCard<(), ()> {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self {
             trigger: None,
@@ -47,6 +59,7 @@ impl Default for HoverCard<(), ()> {
     }
 }
 impl<T, C> HoverCard<T, C> {
+    /// The trigger.
     pub fn trigger<T2: Fn() -> V, V: IntoView + 'static>(self, trigger: T2) -> HoverCard<T2, C> {
         HoverCard {
             trigger: Some(trigger),
@@ -55,6 +68,7 @@ impl<T, C> HoverCard<T, C> {
             align: self.align,
         }
     }
+    /// The content.
     pub fn content<C2: Fn() -> V, V: IntoView + 'static>(self, content: C2) -> HoverCard<T, C2> {
         HoverCard {
             trigger: self.trigger,
@@ -63,10 +77,14 @@ impl<T, C> HoverCard<T, C> {
             align: self.align,
         }
     }
+    #[must_use]
+    /// The side.
     pub fn side(mut self, side: HoverCardSide) -> Self {
         self.side = side;
         self
     }
+    #[must_use]
+    /// The align.
     pub fn align(mut self, align: HoverCardAlign) -> Self {
         self.align = align;
         self
@@ -79,6 +97,7 @@ where
     TV: IntoView + 'static,
     CV: IntoView + 'static,
 {
+    /// Builds it.
     pub fn build(self) -> impl IntoView {
         let trigger = self.trigger;
         let content = self.content;
@@ -87,11 +106,11 @@ where
         let is_hovered = RwSignal::new(false);
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
-                    is_hovered.set(true)
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
+                    is_hovered.set(true);
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
-                    is_hovered.set(false)
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
+                    is_hovered.set(false);
                 })
                 .into_any()
         } else {
@@ -153,7 +172,7 @@ where
             floem::views::Empty::new().into_any()
         };
         floem::views::Container::new(floem::views::Stack::new((trigger_view, content_view)))
-            .style(|s| s.relative())
+            .style(floem_tailwind::TailwindExt::relative)
     }
 }
 impl<T, C, TV, CV> IntoView for HoverCard<T, C>
@@ -174,11 +193,13 @@ where
 }
 
 // HoverCardContent
+/// The `HoverCardContent`.
 pub struct HoverCardContent<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> HoverCardContent<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -206,11 +227,13 @@ impl<V: IntoView + 'static> IntoView for HoverCardContent<V> {
 }
 
 // HoverCardTrigger
+/// The `HoverCardTrigger`.
 pub struct HoverCardTrigger<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> HoverCardTrigger<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
