@@ -7,6 +7,7 @@
 //! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::popover::Popover;
+//! # use floem::views::label;
 //!
 //! let open = RwSignal::new(false);
 //!
@@ -25,21 +26,31 @@ use floem_tailwind::TailwindExt;
 use crate::theme::ShadcnThemeExt;
 
 #[derive(Clone, Copy, Default)]
+/// The `PopoverAlign`.
 pub enum PopoverAlign {
+    /// The item.
     Start,
     #[default]
+    /// The item.
     Center,
+    /// The item.
     End,
 }
 #[derive(Clone, Copy, Default)]
+/// The `PopoverSide`.
 pub enum PopoverSide {
+    /// The item.
     Top,
     #[default]
+    /// The item.
     Bottom,
+    /// The item.
     Left,
+    /// The item.
     Right,
 }
 
+/// The Popover.
 pub struct Popover<T, C> {
     open: RwSignal<bool>,
     trigger: Option<T>,
@@ -49,6 +60,8 @@ pub struct Popover<T, C> {
 }
 
 impl Popover<(), ()> {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(open: RwSignal<bool>) -> Self {
         Self {
             open,
@@ -61,6 +74,7 @@ impl Popover<(), ()> {
 }
 
 impl<T, C> Popover<T, C> {
+    /// The trigger.
     pub fn trigger<T2: Fn() -> V, V: IntoView + 'static>(self, trigger: T2) -> Popover<T2, C> {
         Popover {
             open: self.open,
@@ -70,6 +84,7 @@ impl<T, C> Popover<T, C> {
             align: self.align,
         }
     }
+    /// The content.
     pub fn content<C2: Fn() -> V, V: IntoView + 'static>(self, content: C2) -> Popover<T, C2> {
         Popover {
             open: self.open,
@@ -79,10 +94,14 @@ impl<T, C> Popover<T, C> {
             align: self.align,
         }
     }
+    #[must_use]
+    /// The side.
     pub fn side(mut self, side: PopoverSide) -> Self {
         self.side = side;
         self
     }
+    #[must_use]
+    /// The align.
     pub fn align(mut self, align: PopoverAlign) -> Self {
         self.align = align;
         self
@@ -96,6 +115,7 @@ where
     TV: IntoView + 'static,
     CV: IntoView + 'static,
 {
+    /// Builds it.
     pub fn build(self) -> impl IntoView {
         let open = self.open;
         let trigger = self.trigger;
@@ -106,7 +126,7 @@ where
         let trigger_view = if let Some(trigger_fn) = trigger {
             floem::views::Container::new(trigger_fn())
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -168,7 +188,7 @@ where
         };
 
         floem::views::Container::new(floem::views::Stack::new((trigger_view, content_view)))
-            .style(|s| s.relative())
+            .style(floem_tailwind::TailwindExt::relative)
     }
 }
 
@@ -202,12 +222,14 @@ where
 }
 
 // PopoverTrigger and PopoverContent follow similar style substitutions
+/// The `PopoverTrigger`.
 pub struct PopoverTrigger<V> {
     id: ViewId,
     open: RwSignal<bool>,
     child: V,
 }
 impl<V: IntoView + 'static> PopoverTrigger<V> {
+    /// Creates a new it.
     pub fn new(open: RwSignal<bool>, child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -232,19 +254,21 @@ impl<V: IntoView + 'static> IntoView for PopoverTrigger<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     open.update(|v| *v = !*v);
                 }),
         )
     }
 }
 
+/// The `PopoverContent`.
 pub struct PopoverContent<V> {
     id: ViewId,
     open: RwSignal<bool>,
     child: V,
 }
 impl<V: IntoView + 'static> PopoverContent<V> {
+    /// Creates a new it.
     pub fn new(open: RwSignal<bool>, child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -286,6 +310,161 @@ impl<V: IntoView + 'static> IntoView for PopoverContent<V> {
                     }
                 })
             }),
+        )
+    }
+}
+
+/// Click-to-close button that sets the popover's `open` signal to `false`
+pub struct PopoverClose<V> {
+    id: ViewId,
+    open: RwSignal<bool>,
+    child: V,
+}
+impl<V: IntoView + 'static> PopoverClose<V> {
+    /// Create a new close button bound to the popover open signal
+    pub fn new(open: RwSignal<bool>, child: V) -> Self {
+        Self {
+            id: ViewId::new(),
+            open,
+            child,
+        }
+    }
+}
+impl<V: IntoView + 'static> HasViewId for PopoverClose<V> {
+    fn view_id(&self) -> ViewId {
+        self.id
+    }
+}
+impl<V: IntoView + 'static> IntoView for PopoverClose<V> {
+    type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
+    fn into_view(self) -> Self::V {
+        let open = self.open;
+        Box::new(
+            floem::views::Container::with_id(self.id, self.child)
+                .style(|s| s.cursor(CursorStyle::Pointer))
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
+                    open.set(false);
+                }),
+        )
+    }
+}
+
+/// Header region of a popover panel (title + description stack)
+pub struct PopoverHeader {
+    id: ViewId,
+    children: Vec<floem::AnyView>,
+}
+impl PopoverHeader {
+    #[must_use]
+    /// Create a new popover header
+    pub fn new() -> Self {
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
+    }
+}
+impl Default for PopoverHeader {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl HasViewId for PopoverHeader {
+    fn view_id(&self) -> ViewId {
+        self.id
+    }
+}
+impl ParentView for PopoverHeader {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
+impl IntoView for PopoverHeader {
+    type V = Container;
+    type Intermediate = Container;
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
+    fn into_view(self) -> Self::V {
+        let container = { Container::with_id(self.id, ()).style(|s| s.flex_col().gap_1()) };
+        self.id.set_children_vec(self.children);
+        container
+    }
+}
+
+/// Popover panel title
+pub struct PopoverTitle {
+    id: ViewId,
+    text: String,
+}
+impl PopoverTitle {
+    /// Create a new popover title
+    pub fn new(text: impl Into<String>) -> Self {
+        Self {
+            id: ViewId::new(),
+            text: text.into(),
+        }
+    }
+}
+impl HasViewId for PopoverTitle {
+    fn view_id(&self) -> ViewId {
+        self.id
+    }
+}
+impl IntoView for PopoverTitle {
+    type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
+    fn into_view(self) -> Self::V {
+        let text = self.text;
+        Box::new(
+            floem::views::Label::new(text)
+                .style(|s| s.with_shadcn_theme(|s, t| s.font_medium().color(t.foreground))),
+        )
+    }
+}
+
+/// Popover panel description line
+pub struct PopoverDescription {
+    id: ViewId,
+    text: String,
+}
+impl PopoverDescription {
+    /// Create a new popover description
+    pub fn new(text: impl Into<String>) -> Self {
+        Self {
+            id: ViewId::new(),
+            text: text.into(),
+        }
+    }
+}
+impl HasViewId for PopoverDescription {
+    fn view_id(&self) -> ViewId {
+        self.id
+    }
+}
+impl IntoView for PopoverDescription {
+    type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
+    fn into_view(self) -> Self::V {
+        let text = self.text;
+        Box::new(
+            floem::views::Label::new(text)
+                .style(|s| s.with_shadcn_theme(|s, t| s.text_sm().color(t.muted_foreground))),
         )
     }
 }
