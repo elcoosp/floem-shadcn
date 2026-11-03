@@ -24,6 +24,7 @@ pub struct TypographyH1 {
     text: String,
 }
 impl TypographyH1 {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -46,7 +47,7 @@ impl IntoView for TypographyH1 {
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(
-            floem::views::Label::new(text)
+            floem::views::Label::with_id(self.id, text)
                 .style(|s| s.text_3xl().leading_tight().font_bold().text_foreground()),
         )
     }
@@ -58,6 +59,7 @@ pub struct TypographyH2 {
     text: String,
 }
 impl TypographyH2 {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -80,7 +82,7 @@ impl IntoView for TypographyH2 {
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(
-            floem::views::Label::new(text)
+            floem::views::Label::with_id(self.id, text)
                 .style(|s| s.text_2xl().leading_tight().font_bold().text_foreground()),
         )
     }
@@ -92,6 +94,7 @@ pub struct TypographyH3 {
     text: String,
 }
 impl TypographyH3 {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -114,18 +117,19 @@ impl IntoView for TypographyH3 {
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(
-            floem::views::Label::new(text)
+            floem::views::Label::with_id(self.id, text)
                 .style(|s| s.text_xl().leading_normal().font_bold().text_foreground()),
         )
     }
 }
 
-/// H4 heading – uses explicit 16px since text_lg is 18px and no text_base exists
+/// H4 heading – uses explicit 16px since `text_lg` is 18px and no `text_base` exists
 pub struct TypographyH4 {
     id: ViewId,
     text: String,
 }
 impl TypographyH4 {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -147,7 +151,7 @@ impl IntoView for TypographyH4 {
 
     fn into_view(self) -> Self::V {
         let text = self.text;
-        Box::new(floem::views::Label::new(text).style(|s| {
+        Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.font_size(16.0)
                 .leading_normal()
                 .font_medium()
@@ -162,6 +166,7 @@ pub struct TypographyP {
     text: String,
 }
 impl TypographyP {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -184,7 +189,7 @@ impl IntoView for TypographyP {
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(
-            floem::views::Label::new(text)
+            floem::views::Label::with_id(self.id, text)
                 .style(|s| s.text_sm().leading_normal().text_foreground()),
         )
     }
@@ -196,6 +201,7 @@ pub struct TypographyLead {
     text: String,
 }
 impl TypographyLead {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -218,7 +224,7 @@ impl IntoView for TypographyLead {
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(
-            floem::views::Label::new(text)
+            floem::views::Label::with_id(self.id, text)
                 .style(|s| s.text_lg().leading_normal().text_muted_foreground()),
         )
     }
@@ -230,6 +236,7 @@ pub struct TypographyMuted {
     text: String,
 }
 impl TypographyMuted {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -252,7 +259,7 @@ impl IntoView for TypographyMuted {
     fn into_view(self) -> Self::V {
         let text = self.text;
         Box::new(
-            floem::views::Label::new(text)
+            floem::views::Label::with_id(self.id, text)
                 .style(|s| s.text_xs().leading_normal().text_muted_foreground()),
         )
     }
@@ -264,6 +271,7 @@ pub struct TypographyCode {
     text: String,
 }
 impl TypographyCode {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -285,7 +293,7 @@ impl IntoView for TypographyCode {
 
     fn into_view(self) -> Self::V {
         let text = self.text;
-        Box::new(floem::views::Label::new(text).style(|s| {
+        Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.px_1()
                 .py_0p5()
                 .font_size(13.0) // explicit because text_sm is 14px
@@ -304,6 +312,7 @@ pub struct TypographyBlockquote {
     text: String,
 }
 impl TypographyBlockquote {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -325,7 +334,7 @@ impl IntoView for TypographyBlockquote {
 
     fn into_view(self) -> Self::V {
         let text = self.text;
-        Box::new(floem::views::Label::new(text).style(|s| {
+        Box::new(floem::views::Label::with_id(self.id, text).style(|s| {
             s.mt_4()
                 .mb_4()
                 .pl_4()
@@ -345,6 +354,8 @@ pub struct TypographyList {
     ordered: bool,
 }
 impl TypographyList {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(items: Vec<String>, ordered: bool) -> Self {
         Self {
             id: ViewId::new(),
@@ -368,6 +379,7 @@ impl IntoView for TypographyList {
     fn into_view(self) -> Self::V {
         let items = self.items;
         let ordered = self.ordered;
+        let id = self.id;
         let children: Vec<Box<dyn View>> = items
             .iter()
             .enumerate()
@@ -377,15 +389,17 @@ impl IntoView for TypographyList {
                 } else {
                     "• ".to_string()
                 };
-                let text = format!("{}{}", bullet, item);
+                let text = format!("{bullet}{item}");
                 Box::new(
                     floem::views::Label::new(text)
                         .style(|s| s.text_sm().leading_normal().text_foreground()),
                 ) as Box<dyn View>
             })
             .collect();
-        Box::new(
-            floem::views::Stack::vertical_from_iter(children).style(|s| s.mt_2().mb_2().gap_1()),
-        )
+        let stack =
+            floem::views::Stack::vertical_from_iter(children).style(|s| s.mt_2().mb_2().gap_1());
+        // Attach the pre-created ViewId via Container so `view_id()` queries
+        // resolve against the rendered list, not an orphan node.
+        Box::new(floem::views::Container::with_id(id, stack))
     }
 }
