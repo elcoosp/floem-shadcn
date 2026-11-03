@@ -1,3 +1,5 @@
+//! Integration tests for the Dialog component.
+
 use floem::headless::TestRoot;
 use floem::prelude::*;
 use floem::reactive::RwSignal;
@@ -11,7 +13,9 @@ use floem_test::prelude::*;
 #[test]
 fn test_dialog_opens_via_trigger() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
+    // TestRoot must be created before the view tree: ViewIds created before
+    // the root exists never receive dispatched events.
+    let root = TestRoot::new();
     let dialog = Dialog::new((
         DialogTrigger::new(Button::new("Open Dialog")),
         DialogContent::new((DialogHeader::new()
@@ -19,17 +23,23 @@ fn test_dialog_opens_via_trigger() {
             .description("This is a test dialog"),)),
     ));
     let open = dialog.open_signal();
+    let dialog_id = dialog.view_id();
     let view = Stack::vertical((dialog,));
-    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(root, view, 800.0, 600.0);
     harness.rebuild();
+    assert!(!open.get(), "Dialog starts closed");
+    // Click the trigger button at the top of the stack.
     harness.click(50.0, 20.0);
     harness.rebuild();
-    assert!(open.get(), "Dialog should open after clicking trigger");
+    assert!(open.get(), "Clicking the trigger should open the dialog");
+    assert!(
+        dialog_id.get_layout().is_some(),
+        "Dialog renders a layout once mounted"
+    );
 }
 
 #[test]
 fn test_dialog_closes_via_close_button() {
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let dialog = Dialog::new((
         DialogTrigger::new(Button::new("Open")),
@@ -52,14 +62,17 @@ fn test_dialog_closes_via_close_button() {
 #[test]
 fn test_dialog_backdrop_click_closes() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
+    // TestRoot must be created before the view tree: ViewIds created before
+    // the root exists are registered outside the root's view registry and
+    // never receive dispatched events.
+    let root = TestRoot::new();
     let dialog = Dialog::new((
         DialogTrigger::new(Button::new("Open")),
         DialogContent::new((DialogHeader::new().title("Test"),)),
     ));
     let open = dialog.open_signal();
     let view = Stack::new((dialog,)).style(|s| s.size(800.0, 600.0));
-    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(root, view, 800.0, 600.0);
     harness.rebuild();
     open.set(true);
     harness.rebuild();
@@ -70,10 +83,10 @@ fn test_dialog_backdrop_click_closes() {
 
 #[test]
 fn test_dialog_reactivity() {
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     use std::cell::RefCell;
     use std::rc::Rc;
+
+    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let dialog = Dialog::new((
         DialogTrigger::new(Button::new("Open")),
         DialogContent::new((DialogHeader::new().title("Test"),)),
@@ -97,7 +110,6 @@ fn test_dialog_reactivity() {
 
 #[test]
 fn test_dialog_with_paint_cycle() {
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let dialog = Dialog::new((
         DialogTrigger::new(Button::new("Open")),
@@ -131,7 +143,6 @@ fn test_dialog_with_paint_cycle() {
 #[test]
 fn test_dialog_inside_scroll() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let dialog = Dialog::new((
         DialogTrigger::new(Button::new("Open Dialog")),
         DialogContent::new((
@@ -155,7 +166,6 @@ fn test_dialog_inside_scroll() {
 
 #[test]
 fn test_dialog_with_dyn_container_in_scroll() {
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let section = RwSignal::new("dialog".to_string());
     let dialog_open = RwSignal::new(false);
@@ -185,7 +195,6 @@ fn test_dialog_with_dyn_container_in_scroll() {
 #[test]
 fn test_multiple_dialogs() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let dialog1 = Dialog::new((
         DialogTrigger::new(Button::new("Open Dialog 1")),
         DialogContent::new((DialogHeader::new().title("Dialog 1"),)),
@@ -211,7 +220,7 @@ fn test_multiple_dialogs() {
 #[test]
 fn test_clicking_backdrop_closes_dialog() {
     floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
+    let root = TestRoot::new();
     let dialog = Dialog::new((
         DialogTrigger::new(Button::new("Open")),
         DialogContent::new((DialogHeader::new()
@@ -220,20 +229,22 @@ fn test_clicking_backdrop_closes_dialog() {
     ));
     let open = dialog.open_signal();
     let view = Stack::new((dialog,)).style(|s| s.size(800.0, 600.0));
-    let mut harness = HeadlessHarness::new_with_size(TestRoot::new(), view, 800.0, 600.0);
+    let mut harness = HeadlessHarness::new_with_size(root, view, 800.0, 600.0);
     harness.rebuild();
     open.set(true);
     harness.rebuild();
+    // The backdrop fills the whole viewport; (10, 10) is outside the centered
+    // content panel, so this click must hit the backdrop and close the dialog.
     harness.click(10.0, 10.0);
     harness.rebuild();
-    assert!(!open.get());
+    assert!(!open.get(), "Clicking the backdrop should close the dialog");
 }
 
 #[test]
 fn test_dialog_context_access() {
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
-    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     use floem::reactive::Context;
+
+    floem_shadcn::theme::set_theme(floem_shadcn::theme::ShadcnTheme::light());
     let context_found = RwSignal::new(false);
     let custom_content = floem::views::Empty::new().style(move |s| {
         if Context::get::<DialogContext>().is_some() {
