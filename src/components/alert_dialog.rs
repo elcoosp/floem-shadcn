@@ -1,6 +1,6 @@
-//! AlertDialog component with builder-style API
+//! `AlertDialog` component with builder-style API
 //!
-//! Based on shadcn/ui AlertDialog - a modal dialog for important confirmations.
+//! Based on shadcn/ui `AlertDialog` - a modal dialog for important confirmations.
 //!
 //! # Example
 //!
@@ -33,6 +33,7 @@ use crate::theme::ShadcnThemeExt;
 // AlertDialog
 // ============================================================================
 
+/// The `AlertDialog`.
 pub struct AlertDialog {
     id: ViewId,
     is_open: RwSignal<bool>,
@@ -46,6 +47,8 @@ pub struct AlertDialog {
 }
 
 impl AlertDialog {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -59,27 +62,39 @@ impl AlertDialog {
             destructive: false,
         }
     }
+    #[must_use]
+    /// The trigger.
     pub fn trigger(mut self, text: impl Into<String>) -> Self {
         self.trigger_text = text.into();
         self
     }
+    #[must_use]
+    /// The title.
     pub fn title(mut self, title: impl Into<String>) -> Self {
         self.title = title.into();
         self
     }
+    #[must_use]
+    /// The description.
     pub fn description(mut self, description: impl Into<String>) -> Self {
         self.description = description.into();
         self
     }
+    #[must_use]
+    /// The cancel.
     pub fn cancel(mut self, text: impl Into<String>) -> Self {
         self.cancel_text = text.into();
         self
     }
+    #[must_use]
+    /// The action.
     pub fn action(mut self, text: impl Into<String>, handler: impl Fn() + 'static) -> Self {
         self.action_text = text.into();
         self.on_action = Some(Box::new(handler));
         self
     }
+    #[must_use]
+    /// The destructive.
     pub fn destructive(mut self) -> Self {
         self.destructive = true;
         self
@@ -90,6 +105,90 @@ impl HasViewId for AlertDialog {
     fn view_id(&self) -> ViewId {
         self.id
     }
+}
+
+/// The alert-dialog trigger chip: opens the dialog when clicked.
+fn alert_trigger(label: &str, is_open: RwSignal<bool>) -> floem::AnyView {
+    floem::views::Label::new(label)
+        .style(|s| {
+            s.with_shadcn_theme(move |s, t| {
+                s.px_4()
+                    .py_2()
+                    .text_sm()
+                    .font_medium()
+                    .background(t.primary)
+                    .color(t.primary_foreground)
+                    .rounded_md()
+                    .cursor(CursorStyle::Pointer)
+                    .hover(|s| s.background(t.primary.with_alpha(0.9)))
+            })
+        })
+        .on_event_stop(floem::event::listener::Click, move |_, ()| {
+            is_open.set(true);
+        })
+        .into_any()
+}
+
+/// The alert-dialog cancel button: closes the dialog when clicked.
+fn alert_cancel_button(label: &str, is_open: RwSignal<bool>) -> floem::AnyView {
+    floem::views::Label::new(label)
+        .style(|s| {
+            s.with_shadcn_theme(move |s, t| {
+                s.px_4()
+                    .py_2()
+                    .text_sm()
+                    .font_medium()
+                    .background(t.secondary)
+                    .color(t.secondary_foreground)
+                    .rounded_md()
+                    .cursor(CursorStyle::Pointer)
+                    .hover(|s| s.background(t.secondary.with_alpha(0.8)))
+            })
+        })
+        .on_event_stop(floem::event::listener::Click, move |_, ()| {
+            is_open.set(false);
+        })
+        .into_any()
+}
+
+/// The alert-dialog action button: runs the handler then closes the dialog.
+fn alert_action_button(
+    label: &str,
+    destructive: bool,
+    on_action: Option<Box<dyn Fn()>>,
+    is_open: RwSignal<bool>,
+) -> floem::AnyView {
+    floem::views::Label::new(label)
+        .style(move |s| {
+            s.with_shadcn_theme(move |s, t| {
+                let bg = if destructive {
+                    t.destructive
+                } else {
+                    t.primary
+                };
+                let fg = if destructive {
+                    t.destructive_foreground
+                } else {
+                    t.primary_foreground
+                };
+                s.px_4()
+                    .py_2()
+                    .text_sm()
+                    .font_medium()
+                    .background(bg)
+                    .color(fg)
+                    .rounded_md()
+                    .cursor(CursorStyle::Pointer)
+                    .hover(|s| s.background(bg.with_alpha(0.9)))
+            })
+        })
+        .on_event_stop(floem::event::listener::Click, move |_, ()| {
+            if let Some(ref handler) = on_action {
+                handler();
+            }
+            is_open.set(false);
+        })
+        .into_any()
 }
 
 impl IntoView for AlertDialog {
@@ -109,86 +208,25 @@ impl IntoView for AlertDialog {
         let on_action = self.on_action;
         let destructive = self.destructive;
 
-        let trigger = floem::views::Label::new(trigger_text)
-            .style(|s| {
-                s.with_shadcn_theme(move |s, t| {
-                    s.px_4()
-                        .py_2()
-                        .text_sm()
-                        .font_medium()
-                        .background(t.primary)
-                        .color(t.primary_foreground)
-                        .rounded_md()
-                        .cursor(CursorStyle::Pointer)
-                        .hover(|s| s.background(t.primary.with_alpha(0.9)))
-                })
-            })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
-                is_open.set(true);
-            });
+        let trigger = alert_trigger(&trigger_text, is_open);
 
         let title_view = floem::views::Label::new(title).style(|s| {
             s.with_shadcn_theme(move |s, t| s.text_lg().font_semibold().color(t.foreground))
         });
 
-        let desc_view = if !description.is_empty() {
+        let desc_view = if description.is_empty() {
+            floem::views::Empty::new().into_any()
+        } else {
             floem::views::Label::new(description)
                 .style(|s| {
                     s.with_shadcn_theme(move |s, t| s.text_sm().color(t.muted_foreground).mt_2())
                 })
                 .into_any()
-        } else {
-            floem::views::Empty::new().into_any()
         };
 
-        let cancel_btn = floem::views::Label::new(cancel_text)
-            .style(|s| {
-                s.with_shadcn_theme(move |s, t| {
-                    s.px_4()
-                        .py_2()
-                        .text_sm()
-                        .font_medium()
-                        .background(t.secondary)
-                        .color(t.secondary_foreground)
-                        .rounded_md()
-                        .cursor(CursorStyle::Pointer)
-                        .hover(|s| s.background(t.secondary.with_alpha(0.8)))
-                })
-            })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
-                is_open.set(false);
-            });
+        let cancel_btn = alert_cancel_button(&cancel_text, is_open);
 
-        let action_btn = floem::views::Label::new(action_text)
-            .style(move |s| {
-                s.with_shadcn_theme(move |s, t| {
-                    let bg = if destructive {
-                        t.destructive
-                    } else {
-                        t.primary
-                    };
-                    let fg = if destructive {
-                        t.destructive_foreground
-                    } else {
-                        t.primary_foreground
-                    };
-                    s.px_4()
-                        .py_2()
-                        .text_sm()
-                        .font_medium()
-                        .background(bg)
-                        .color(fg)
-                        .rounded_md()
-                        .cursor(CursorStyle::Pointer)
-                        .hover(|s| s.background(bg.with_alpha(0.9)))
-                })
-            })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
-                if let Some(ref handler) = on_action {
-                    handler();
-                }
-                is_open.set(false);
-            });
+        let action_btn = alert_action_button(&action_text, destructive, on_action, is_open);
 
         let footer = floem::views::Stack::horizontal((cancel_btn, action_btn))
             .style(|s| s.gap_2().justify_end());
@@ -199,9 +237,9 @@ impl IntoView for AlertDialog {
                     .style(move |s| {
                         s.absolute()
                             .inset_0()
-                            .background(peniko::Color::from_rgba8(0, 0, 0, 128))
+                            .background(floem::peniko::Color::from_rgba8(0, 0, 0, 128))
                     })
-                    .on_event_stop(floem::event::listener::Click, move |_, _| {}),
+                    .on_event_stop(floem::event::listener::Click, move |_, ()| {}),
                 floem::views::Stack::vertical((title_view, desc_view, footer))
                     .style(move |s| {
                         s.absolute()
@@ -213,7 +251,7 @@ impl IntoView for AlertDialog {
                             .p_6()
                             .gap_4()
                             .box_shadow_blur(8.0)
-                            .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 60))
+                            .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 60))
                     })
                     .style(move |s| {
                         s.with_shadcn_theme(move |s, t| {
@@ -227,7 +265,7 @@ impl IntoView for AlertDialog {
                     .inset_0()
                     .w_full()
                     .h_full()
-                    .apply_if(!open, |s| s.hide())
+                    .apply_if(!open, floem::style::Style::hide)
             }),
         );
 
@@ -236,12 +274,14 @@ impl IntoView for AlertDialog {
 }
 
 // (Remaining standalone components: AlertDialogTrigger, AlertDialogContent, etc. follow the same Tailwind substitutions)
+/// The `AlertDialogTrigger`.
 pub struct AlertDialogTrigger<V> {
     id: ViewId,
     child: V,
     is_open: RwSignal<bool>,
 }
 impl<V: IntoView + 'static> AlertDialogTrigger<V> {
+    /// Creates a new it.
     pub fn new(child: V, is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -266,19 +306,21 @@ impl<V: IntoView + 'static> IntoView for AlertDialogTrigger<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.cursor(CursorStyle::Pointer))
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     is_open.set(true);
                 }),
         )
     }
 }
 
+/// The `AlertDialogContent`.
 pub struct AlertDialogContent<V> {
     id: ViewId,
     child: V,
     is_open: RwSignal<bool>,
 }
 impl<V: IntoView + 'static> AlertDialogContent<V> {
+    /// Creates a new it.
     pub fn new(child: V, is_open: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -307,9 +349,9 @@ impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
                     .style(move |s| {
                         s.absolute()
                             .inset_0()
-                            .background(peniko::Color::from_rgba8(0, 0, 0, 128))
+                            .background(floem::peniko::Color::from_rgba8(0, 0, 0, 128))
                     })
-                    .on_event_stop(floem::event::listener::Click, move |_, _| {}),
+                    .on_event_stop(floem::event::listener::Click, move |_, ()| {}),
                 floem::views::Container::new(child)
                     .style(move |s| {
                         s.absolute()
@@ -321,7 +363,7 @@ impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
                             .p_6()
                             .gap_4()
                             .box_shadow_blur(8.0)
-                            .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 60))
+                            .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 60))
                     })
                     .style(move |s| {
                         s.with_shadcn_theme(move |s, t| {
@@ -335,17 +377,19 @@ impl<V: IntoView + 'static> IntoView for AlertDialogContent<V> {
                     .inset_0()
                     .w_full()
                     .h_full()
-                    .apply_if(!open, |s| s.hide())
+                    .apply_if(!open, floem::style::Style::hide)
             }),
         ))
     }
 }
 
+/// The `AlertDialogHeader`.
 pub struct AlertDialogHeader<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> AlertDialogHeader<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -371,11 +415,13 @@ impl<V: IntoView + 'static> IntoView for AlertDialogHeader<V> {
     }
 }
 
+/// The `AlertDialogFooter`.
 pub struct AlertDialogFooter<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> AlertDialogFooter<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -402,11 +448,13 @@ impl<V: IntoView + 'static> IntoView for AlertDialogFooter<V> {
     }
 }
 
+/// The `AlertDialogTitle`.
 pub struct AlertDialogTitle {
     id: ViewId,
     text: String,
 }
 impl AlertDialogTitle {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -433,11 +481,13 @@ impl IntoView for AlertDialogTitle {
     }
 }
 
+/// The `AlertDialogDescription`.
 pub struct AlertDialogDescription {
     id: ViewId,
     text: String,
 }
 impl AlertDialogDescription {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -464,6 +514,7 @@ impl IntoView for AlertDialogDescription {
     }
 }
 
+/// The `AlertDialogAction`.
 pub struct AlertDialogAction {
     id: ViewId,
     text: String,
@@ -472,6 +523,7 @@ pub struct AlertDialogAction {
     is_open: Option<RwSignal<bool>>,
 }
 impl AlertDialogAction {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -481,14 +533,20 @@ impl AlertDialogAction {
             is_open: None,
         }
     }
+    #[must_use]
+    /// The destructive.
     pub fn destructive(mut self) -> Self {
         self.destructive = true;
         self
     }
+    #[must_use]
+    /// Adds a handler for click.
     pub fn on_click(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_click = Some(Box::new(handler));
         self
     }
+    #[must_use]
+    /// The dialog.
     pub fn dialog(mut self, is_open: RwSignal<bool>) -> Self {
         self.is_open = Some(is_open);
         self
@@ -535,7 +593,7 @@ impl IntoView for AlertDialogAction {
                             .hover(|s| s.background(bg.with_alpha(0.9)))
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     if let Some(ref handler) = on_click {
                         handler();
                     }
@@ -547,12 +605,14 @@ impl IntoView for AlertDialogAction {
     }
 }
 
+/// The `AlertDialogCancel`.
 pub struct AlertDialogCancel {
     id: ViewId,
     text: String,
     is_open: Option<RwSignal<bool>>,
 }
 impl AlertDialogCancel {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -560,6 +620,8 @@ impl AlertDialogCancel {
             is_open: None,
         }
     }
+    #[must_use]
+    /// The dialog.
     pub fn dialog(mut self, is_open: RwSignal<bool>) -> Self {
         self.is_open = Some(is_open);
         self
@@ -594,7 +656,7 @@ impl IntoView for AlertDialogCancel {
                             .hover(|s| s.background(t.secondary.with_alpha(0.8)))
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     if let Some(signal) = is_open {
                         signal.set(false);
                     }
