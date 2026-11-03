@@ -1,4 +1,3 @@
-#[allow(dead_code)]
 use crate::theme::ShadcnThemeExt;
 use floem::prelude::*;
 use floem::reactive::RwSignal;
@@ -8,13 +7,15 @@ use floem::views::{Decorators, Stem};
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
-#[allow(dead_code)]
+/// The Command.
 pub struct Command {
     content_id: ViewId,
     search: RwSignal<String>,
     placeholder: String,
 }
 impl Command {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(search: RwSignal<String>) -> Self {
         Self {
             content_id: ViewId::new(),
@@ -22,9 +23,16 @@ impl Command {
             placeholder: "Type a command...".to_string(),
         }
     }
+    #[must_use]
+    /// The placeholder.
     pub fn placeholder(mut self, placeholder: impl Into<String>) -> Self {
         self.placeholder = placeholder.into();
         self
+    }
+    #[must_use]
+    /// The shared search-query signal, to read or drive the command list.
+    pub fn search_signal(&self) -> RwSignal<String> {
+        self.search
     }
 }
 impl HasViewId for Command {
@@ -53,7 +61,7 @@ impl IntoView for Command {
                         .border_0()
                         .border_bottom(1.0)
                         .border_color(t.border)
-                        .background(peniko::Color::TRANSPARENT)
+                        .background(floem::peniko::Color::TRANSPARENT)
                         .color(t.foreground)
                 })
             });
@@ -71,13 +79,21 @@ impl IntoView for Command {
 }
 impl ParentView for Command {}
 
-#[allow(dead_code)]
+/// The `CommandInput`.
 pub struct CommandInput {
     id: ViewId,
     search: RwSignal<String>,
     placeholder: String,
 }
 impl CommandInput {
+    #[must_use]
+    /// The shared search-query signal, to read or drive the input.
+    pub fn search_signal(&self) -> RwSignal<String> {
+        self.search
+    }
+
+    #[must_use]
+    /// Creates a new it.
     pub fn new(search: RwSignal<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -85,6 +101,8 @@ impl CommandInput {
             placeholder: "Search...".to_string(),
         }
     }
+    #[must_use]
+    /// The placeholder.
     pub fn placeholder(mut self, placeholder: impl Into<String>) -> Self {
         self.placeholder = placeholder.into();
         self
@@ -116,7 +134,7 @@ impl IntoView for CommandInput {
                             .border_0()
                             .border_bottom(1.0)
                             .border_color(t.border)
-                            .background(peniko::Color::TRANSPARENT)
+                            .background(floem::peniko::Color::TRANSPARENT)
                             .color(t.foreground)
                     })
                 }),
@@ -124,12 +142,19 @@ impl IntoView for CommandInput {
     }
 }
 
+/// The `CommandList`.
 pub struct CommandList {
     id: ViewId,
+    children: Vec<floem::AnyView>,
 }
 impl CommandList {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
-        Self { id: ViewId::new() }
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
     }
 }
 impl Default for CommandList {
@@ -152,13 +177,24 @@ impl IntoView for CommandList {
         Stem::with_id(self.id).style(|s| s.p_1().max_height(300.0).flex_col())
     }
 }
-impl ParentView for CommandList {}
+impl ParentView for CommandList {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
+/// The `CommandEmpty`.
 pub struct CommandEmpty {
     id: ViewId,
     text: String,
 }
 impl CommandEmpty {
+    /// Creates a new it.
     pub fn new(text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -196,11 +232,13 @@ impl IntoView for CommandEmpty {
     }
 }
 
+/// The `CommandGroup`.
 pub struct CommandGroup {
     items_id: ViewId,
     heading: String,
 }
 impl CommandGroup {
+    /// Creates a new it.
     pub fn new(heading: impl Into<String>) -> Self {
         Self {
             items_id: ViewId::new(),
@@ -231,13 +269,13 @@ impl IntoView for CommandGroup {
                     .color(t.muted_foreground)
             })
         });
-        let items = Stem::with_id(items_id).style(|s| s.flex_col());
+        let items = Stem::with_id(items_id).style(floem::style::Style::flex_col);
         Box::new(floem::views::Stack::vertical((heading_view, items)))
     }
 }
 impl ParentView for CommandGroup {}
 
-#[allow(dead_code)]
+/// The `CommandItem`.
 pub struct CommandItem {
     id: ViewId,
     value: String,
@@ -246,6 +284,13 @@ pub struct CommandItem {
     on_select: Option<Box<dyn Fn() + 'static>>,
 }
 impl CommandItem {
+    #[must_use]
+    /// The value submitted when this item is selected.
+    pub fn value(&self) -> &str {
+        &self.value
+    }
+
+    /// Creates a new it.
     pub fn new(value: impl Into<String>, text: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -255,10 +300,14 @@ impl CommandItem {
             on_select: None,
         }
     }
+    #[must_use]
+    /// Adds a handler for select.
     pub fn on_select(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_select = Some(Box::new(handler));
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
@@ -301,10 +350,10 @@ impl IntoView for CommandItem {
             })
         });
         if let Some(handler) = on_select {
-            if !disabled {
-                Box::new(label.on_event_stop(floem::event::listener::Click, move |_, _| handler()))
-            } else {
+            if disabled {
                 Box::new(label)
+            } else {
+                Box::new(label.on_event_stop(floem::event::listener::Click, move |_, ()| handler()))
             }
         } else {
             Box::new(label)
@@ -312,6 +361,7 @@ impl IntoView for CommandItem {
     }
 }
 
+/// The `CommandItemCustom`.
 pub struct CommandItemCustom<V> {
     id: ViewId,
     child: V,
@@ -319,6 +369,7 @@ pub struct CommandItemCustom<V> {
     on_select: Option<Box<dyn Fn() + 'static>>,
 }
 impl<V: IntoView + 'static> CommandItemCustom<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -327,10 +378,14 @@ impl<V: IntoView + 'static> CommandItemCustom<V> {
             on_select: None,
         }
     }
+    #[must_use]
+    /// Adds a handler for select.
     pub fn on_select(mut self, handler: impl Fn() + 'static) -> Self {
         self.on_select = Some(Box::new(handler));
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
@@ -373,12 +428,12 @@ impl<V: IntoView + 'static> IntoView for CommandItemCustom<V> {
             })
         });
         if let Some(handler) = on_select {
-            if !disabled {
-                Box::new(
-                    container.on_event_stop(floem::event::listener::Click, move |_, _| handler()),
-                )
-            } else {
+            if disabled {
                 Box::new(container)
+            } else {
+                Box::new(
+                    container.on_event_stop(floem::event::listener::Click, move |_, ()| handler()),
+                )
             }
         } else {
             Box::new(container)
@@ -386,8 +441,11 @@ impl<V: IntoView + 'static> IntoView for CommandItemCustom<V> {
     }
 }
 
+/// The `CommandSeparator`.
 pub struct CommandSeparator;
 impl CommandSeparator {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self
     }
@@ -421,11 +479,13 @@ impl IntoView for CommandSeparator {
     }
 }
 
+/// The `CommandShortcut`.
 pub struct CommandShortcut {
     id: ViewId,
     keys: String,
 }
 impl CommandShortcut {
+    /// Creates a new it.
     pub fn new(keys: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
