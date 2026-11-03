@@ -6,7 +6,7 @@
 //!
 //! ```rust
 //! use floem_shadcn::components::table::*;
-//! use floem::view::ParentView;
+//! # use floem::prelude::*;
 //!
 //! Table::new()
 //!     .child(
@@ -54,12 +54,23 @@ use floem_tailwind::TailwindExt;
 /// Table container
 pub struct Table {
     id: ViewId,
+    children: Vec<floem::AnyView>,
+}
+
+impl Default for Table {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Table {
+    #[must_use]
     /// Create a new table
     pub fn new() -> Self {
-        Self { id: ViewId::new() }
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
     }
 }
 
@@ -77,21 +88,34 @@ impl IntoView for Table {
     }
 
     fn into_view(self) -> Self::V {
-        Container::with_id(self.id, ()).style(|s| {
-            s.with_shadcn_theme(|s, t| {
-                s.w_full()
-                    .grid()
-                    .grid_auto_flow(GridAutoFlow::Row)
-                    .text_sm()
-                    .border_1()
-                    .border_color(t.border)
-                    .border_radius(t.radius)
+        let container = {
+            Container::with_id(self.id, ()).style(|s| {
+                s.with_shadcn_theme(|s, t| {
+                    s.w_full()
+                        .grid()
+                        .grid_auto_flow(GridAutoFlow::Row)
+                        .text_sm()
+                        .border_1()
+                        .border_color(t.border)
+                        .border_radius(t.radius)
+                })
             })
-        })
+        };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
 
-impl ParentView for Table {}
+impl ParentView for Table {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
 // ============================================================================
 // TableHeader
@@ -100,12 +124,23 @@ impl ParentView for Table {}
 /// Table header section (thead)
 pub struct TableHeader {
     id: ViewId,
+    children: Vec<floem::AnyView>,
+}
+
+impl Default for TableHeader {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl TableHeader {
+    #[must_use]
     /// Create a new table header
     pub fn new() -> Self {
-        Self { id: ViewId::new() }
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
     }
 }
 
@@ -123,12 +158,25 @@ impl IntoView for TableHeader {
     }
 
     fn into_view(self) -> Self::V {
-        Container::with_id(self.id, ())
-            .style(|s| s.w_full().grid().grid_auto_flow(GridAutoFlow::Row))
+        let container = {
+            Container::with_id(self.id, ())
+                .style(|s| s.w_full().grid().grid_auto_flow(GridAutoFlow::Row))
+        };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
 
-impl ParentView for TableHeader {}
+impl ParentView for TableHeader {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
 // ============================================================================
 // TableBody
@@ -137,12 +185,23 @@ impl ParentView for TableHeader {}
 /// Table body section (tbody)
 pub struct TableBody {
     id: ViewId,
+    children: Vec<floem::AnyView>,
+}
+
+impl Default for TableBody {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl TableBody {
+    #[must_use]
     /// Create a new table body
     pub fn new() -> Self {
-        Self { id: ViewId::new() }
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
     }
 }
 
@@ -160,12 +219,25 @@ impl IntoView for TableBody {
     }
 
     fn into_view(self) -> Self::V {
-        Container::with_id(self.id, ())
-            .style(|s| s.w_full().grid().grid_auto_flow(GridAutoFlow::Row))
+        let container = {
+            Container::with_id(self.id, ())
+                .style(|s| s.w_full().grid().grid_auto_flow(GridAutoFlow::Row))
+        };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
 
-impl ParentView for TableBody {}
+impl ParentView for TableBody {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
 // ============================================================================
 // TableFooter
@@ -174,12 +246,23 @@ impl ParentView for TableBody {}
 /// Table footer section (tfoot)
 pub struct TableFooter {
     id: ViewId,
+    children: Vec<floem::AnyView>,
+}
+
+impl Default for TableFooter {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl TableFooter {
+    #[must_use]
     /// Create a new table footer
     pub fn new() -> Self {
-        Self { id: ViewId::new() }
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
     }
 }
 
@@ -197,19 +280,32 @@ impl IntoView for TableFooter {
     }
 
     fn into_view(self) -> Self::V {
-        Container::with_id(self.id, ()).style(|s| {
-            s.with_shadcn_theme(|s, t| {
-                s.w_full()
-                    .grid()
-                    .background(t.muted.with_alpha(0.5))
-                    .border_top(1.0)
-                    .border_color(t.border)
+        let container = {
+            Container::with_id(self.id, ()).style(|s| {
+                s.with_shadcn_theme(|s, t| {
+                    s.w_full()
+                        .grid()
+                        .background(t.muted.with_alpha(0.5))
+                        .border_top(1.0)
+                        .border_color(t.border)
+                })
             })
-        })
+        };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
 
-impl ParentView for TableFooter {}
+impl ParentView for TableFooter {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
 // ============================================================================
 // TableRow
@@ -218,12 +314,23 @@ impl ParentView for TableFooter {}
 /// Table row (tr)
 pub struct TableRow {
     id: ViewId,
+    children: Vec<floem::AnyView>,
+}
+
+impl Default for TableRow {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl TableRow {
+    #[must_use]
     /// Create a new table row
     pub fn new() -> Self {
-        Self { id: ViewId::new() }
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
     }
 }
 
@@ -241,28 +348,41 @@ impl IntoView for TableRow {
     }
 
     fn into_view(self) -> Self::V {
-        Container::with_id(self.id, ()).style(|s| {
-            s.with_shadcn_theme(|s, t| {
-                s.w_full()
-                    .grid() // Use Grid for cells
-                    .grid_auto_flow(GridAutoFlow::Column) // Cells flow horizontally
-                    .grid_auto_columns(vec![MinMax {
-                        min: MinTrackSizingFunction::length(0.0), // No minimum - use fr for distribution
-                        max: MaxTrackSizingFunction::fr(1.0),     // Equal column widths
-                    }]) // Each cell gets equal width using 1fr
-                    .border_bottom(1.0)
-                    .border_color(t.border)
-                    .hover(|s| s.background(t.muted.with_alpha(0.5))) // hover:bg-muted/50
-                    .transition(
-                        floem::style::Background,
-                        floem::style::Transition::linear(std::time::Duration::from_millis(150)),
-                    )
+        let container = {
+            Container::with_id(self.id, ()).style(|s| {
+                s.with_shadcn_theme(|s, t| {
+                    s.w_full()
+                        .grid() // Use Grid for cells
+                        .grid_auto_flow(GridAutoFlow::Column) // Cells flow horizontally
+                        .grid_auto_columns(vec![MinMax {
+                            min: MinTrackSizingFunction::length(0.0), // No minimum - use fr for distribution
+                            max: MaxTrackSizingFunction::fr(1.0),     // Equal column widths
+                        }]) // Each cell gets equal width using 1fr
+                        .border_bottom(1.0)
+                        .border_color(t.border)
+                        .hover(|s| s.background(t.muted.with_alpha(0.5))) // hover:bg-muted/50
+                        .transition(
+                            floem::style::Background,
+                            floem::style::Transition::linear(std::time::Duration::from_millis(150)),
+                        )
+                })
             })
-        })
+        };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
 
-impl ParentView for TableRow {}
+impl ParentView for TableRow {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
 // ============================================================================
 // TableHead
@@ -285,6 +405,7 @@ impl TableHead {
         }
     }
 
+    #[must_use]
     /// Set fixed width for the column
     pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
@@ -349,6 +470,7 @@ impl<V: IntoView + 'static> TableHeadCustom<V> {
         }
     }
 
+    #[must_use]
     /// Set fixed width for the column
     pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
@@ -415,6 +537,7 @@ impl TableCell {
         }
     }
 
+    #[must_use]
     /// Set fixed width for the cell
     pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
@@ -477,6 +600,7 @@ impl<V: IntoView + 'static> TableCellCustom<V> {
         }
     }
 
+    #[must_use]
     /// Set fixed width for the cell
     pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
