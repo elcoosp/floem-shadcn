@@ -8,13 +8,20 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 #[derive(Clone, Copy)]
+/// The `ComboboxContext`.
 pub struct ComboboxContext {
+    /// The item.
     pub selected: RwSignal<Option<String>>,
+    /// The item.
     pub search: RwSignal<String>,
+    /// The item.
     pub is_open: RwSignal<bool>,
+    /// The item.
     pub trigger_origin: RwSignal<floem::kurbo::Point>,
+    /// The item.
     pub trigger_size: RwSignal<floem::kurbo::Size>,
 }
+/// The Combobox.
 pub struct Combobox {
     id: ViewId,
     selected: RwSignal<Option<String>>,
@@ -23,6 +30,8 @@ pub struct Combobox {
     scope: Scope,
 }
 impl Combobox {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(selected: RwSignal<Option<String>>, search: RwSignal<String>) -> Self {
         let is_open = RwSignal::new(false);
         let trigger_origin = RwSignal::new(floem::kurbo::Point::ZERO);
@@ -43,12 +52,18 @@ impl Combobox {
             scope,
         }
     }
+    #[must_use]
+    /// Returns whether open signal.
     pub fn is_open_signal(&self) -> RwSignal<bool> {
         self.is_open
     }
+    #[must_use]
+    /// The selected signal.
     pub fn selected_signal(&self) -> RwSignal<Option<String>> {
         self.selected
     }
+    #[must_use]
+    /// The search signal.
     pub fn search_signal(&self) -> RwSignal<String> {
         self.search
     }
@@ -76,12 +91,14 @@ impl ParentView for Combobox {
     }
 }
 
+/// The `ComboboxTrigger`.
 pub struct ComboboxTrigger {
     id: ViewId,
     placeholder: String,
     items: Vec<(String, String)>,
 }
 impl ComboboxTrigger {
+    /// Creates a new it.
     pub fn new(p: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -89,6 +106,8 @@ impl ComboboxTrigger {
             items: vec![],
         }
     }
+    #[must_use]
+    /// The items.
     pub fn items(
         mut self,
         items: impl IntoIterator<Item = (impl Into<String>, impl Into<String>)>,
@@ -135,7 +154,7 @@ impl IntoView for ComboboxTrigger {
                     .style(move |s| {
                         s.with_shadcn_theme(move |s, t| {
                             let hv = selected.get().is_some();
-                            s.flex_grow(1.0).font_size(14.0).color(if hv {
+                            s.flex_grow(1.0_f32).font_size(14.0).color(if hv {
                                 t.foreground
                             } else {
                                 t.muted_foreground
@@ -144,7 +163,9 @@ impl IntoView for ComboboxTrigger {
                     }),
                     floem::views::Label::new("▼").style(|s| {
                         s.with_shadcn_theme(move |s, t| {
-                            s.font_size(10.0).color(t.muted_foreground).flex_shrink(0.0)
+                            s.font_size(10.0)
+                                .color(t.muted_foreground)
+                                .flex_shrink(0.0_f32)
                         })
                     }),
                 ))
@@ -163,7 +184,7 @@ impl IntoView for ComboboxTrigger {
                             .border_radius(6.0)
                             .background(t.background)
                             .box_shadow_blur(2.0)
-                            .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
+                            .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 25))
                             .cursor(CursorStyle::Pointer)
                             .hover(|s| s.border_color(t.ring))
                     })
@@ -175,7 +196,7 @@ impl IntoView for ComboboxTrigger {
                         trigger_size.set(event.new_box.size());
                     },
                 )
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     is_open.update(|v| *v = !*v);
                 }),
             )
@@ -200,12 +221,19 @@ impl IntoView for ComboboxTrigger {
     }
 }
 
+/// The `ComboboxContent`.
 pub struct ComboboxContent {
     id: ViewId,
+    children: Vec<floem::AnyView>,
 }
 impl ComboboxContent {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
-        Self { id: ViewId::new() }
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
     }
 }
 impl Default for ComboboxContent {
@@ -225,51 +253,69 @@ impl IntoView for ComboboxContent {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        let ctx = Context::get::<ComboboxContext>();
-        let stem = Container::with_id(self.id, ()).style(|s| s.flex_col().width_full());
-        if let Some(ctx) = ctx {
-            let trigger_origin = ctx.trigger_origin;
-            let trigger_size = ctx.trigger_size;
-            Box::new(floem::views::Container::new(stem).style(move |s| {
-                s.with_shadcn_theme(move |s, t| {
-                    let origin = trigger_origin.get();
-                    let size = trigger_size.get();
-                    s.position(floem::style::Position::Absolute)
-                        .inset_left(origin.x)
-                        .inset_top(origin.y + size.height + 6.0)
-                        .min_width(size.width.max(200.0))
-                        .flex_col()
-                        .background(t.popover)
-                        .color(t.popover_foreground)
-                        .border(1.0)
-                        .border_color(t.border)
-                        .border_radius(6.0)
-                        .box_shadow_blur(8.0)
-                        .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 60))
-                        .z_index(100)
-                        .apply_if(!ctx.is_open.get(), |s| {
-                            s.display(floem::style::Display::None)
-                        })
-                })
-            }))
-        } else {
-            Box::new(stem)
-        }
+        let container = {
+            let ctx = Context::get::<ComboboxContext>();
+            let stem = Container::with_id(self.id, ()).style(|s| s.flex_col().width_full());
+            if let Some(ctx) = ctx {
+                let trigger_origin = ctx.trigger_origin;
+                let trigger_size = ctx.trigger_size;
+                Box::new(floem::views::Container::new(stem).style(move |s| {
+                    s.with_shadcn_theme(move |s, t| {
+                        let origin = trigger_origin.get();
+                        let size = trigger_size.get();
+                        s.position(floem::style::Position::Absolute)
+                            .inset_left(origin.x)
+                            .inset_top(origin.y + size.height + 6.0)
+                            .min_width(size.width.max(200.0))
+                            .flex_col()
+                            .background(t.popover)
+                            .color(t.popover_foreground)
+                            .border(1.0)
+                            .border_color(t.border)
+                            .border_radius(6.0)
+                            .box_shadow_blur(8.0)
+                            .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 60))
+                            .z_index(100)
+                            .apply_if(!ctx.is_open.get(), |s| {
+                                s.display(floem::style::Display::None)
+                            })
+                    })
+                }))
+            } else {
+                Box::new(stem)
+            }
+        };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
-impl ParentView for ComboboxContent {}
+impl ParentView for ComboboxContent {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
+/// The `ComboboxInput`.
 pub struct ComboboxInput {
     id: ViewId,
     placeholder: String,
 }
 impl ComboboxInput {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
             placeholder: "Search...".into(),
         }
     }
+    #[must_use]
+    /// The placeholder.
     pub fn placeholder(mut self, p: impl Into<String>) -> Self {
         self.placeholder = p.into();
         self
@@ -313,17 +359,25 @@ impl IntoView for ComboboxInput {
     }
 }
 
+/// The `ComboboxList`.
 pub struct ComboboxList {
     id: ViewId,
+    children: Vec<floem::AnyView>,
     max_height: f64,
 }
 impl ComboboxList {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
             max_height: 300.0,
+
+            children: Vec::new(),
         }
     }
+    #[must_use]
+    /// The max height.
     pub fn max_height(mut self, h: f64) -> Self {
         self.max_height = h;
         self
@@ -346,13 +400,28 @@ impl IntoView for ComboboxList {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        let mh = self.max_height;
-        let c = Container::with_id(self.id, ()).style(|s| s.flex_col().width_full().padding(4.0));
-        floem::views::Scroll::new(c).style(move |s| s.max_height(mh).width_full())
+        let container = {
+            let mh = self.max_height;
+            let c =
+                Container::with_id(self.id, ()).style(|s| s.flex_col().width_full().padding(4.0));
+            floem::views::Scroll::new(c).style(move |s| s.max_height(mh).width_full())
+        };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
-impl ParentView for ComboboxList {}
+impl ParentView for ComboboxList {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
+/// The `ComboboxItem`.
 pub struct ComboboxItem {
     id: ViewId,
     value: String,
@@ -360,6 +429,7 @@ pub struct ComboboxItem {
     disabled: bool,
 }
 impl ComboboxItem {
+    /// Creates a new it.
     pub fn new(value: impl Into<String>, label: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -368,6 +438,8 @@ impl ComboboxItem {
             disabled: false,
         }
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, d: bool) -> Self {
         self.disabled = d;
         self
@@ -398,7 +470,8 @@ impl IntoView for ComboboxItem {
             Box::new(
                 floem::views::Container::new(
                     floem::views::Stack::horizontal((
-                        floem::views::Label::new(label).style(|s| s.font_size(14.0).flex_grow(1.0)),
+                        floem::views::Label::new(label)
+                            .style(|s| s.font_size(14.0).flex_grow(1.0_f32)),
                         floem::views::Label::new("✓").style(move |s| {
                             let v = v0.clone();
                             s.with_shadcn_theme(move |s, t| {
@@ -408,7 +481,7 @@ impl IntoView for ComboboxItem {
                                     .color(t.foreground)
                                     .items_center()
                                     .justify_center()
-                                    .flex_shrink(0.0)
+                                    .flex_shrink(0.0_f32)
                                     .apply_if(!is_sel, |s| s.display(floem::style::Display::None))
                             })
                         }),
@@ -435,14 +508,14 @@ impl IntoView for ComboboxItem {
                         if is_sel {
                             base.background(t.accent).color(t.accent_foreground)
                         } else if disabled {
-                            base.color(t.muted_foreground).opacity(0.5)
+                            base.color(t.muted_foreground).opacity(0.5_f32)
                         } else {
                             base.color(t.foreground)
                                 .hover(|s| s.background(t.accent).color(t.accent_foreground))
                         }
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     if !disabled {
                         selected.set(Some(v2.clone()));
                         is_open.set(false);
@@ -462,11 +535,13 @@ impl IntoView for ComboboxItem {
     }
 }
 
+/// The `ComboboxEmpty`.
 pub struct ComboboxEmpty {
     id: ViewId,
     text: String,
 }
 impl ComboboxEmpty {
+    /// Creates a new it.
     pub fn new(t: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -504,12 +579,19 @@ impl IntoView for ComboboxEmpty {
     }
 }
 
+/// The `ComboboxGroup`.
 pub struct ComboboxGroup {
     id: ViewId,
+    children: Vec<floem::AnyView>,
 }
 impl ComboboxGroup {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
-        Self { id: ViewId::new() }
+        Self {
+            id: ViewId::new(),
+            children: Vec::new(),
+        }
     }
 }
 impl Default for ComboboxGroup {
@@ -529,16 +611,29 @@ impl IntoView for ComboboxGroup {
         self.into_view()
     }
     fn into_view(self) -> Self::V {
-        Container::with_id(self.id, ()).style(|s| s.flex_col().width_full())
+        let container = { Container::with_id(self.id, ()).style(|s| s.flex_col().width_full()) };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
-impl ParentView for ComboboxGroup {}
+impl ParentView for ComboboxGroup {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
+/// The `ComboboxLabel`.
 pub struct ComboboxLabel {
     id: ViewId,
     text: String,
 }
 impl ComboboxLabel {
+    /// Creates a new it.
     pub fn new(t: impl Into<String>) -> Self {
         Self {
             id: ViewId::new(),
@@ -571,8 +666,11 @@ impl IntoView for ComboboxLabel {
     }
 }
 
+/// The `ComboboxSeparator`.
 pub struct ComboboxSeparator;
 impl ComboboxSeparator {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self
     }
