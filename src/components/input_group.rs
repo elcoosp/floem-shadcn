@@ -1,6 +1,6 @@
 //! Input Group component – input with adornments
 //!
-//! Based on shadcn/ui InputGroup.
+//! Based on shadcn/ui `InputGroup`.
 //!
 //! # Example
 //!
@@ -8,9 +8,10 @@
 //! use floem::view::ParentView;
 //! use floem_shadcn::components::input::Input;
 //! use floem_shadcn::components::input_group::{InputGroup, InputGroupAddon, AddonPosition};
+//! # use floem::views::label;
 //!
 //! InputGroup::new()
-//!     .child(InputGroupAddon::new(AddonPosition::Prefix, label("$")))
+//!     .child(InputGroupAddon::new(AddonPosition::Prefix, label(|| "$")))
 //!     .child(Input::new());
 //! ```
 
@@ -24,7 +25,9 @@ use crate::theme::ShadcnThemeExt;
 /// Position of an addon within an input group
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AddonPosition {
+    /// The item.
     Prefix,
+    /// The item.
     Suffix,
 }
 
@@ -33,18 +36,23 @@ pub enum AddonPosition {
 /// Uses `ParentView` to accept child buttons.
 pub struct InputGroup {
     id: ViewId,
+    children: Vec<floem::AnyView>,
     disabled: bool,
 }
 
 impl InputGroup {
+    #[must_use]
     /// Create a new input group
     pub fn new() -> Self {
         Self {
             id: ViewId::new(),
             disabled: false,
+
+            children: Vec::new(),
         }
     }
 
+    #[must_use]
     /// Set the group as disabled (propagates to children)
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
@@ -72,19 +80,30 @@ impl IntoView for InputGroup {
     }
 
     fn into_view(self) -> Self::V {
-        Container::with_id(self.id, ()).style(|s| {
-            s.display(floem::style::Display::Flex)
-                .flex_direction(floem::style::FlexDirection::Row)
-                .items_center()
-        })
+        let container = {
+            Container::with_id(self.id, ()).style(|s| {
+                s.display(floem::style::Display::Flex)
+                    .flex_direction(floem::style::FlexDirection::Row)
+                    .items_center()
+            })
+        };
+        self.id.set_children_vec(self.children);
+        container
     }
 }
 
-impl ParentView for InputGroup {}
+impl ParentView for InputGroup {
+    fn child(mut self, child: impl IntoView + 'static) -> Self {
+        self.children.push(child.into_any());
+        self
+    }
+    fn children(mut self, children: impl IntoViewIter + 'static) -> Self {
+        self.children.extend(children.into_view_iter());
+        self
+    }
+}
 
-/// Addon element (prefix or suffix) for InputGroup
-#[allow(dead_code)]
-#[allow(dead_code)]
+/// Addon element (prefix or suffix) for `InputGroup`
 pub struct InputGroupAddon<V> {
     id: ViewId,
     position: AddonPosition,
@@ -92,6 +111,11 @@ pub struct InputGroupAddon<V> {
 }
 
 impl<V: IntoView + 'static> InputGroupAddon<V> {
+    /// Where this addon sits relative to the input.
+    pub fn position(&self) -> AddonPosition {
+        self.position
+    }
+
     /// Create a new addon
     pub fn new(position: AddonPosition, child: V) -> Self {
         Self {
