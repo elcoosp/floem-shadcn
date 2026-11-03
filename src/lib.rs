@@ -9,6 +9,7 @@
 //!
 //! ```rust
 //! use floem_shadcn::prelude::*;
+//! # use floem::style::Style;
 //!
 //! // Use components
 //! let btn = Button::new("Click me").primary();
@@ -20,10 +21,12 @@
 //! ```
 
 pub mod components;
+/// The styled.
 pub mod styled;
 // pub mod text; // removed: use floem built-in views
 pub mod theme;
 
+/// The prelude.
 pub mod prelude {
     pub use crate::components::accordion::{Accordion, AccordionItem};
     pub use crate::components::alert::{Alert, AlertVariant};

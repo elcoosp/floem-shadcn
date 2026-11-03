@@ -1,53 +1,148 @@
 use crate::theme::current_theme;
 use floem::style::Style;
 
+/// The `ShadcnStyleExt`.
 pub trait ShadcnStyleExt: Sized {
+    #[must_use]
+    /// The bg background.
     fn bg_background(self) -> Self;
+    #[must_use]
+    /// The bg foreground.
     fn bg_foreground(self) -> Self;
+    #[must_use]
+    /// The bg card.
     fn bg_card(self) -> Self;
+    #[must_use]
+    /// The bg card foreground.
     fn bg_card_foreground(self) -> Self;
+    #[must_use]
+    /// The bg popover.
     fn bg_popover(self) -> Self;
+    #[must_use]
+    /// The bg popover foreground.
     fn bg_popover_foreground(self) -> Self;
+    #[must_use]
+    /// The bg primary.
     fn bg_primary(self) -> Self;
+    #[must_use]
+    /// The bg primary foreground.
     fn bg_primary_foreground(self) -> Self;
+    #[must_use]
+    /// The bg secondary.
     fn bg_secondary(self) -> Self;
+    #[must_use]
+    /// The bg secondary foreground.
     fn bg_secondary_foreground(self) -> Self;
+    #[must_use]
+    /// The bg muted.
     fn bg_muted(self) -> Self;
+    #[must_use]
+    /// The bg muted foreground.
     fn bg_muted_foreground(self) -> Self;
+    #[must_use]
+    /// The bg accent.
     fn bg_accent(self) -> Self;
+    #[must_use]
+    /// The bg accent foreground.
     fn bg_accent_foreground(self) -> Self;
+    #[must_use]
+    /// The bg destructive.
     fn bg_destructive(self) -> Self;
+    #[must_use]
+    /// The bg destructive foreground.
     fn bg_destructive_foreground(self) -> Self;
+    #[must_use]
+    /// The text background.
     fn text_background(self) -> Self;
+    #[must_use]
+    /// The text foreground.
     fn text_foreground(self) -> Self;
+    #[must_use]
+    /// The text card.
     fn text_card(self) -> Self;
+    #[must_use]
+    /// The text card foreground.
     fn text_card_foreground(self) -> Self;
+    #[must_use]
+    /// The text popover.
     fn text_popover(self) -> Self;
+    #[must_use]
+    /// The text popover foreground.
     fn text_popover_foreground(self) -> Self;
+    #[must_use]
+    /// The text primary.
     fn text_primary(self) -> Self;
+    #[must_use]
+    /// The text primary foreground.
     fn text_primary_foreground(self) -> Self;
+    #[must_use]
+    /// The text secondary.
     fn text_secondary(self) -> Self;
+    #[must_use]
+    /// The text secondary foreground.
     fn text_secondary_foreground(self) -> Self;
+    #[must_use]
+    /// The text muted.
     fn text_muted(self) -> Self;
+    #[must_use]
+    /// The text muted foreground.
     fn text_muted_foreground(self) -> Self;
+    #[must_use]
+    /// The text accent.
     fn text_accent(self) -> Self;
+    #[must_use]
+    /// The text accent foreground.
     fn text_accent_foreground(self) -> Self;
+    #[must_use]
+    /// The text destructive.
     fn text_destructive(self) -> Self;
+    #[must_use]
+    /// The text destructive foreground.
     fn text_destructive_foreground(self) -> Self;
+    #[must_use]
+    /// The border border.
     fn border_border(self) -> Self;
+    #[must_use]
+    /// The border input.
     fn border_input(self) -> Self;
+    #[must_use]
+    /// The border ring.
     fn border_ring(self) -> Self;
+    #[must_use]
+    /// The border primary.
     fn border_primary(self) -> Self;
+    #[must_use]
+    /// The border secondary.
     fn border_secondary(self) -> Self;
+    #[must_use]
+    /// The border destructive.
     fn border_destructive(self) -> Self;
+    #[must_use]
+    /// The border muted.
     fn border_muted(self) -> Self;
+    #[must_use]
+    /// The border accent.
     fn border_accent(self) -> Self;
+    #[must_use]
+    /// The outline ring.
     fn outline_ring(self) -> Self;
+    #[must_use]
+    /// The outline primary.
     fn outline_primary(self) -> Self;
+    #[must_use]
+    /// The outline destructive.
     fn outline_destructive(self) -> Self;
+    #[must_use]
+    /// The rounded radius.
     fn rounded_radius(self) -> Self;
+    #[must_use]
+    /// The rounded radius sm.
     fn rounded_radius_sm(self) -> Self;
+    #[must_use]
+    /// The rounded radius md.
     fn rounded_radius_md(self) -> Self;
+    #[must_use]
+    /// The rounded radius lg.
     fn rounded_radius_lg(self) -> Self;
 }
 macro_rules! bg {
