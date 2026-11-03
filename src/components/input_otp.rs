@@ -20,6 +20,7 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+/// The `InputOTP`.
 pub struct InputOTP {
     id: ViewId,
     value: RwSignal<String>,
@@ -27,6 +28,8 @@ pub struct InputOTP {
     mask: bool,
 }
 impl InputOTP {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(value: RwSignal<String>, max_length: usize) -> Self {
         Self {
             id: ViewId::new(),
@@ -35,6 +38,8 @@ impl InputOTP {
             mask: false,
         }
     }
+    #[must_use]
+    /// The mask.
     pub fn mask(mut self) -> Self {
         self.mask = true;
         self
@@ -57,7 +62,6 @@ impl IntoView for InputOTP {
         let mask = self.mask;
         match max_length {
             4 => Box::new(create_otp_group_4(value, mask).into_view()),
-            6 => Box::new(create_otp_group_6(value, mask).into_view()),
             _ => Box::new(create_otp_group_6(value, mask).into_view()),
         }
     }
@@ -70,7 +74,7 @@ fn create_otp_group_4(value: RwSignal<String>, mask: bool) -> impl IntoView {
         create_otp_slot(value, 2, mask),
         create_otp_slot(value, 3, mask),
     ))
-    .style(|s| s.gap_2())
+    .style(floem_tailwind::TailwindExt::gap_2)
 }
 
 fn create_otp_group_6(value: RwSignal<String>, mask: bool) -> impl IntoView {
@@ -126,11 +130,13 @@ fn create_otp_slot(value: RwSignal<String>, index: usize, mask: bool) -> impl In
     })
 }
 
+/// The `InputOTPGroup`.
 pub struct InputOTPGroup<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> InputOTPGroup<V> {
+    /// Creates a new it.
     pub fn new(child: V) -> Self {
         Self {
             id: ViewId::new(),
@@ -156,6 +162,7 @@ impl<V: IntoView + 'static> IntoView for InputOTPGroup<V> {
     }
 }
 
+/// The `InputOTPSlot`.
 pub struct InputOTPSlot {
     id: ViewId,
     value: RwSignal<String>,
@@ -163,6 +170,8 @@ pub struct InputOTPSlot {
     mask: bool,
 }
 impl InputOTPSlot {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(value: RwSignal<String>, index: usize) -> Self {
         Self {
             id: ViewId::new(),
@@ -171,6 +180,8 @@ impl InputOTPSlot {
             mask: false,
         }
     }
+    #[must_use]
+    /// The mask.
     pub fn mask(mut self) -> Self {
         self.mask = true;
         self
@@ -192,8 +203,11 @@ impl IntoView for InputOTPSlot {
     }
 }
 
+/// The `InputOTPSeparator`.
 pub struct InputOTPSeparator;
 impl InputOTPSeparator {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self
     }
@@ -221,6 +235,7 @@ impl IntoView for InputOTPSeparator {
     }
 }
 
+/// The `PinInput`.
 pub struct PinInput {
     id: ViewId,
     value: RwSignal<String>,
@@ -228,6 +243,8 @@ pub struct PinInput {
     mask: bool,
 }
 impl PinInput {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(value: RwSignal<String>, length: usize) -> Self {
         Self {
             id: ViewId::new(),
@@ -236,6 +253,8 @@ impl PinInput {
             mask: true,
         }
     }
+    #[must_use]
+    /// The show digits.
     pub fn show_digits(mut self) -> Self {
         self.mask = false;
         self
@@ -257,7 +276,6 @@ impl IntoView for PinInput {
         let length = self.length;
         let mask = self.mask;
         match length {
-            4 => Box::new(create_otp_group_4(value, mask).into_view()),
             6 => Box::new(create_otp_group_6(value, mask).into_view()),
             _ => Box::new(create_otp_group_4(value, mask).into_view()),
         }
