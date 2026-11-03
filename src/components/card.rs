@@ -6,6 +6,9 @@
 //!
 //! ```
 //! use floem_shadcn::components::card::{Card, CardHeader, CardContent, CardFooter};
+//! # use floem::views::text;
+//! # let content = text("Body");
+//! # let buttons = text("Actions");
 //!
 //! let card = Card::new((
 //!     CardHeader::new()
@@ -90,6 +93,7 @@ pub struct CardHeader {
 }
 
 impl CardHeader {
+    #[must_use]
     /// Create a new card header
     pub fn new() -> Self {
         Self {
@@ -99,12 +103,14 @@ impl CardHeader {
         }
     }
 
+    #[must_use]
     /// Set the header title
     pub fn title(mut self, title: impl Into<String>) -> Self {
         self.title = Some(title.into());
         self
     }
 
+    #[must_use]
     /// Set the header description
     pub fn description(mut self, description: impl Into<String>) -> Self {
         self.description = Some(description.into());
@@ -187,7 +193,10 @@ impl<V: IntoView + 'static> IntoView for CardContent<V> {
     }
 
     fn into_view(self) -> Self::V {
-        Box::new(floem::views::Container::with_id(self.id, self.child).style(|s| s.px_6()))
+        Box::new(
+            floem::views::Container::with_id(self.id, self.child)
+                .style(floem_tailwind::TailwindExt::px_6),
+        )
     }
 }
 
@@ -314,6 +323,48 @@ impl<V: IntoView + 'static> IntoView for CardDescription<V> {
         Box::new(
             floem::views::Container::with_id(self.id, self.child)
                 .style(|s| s.text_sm().text_muted_foreground()),
+        )
+    }
+}
+
+// ============================================================================
+// CardAction (standalone action slot, top-right of the card)
+// ============================================================================
+
+/// Card action slot builder (top-right of the card header)
+pub struct CardAction<V> {
+    id: ViewId,
+    child: V,
+}
+
+impl<V: IntoView + 'static> CardAction<V> {
+    /// Create a new card action slot
+    pub fn new(child: V) -> Self {
+        Self {
+            id: ViewId::new(),
+            child,
+        }
+    }
+}
+
+impl<V: IntoView + 'static> HasViewId for CardAction<V> {
+    fn view_id(&self) -> ViewId {
+        self.id
+    }
+}
+
+impl<V: IntoView + 'static> IntoView for CardAction<V> {
+    type V = Box<dyn View>;
+
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
+
+    fn into_view(self) -> Self::V {
+        Box::new(
+            floem::views::Container::with_id(self.id, self.child)
+                .style(|s| s.flex_row().items_center().gap_2()),
         )
     }
 }
