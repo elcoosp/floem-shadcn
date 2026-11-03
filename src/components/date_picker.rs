@@ -8,9 +8,9 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 use floem_tailwind::TailwindExt;
 
+/// The `DatePicker`.
 pub struct DatePicker {
     id: ViewId,
-    #[allow(dead_code)]
     selected: RwSignal<Option<SimpleDate>>,
     placeholder: String,
     disabled: bool,
@@ -18,6 +18,8 @@ pub struct DatePicker {
     trigger_size: RwSignal<floem::kurbo::Size>,
 }
 impl DatePicker {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(selected: RwSignal<Option<SimpleDate>>) -> Self {
         Self {
             id: ViewId::new(),
@@ -28,10 +30,14 @@ impl DatePicker {
             trigger_size: RwSignal::new(floem::kurbo::Size::ZERO),
         }
     }
+    #[must_use]
+    /// The placeholder.
     pub fn placeholder(mut self, placeholder: impl Into<String>) -> Self {
         self.placeholder = placeholder.into();
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, disabled: bool) -> Self {
         self.disabled = disabled;
         self
@@ -41,6 +47,58 @@ impl HasViewId for DatePicker {
     fn view_id(&self) -> ViewId {
         self.id
     }
+}
+
+/// Build the date-picker trigger chip showing the selected date (or placeholder).
+fn date_picker_trigger(
+    selected: RwSignal<Option<SimpleDate>>,
+    placeholder: String,
+    disabled: bool,
+) -> impl IntoView {
+    floem::views::Stack::horizontal((
+        floem::views::Label::new("📅").style(floem_tailwind::TailwindExt::text_sm),
+        floem::views::Label::derived(move || {
+            if let Some(date) = selected.get() {
+                format!("{:04}-{:02}-{:02}", date.year, date.month, date.day)
+            } else {
+                placeholder.clone()
+            }
+        })
+        .style(move |s| {
+            s.with_shadcn_theme(move |s, t| {
+                if selected.get().is_some() {
+                    s.color(t.foreground)
+                } else {
+                    s.color(t.muted_foreground)
+                }
+            })
+        }),
+    ))
+    .style(move |s| {
+        s.with_shadcn_theme(move |s, t| {
+            let base = s
+                .gap_2()
+                .px_3()
+                .py_2()
+                .min_width(200.0)
+                .text_sm()
+                .background(t.background)
+                .border_1()
+                .border_color(t.input)
+                .rounded_md()
+                .items_center()
+                .cursor(if disabled {
+                    CursorStyle::Default
+                } else {
+                    CursorStyle::Pointer
+                });
+            if disabled {
+                base.color(t.muted_foreground).background(t.muted)
+            } else {
+                base.hover(|s| s.border_color(t.ring))
+            }
+        })
+    })
 }
 impl IntoView for DatePicker {
     type V = Box<dyn View>;
@@ -55,51 +113,7 @@ impl IntoView for DatePicker {
         let trigger_origin = self.trigger_origin;
         let trigger_size = self.trigger_size;
         let is_open = RwSignal::new(false);
-        let trigger = floem::views::Stack::horizontal((
-            floem::views::Label::new("📅").style(|s| s.text_sm()),
-            floem::views::Label::derived(move || {
-                if let Some(date) = selected.get() {
-                    format!("{:04}-{:02}-{:02}", date.year, date.month, date.day)
-                } else {
-                    placeholder.clone()
-                }
-            })
-            .style(move |s| {
-                s.with_shadcn_theme(move |s, t| {
-                    let hv = selected.get().is_some();
-                    if hv {
-                        s.color(t.foreground)
-                    } else {
-                        s.color(t.muted_foreground)
-                    }
-                })
-            }),
-        ))
-        .style(move |s| {
-            s.with_shadcn_theme(move |s, t| {
-                let base = s
-                    .gap_2()
-                    .px_3()
-                    .py_2()
-                    .min_width(200.0)
-                    .text_sm()
-                    .background(t.background)
-                    .border_1()
-                    .border_color(t.input)
-                    .rounded_md()
-                    .items_center()
-                    .cursor(if disabled {
-                        CursorStyle::Default
-                    } else {
-                        CursorStyle::Pointer
-                    });
-                if disabled {
-                    base.color(t.muted_foreground).background(t.muted)
-                } else {
-                    base.hover(|s| s.border_color(t.ring))
-                }
-            })
-        });
+        let trigger = date_picker_trigger(selected, placeholder, disabled);
         let trigger = if disabled {
             trigger.into_any()
         } else {
@@ -111,7 +125,7 @@ impl IntoView for DatePicker {
                         trigger_size.set(event.new_box.size());
                     },
                 )
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     is_open.update(|v| *v = !*v);
                 })
                 .into_any()
@@ -163,17 +177,17 @@ impl IntoView for DatePicker {
                     s.display(floem::style::Display::None)
                 }
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 is_open.set(false);
             });
         Box::new(
             floem::views::Container::new(floem::views::Stack::new((trigger, backdrop, popup)))
-                .style(|s| s.relative()),
+                .style(floem_tailwind::TailwindExt::relative),
         )
     }
 }
 fn create_calendar_content(
-    #[allow(unused_variables)] selected: RwSignal<Option<SimpleDate>>,
+    _selected: RwSignal<Option<SimpleDate>>,
     view_year: RwSignal<i32>,
     view_month: RwSignal<u32>,
     _is_open: RwSignal<bool>,
@@ -190,7 +204,7 @@ fn create_calendar_content(
                         .hover(|s| s.background(t.accent))
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 let m = view_month.get();
                 if m == 1 {
                     view_month.set(12);
@@ -221,7 +235,7 @@ fn create_calendar_content(
         })
         .style(|s| {
             s.with_shadcn_theme(move |s, t| {
-                s.flex_grow(1.0)
+                s.flex_grow(1.0_f32)
                     .text_sm()
                     .font_medium()
                     .color(t.foreground)
@@ -239,7 +253,7 @@ fn create_calendar_content(
                         .hover(|s| s.background(t.accent))
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 let m = view_month.get();
                 if m == 12 {
                     view_month.set(1);
@@ -252,12 +266,121 @@ fn create_calendar_content(
     .style(|s| s.w_full().items_center().mb_2());
     floem::views::Stack::vertical((header,))
 }
-#[allow(dead_code)]
+/// The `DateRangePicker`.
 pub struct DateRangePicker {
-    #[allow(dead_code)]
+    id: ViewId,
     start: RwSignal<Option<SimpleDate>>,
-    #[allow(dead_code)]
     end: RwSignal<Option<SimpleDate>>,
     placeholder: String,
     disabled: bool,
+}
+
+impl DateRangePicker {
+    #[must_use]
+    /// Create a range picker bound to the given start/end signals.
+    pub fn new(start: RwSignal<Option<SimpleDate>>, end: RwSignal<Option<SimpleDate>>) -> Self {
+        Self {
+            id: ViewId::new(),
+            start,
+            end,
+            placeholder: "Pick a date range".to_string(),
+            disabled: false,
+        }
+    }
+
+    #[must_use]
+    /// Override the placeholder shown when no range is selected.
+    pub fn placeholder(mut self, placeholder: impl Into<String>) -> Self {
+        self.placeholder = placeholder.into();
+        self
+    }
+
+    #[must_use]
+    /// Disable interaction with the picker.
+    pub fn disabled(mut self, disabled: bool) -> Self {
+        self.disabled = disabled;
+        self
+    }
+
+    #[must_use]
+    /// The start-date signal.
+    pub fn start_signal(&self) -> RwSignal<Option<SimpleDate>> {
+        self.start
+    }
+
+    #[must_use]
+    /// The end-date signal.
+    pub fn end_signal(&self) -> RwSignal<Option<SimpleDate>> {
+        self.end
+    }
+}
+
+impl HasViewId for DateRangePicker {
+    fn view_id(&self) -> ViewId {
+        self.id
+    }
+}
+
+impl IntoView for DateRangePicker {
+    type V = Box<dyn View>;
+    type Intermediate = Box<dyn View>;
+    fn into_intermediate(self) -> Self::Intermediate {
+        self.into_view()
+    }
+    fn into_view(self) -> Self::V {
+        let start = self.start;
+        let end = self.end;
+        let placeholder = self.placeholder;
+        let disabled = self.disabled;
+        let trigger = floem::views::Stack::horizontal((
+            floem::views::Label::new("📅").style(floem_tailwind::TailwindExt::text_sm),
+            floem::views::Label::derived(move || match (start.get(), end.get()) {
+                (Some(s), Some(e)) => {
+                    format!(
+                        "{:04}-{:02}-{:02} → {:04}-{:02}-{:02}",
+                        s.year, s.month, s.day, e.year, e.month, e.day
+                    )
+                }
+                (Some(s), None) => {
+                    format!("{:04}-{:02}-{:02} → …", s.year, s.month, s.day)
+                }
+                _ => placeholder.clone(),
+            })
+            .style(move |s| {
+                s.with_shadcn_theme(move |s, t| {
+                    if start.get().is_some() {
+                        s.color(t.foreground)
+                    } else {
+                        s.color(t.muted_foreground)
+                    }
+                })
+            }),
+        ))
+        .style(move |s| {
+            s.with_shadcn_theme(move |s, t| {
+                let base = s
+                    .gap_2()
+                    .px_3()
+                    .py_2()
+                    .min_width(240.0)
+                    .text_sm()
+                    .background(t.background)
+                    .border_1()
+                    .border_color(t.input)
+                    .rounded_md()
+                    .items_center()
+                    .cursor(if disabled {
+                        CursorStyle::Default
+                    } else {
+                        CursorStyle::Pointer
+                    });
+                if disabled {
+                    base.color(t.muted_foreground).background(t.muted)
+                } else {
+                    base.hover(|s| s.border_color(t.ring))
+                }
+            })
+        });
+        Box::new(floem::views::Container::with_id(self.id, trigger))
+    }
 }
