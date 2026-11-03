@@ -1,3 +1,5 @@
+//! Integration tests for the Tabs component.
+
 use floem_test::TestRoot;
 // Integration tests for the Tabs component using floem-test.
 //
@@ -28,7 +30,7 @@ fn test_tabs_flex_grow_equal_distribution() {
     let tabs_list_id = tabs_list.view_id();
 
     // Apply width_full() directly to TabsList
-    let tabs_list_styled = tabs_list.style(|s| s.width_full());
+    let tabs_list_styled = tabs_list.style(floem::style::Style::width_full);
 
     // Wrap in a container to give it explicit width
     let container = Stack::new((tabs_list_styled,)).style(|s| s.width(300.0));
@@ -71,9 +73,7 @@ fn test_tabs_flex_grow_equal_distribution() {
 
     assert!(
         (total_tab_width - available_width).abs() < 1.0,
-        "Tabs should fill available space. Available: {}, Total tab width: {}",
-        available_width,
-        total_tab_width
+        "Tabs should fill available space. Available: {available_width}, Total tab width: {total_tab_width}"
     );
 
     // Verify equal distribution: all three tabs should have EQUAL width due to flex_grow(1.0)
@@ -149,7 +149,7 @@ fn test_two_tabs_equal_distribution() {
     let tabs_list_id = tabs_list.view_id();
 
     // Apply width_full() directly to TabsList
-    let tabs_list_styled = tabs_list.style(|s| s.width_full());
+    let tabs_list_styled = tabs_list.style(floem::style::Style::width_full);
 
     let container = Stack::new((tabs_list_styled,)).style(|s| s.width(300.0));
 
@@ -187,9 +187,7 @@ fn test_two_tabs_equal_distribution() {
 
     assert!(
         (total_tab_width - available_width).abs() < 1.0,
-        "Tabs should fill available space. Available: {}, Total tab width: {}",
-        available_width,
-        total_tab_width
+        "Tabs should fill available space. Available: {available_width}, Total tab width: {total_tab_width}"
     );
 
     // Verify equal distribution: both tabs should have EQUAL width despite different text lengths
@@ -223,7 +221,7 @@ fn test_four_tabs_equal_distribution() {
     let tabs_list_id = tabs_list.view_id();
 
     // Apply width_full() directly to TabsList
-    let tabs_list_styled = tabs_list.style(|s| s.width_full());
+    let tabs_list_styled = tabs_list.style(floem::style::Style::width_full);
 
     let container = Stack::new((tabs_list_styled,)).style(|s| s.width(400.0));
 
@@ -268,9 +266,7 @@ fn test_four_tabs_equal_distribution() {
 
     assert!(
         (total_tab_width - available_width).abs() < 1.0,
-        "Tabs should fill available space. Available: {}, Total tab width: {}",
-        available_width,
-        total_tab_width
+        "Tabs should fill available space. Available: {available_width}, Total tab width: {total_tab_width}"
     );
 
     // Verify equal distribution: all tabs should have EQUAL width

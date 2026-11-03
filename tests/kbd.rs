@@ -1,3 +1,5 @@
+//! Integration tests for the Kbd component.
+
 use floem_test::TestRoot;
 // Tests for Kbd component
 

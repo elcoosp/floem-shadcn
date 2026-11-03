@@ -1,3 +1,5 @@
+//! Integration tests for the Empty component.
+
 use floem::headless::TestRoot;
 use floem::prelude::*;
 use floem::views::Stack;

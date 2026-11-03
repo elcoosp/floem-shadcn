@@ -1,3 +1,5 @@
+//! Integration tests for the Button Group component.
+
 use floem::views::Decorators;
 use floem_test::TestRoot;
 // Tests for Button Group component

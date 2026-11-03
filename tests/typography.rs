@@ -1,3 +1,5 @@
+//! Integration tests for the Typography component.
+
 use floem_test::TestRoot;
 // Tests for Typography components
 

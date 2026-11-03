@@ -1,3 +1,5 @@
+//! Integration tests for the Input Group component.
+
 use floem::views::Decorators;
 use floem_test::TestRoot;
 // Tests for Input Group component

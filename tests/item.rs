@@ -1,3 +1,5 @@
+//! Integration tests for the Item component.
+
 use floem::views::Decorators;
 use floem_test::TestRoot;
 // Tests for Item component

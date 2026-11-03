@@ -1,3 +1,5 @@
+//! Integration tests for the Select component.
+
 use floem_test::TestRoot;
 // Tests for Select component
 
@@ -6,7 +8,6 @@ use floem::reactive::RwSignal;
 use floem_shadcn::components::select::{Select, SelectItemData};
 use floem_test::prelude::*;
 
-/// Test basic select click interaction
 #[test]
 fn test_select_basic_click() {
     let selected = RwSignal::new(None::<String>);
@@ -16,9 +17,9 @@ fn test_select_basic_click() {
     let test_button = floem::views::Label::new("Test Button")
         .style(|s| {
             s.size(100.0, 40.0)
-                .background(peniko::Color::from_rgb8(255, 0, 0))
+                .background(floem::peniko::Color::from_rgb8(255, 0, 0))
         })
-        .on_event_stop(floem::event::listener::Click, move |_, _| {
+        .on_event_stop(floem::event::listener::Click, move |_, ()| {
             click_count.update(|c| *c += 1);
         });
 
@@ -54,7 +55,6 @@ fn test_select_basic_click() {
     eprintln!("Selected: {:?}", selected.get());
 }
 
-/// Test that dropdown is positioned correctly below the trigger
 #[test]
 fn test_select_dropdown_position() {
     let selected = RwSignal::new(None::<String>);
@@ -102,9 +102,6 @@ fn test_select_dropdown_position() {
     // For now, just verify the test runs - we'll assert after confirming clicks work
 }
 
-/// Test select at origin - verify position tracking works
-/// Note: Full dropdown interaction tests require visual testing since
-/// the Overlay may not fully render in headless mode.
 #[test]
 fn test_select_dropdown_position_at_origin() {
     let selected = RwSignal::new(None::<String>);
@@ -127,7 +124,6 @@ fn test_select_dropdown_position_at_origin() {
     // The key fix was using on_move (window coords) instead of on_resize (local coords)
 }
 
-/// Test that select with offset trigger doesn't break
 #[test]
 fn test_select_with_offset_trigger() {
     let selected = RwSignal::new(None::<String>);

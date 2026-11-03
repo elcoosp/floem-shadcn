@@ -1,3 +1,5 @@
+//! Integration tests for the Spinner component.
+
 use floem_test::TestRoot;
 // Tests for Spinner component
 

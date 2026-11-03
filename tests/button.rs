@@ -1,3 +1,5 @@
+//! Integration tests for the Button component.
+
 use floem_test::TestRoot;
 // Tests for Button component layout and sizing
 //
@@ -282,9 +284,7 @@ fn test_buttons_centered_in_horizontal_stack() {
 
     assert!(
         (center_y1 - center_y2).abs() < 0.1,
-        "Buttons should be vertically centered at same point, got centers at {} and {}",
-        center_y1,
-        center_y2
+        "Buttons should be vertically centered at same point, got centers at {center_y1} and {center_y2}"
     );
 }
 
@@ -355,8 +355,6 @@ fn test_button_sizes_are_ordered_horizontal() {
     );
 }
 
-/// Verify that buttons maintain their intrinsic width in a vertical stack
-/// and don't stretch to fill the container's cross-axis.
 #[test]
 fn test_button_does_not_stretch_in_vertical_stack() {
     let button = Button::new("Short");
@@ -391,7 +389,6 @@ fn test_button_does_not_stretch_in_vertical_stack() {
     );
 }
 
-/// Test that buttons maintain intrinsic width in showcase-style layout
 #[test]
 fn test_showcase_demo_section_layout() {
     // This simulates the structure from the showcase demo:
@@ -440,10 +437,7 @@ fn test_showcase_demo_section_layout() {
     // In a properly laid out showcase, buttons should have their intrinsic width
     // not stretch to fill the container
     let total_btn_width = layout1.size.width + layout2.size.width + 8.0; // plus gap
-    eprintln!(
-        "Total button row width: {} (container: 600)",
-        total_btn_width
-    );
+    eprintln!("Total button row width: {total_btn_width} (container: 600)");
 
     // If buttons are stretching, their widths would be close to 600/2 = 300 each
     // If they're correct, they should be around 100-150px each
@@ -454,7 +448,6 @@ fn test_showcase_demo_section_layout() {
     );
 }
 
-/// Test with exact showcase structure including w_full()
 #[test]
 fn test_exact_showcase_structure() {
     use floem_tailwind::TailwindExt;
@@ -478,9 +471,9 @@ fn test_exact_showcase_structure() {
         floem::views::Label::new("Buttons")
             .style(|s| s.font_size(24.0).font_weight(FontWeight::BOLD).mb_2()),
         floem::views::Label::new("Description").style(|s| s.font_size(14.0).mb_6()),
-        Stack::vertical((subsection,)).style(|s| s.gap_8()),
+        Stack::vertical((subsection,)).style(floem_tailwind::TailwindExt::gap_8),
     ))
-    .style(|s| s.w_full());
+    .style(floem_tailwind::TailwindExt::w_full);
 
     // Container
     let container = Stack::new((demo_section,)).style(|s| s.size(800.0, 600.0));
@@ -514,7 +507,6 @@ fn test_exact_showcase_structure() {
     );
 }
 
-/// Test with Scroll wrapper like actual showcase
 #[test]
 fn test_showcase_with_scroll() {
     use floem_tailwind::TailwindExt;
@@ -537,13 +529,13 @@ fn test_showcase_with_scroll() {
         floem::views::Label::new("Buttons")
             .style(|s| s.font_size(24.0).font_weight(FontWeight::BOLD).mb_2()),
         floem::views::Label::new("Description").style(|s| s.font_size(14.0).mb_6()),
-        Stack::vertical((subsection,)).style(|s| s.gap_8()),
+        Stack::vertical((subsection,)).style(floem_tailwind::TailwindExt::gap_8),
     ))
-    .style(|s| s.w_full());
+    .style(floem_tailwind::TailwindExt::w_full);
 
     // Wrap in Scroll like the actual showcase
     let scroll_content =
-        floem::views::Scroll::new(demo_section).style(|s| s.flex_grow(1.0).h_full().p_8());
+        floem::views::Scroll::new(demo_section).style(|s| s.flex_grow(1.0_f32).h_full().p_8());
 
     // Container (simulating the horizontal layout with sidebar)
     let container = Stack::horizontal((scroll_content,)).style(|s| s.size(800.0, 600.0));
@@ -577,7 +569,6 @@ fn test_showcase_with_scroll() {
     );
 }
 
-/// Test button heights in showcase-style nested layout
 #[test]
 fn test_button_height_in_nested_layout() {
     let sm = Button::new("Small").sm();
@@ -780,7 +771,7 @@ fn test_showcase_variants_layout() {
         total_width += layout.size.width;
     }
     total_width += 5.0 * 8.0; // 5 gaps between 6 buttons
-    eprintln!("Total width needed: {}px", total_width);
+    eprintln!("Total width needed: {total_width}px");
 
     // All buttons on same row should have y = 0 (assuming they fit on one row)
     let first_y = layouts[0].1.location.y;
@@ -796,7 +787,7 @@ fn test_showcase_variants_layout() {
 
     // Buttons should be laid out sequentially with gaps
     let mut expected_x = 0.0;
-    for (name, layout) in layouts.iter() {
+    for (name, layout) in &layouts {
         assert!(
             (layout.location.x - expected_x).abs() < 1.0, // Allow small tolerance
             "{} should be at x={}, got x={}",
@@ -879,14 +870,10 @@ fn test_showcase_sizes_layout() {
 
     assert!(
         (center_sm - center_default).abs() < 0.1,
-        "Small and Default should be centered at same y, got {} and {}",
-        center_sm,
-        center_default
+        "Small and Default should be centered at same y, got {center_sm} and {center_default}"
     );
     assert!(
         (center_default - center_lg).abs() < 0.1,
-        "Default and Large should be centered at same y, got {} and {}",
-        center_default,
-        center_lg
+        "Default and Large should be centered at same y, got {center_default} and {center_lg}"
     );
 }
