@@ -7,6 +7,9 @@
 //! ```
 //! use floem::reactive::RwSignal;
 //! use floem_shadcn::components::tabs::{Tabs, TabsList, Tab, TabsContent};
+//! # use floem::views::text;
+//! # fn account_view() -> impl floem::IntoView { text("Account settings") }
+//! # fn password_view() -> impl floem::IntoView { text("Password settings") }
 //!
 //! let active_tab = RwSignal::new("account".to_string());
 //!
@@ -36,9 +39,15 @@ use crate::theme::ShadcnThemeExt;
 /// Tabs container that manages active tab state
 pub struct Tabs<V> {
     id: ViewId,
-    #[allow(dead_code)]
     active: RwSignal<String>,
     child: V,
+}
+
+impl<V: floem::view::IntoViewIter + 'static> Tabs<V> {
+    /// The shared active-tab signal.
+    pub fn active_signal(&self) -> RwSignal<String> {
+        self.active
+    }
 }
 
 impl<V: floem::view::IntoViewIter + 'static> Tabs<V> {
@@ -145,12 +154,14 @@ impl Tab {
         }
     }
 
+    #[must_use]
     /// Set the active signal for this tab
     pub fn active(mut self, signal: RwSignal<String>) -> Self {
         self.active_signal = Some(signal);
         self
     }
 
+    #[must_use]
     /// Build the tab view
     pub fn build(self) -> impl IntoView {
         let id = self.id.clone();
@@ -164,12 +175,10 @@ impl Tab {
             .style(move |s| {
                 let id = item_id.clone();
                 s.with_shadcn_theme(move |s, t| {
-                    let is_active = active_signal
-                        .map(|sig| sig.get() == id.clone())
-                        .unwrap_or(false);
+                    let is_active = active_signal.is_some_and(|sig| sig.get() == id.clone());
                     let base = s
                         .flex_row()
-                        .flex_grow(1.0) // flex-1
+                        .flex_grow(1.0_f32) // flex-1
                         .flex_basis(0.0)
                         .min_width(0.0)
                         .height(29.0) // h-[calc(100%-1px)]
@@ -179,7 +188,7 @@ impl Tab {
                         .justify_center()
                         .rounded_md() // rounded-md = 6px
                         .border_1()
-                        .border_color(peniko::Color::TRANSPARENT)
+                        .border_color(floem::peniko::Color::TRANSPARENT)
                         .text_sm() // text-sm = 14px
                         .font_medium()
                         .cursor(CursorStyle::Pointer)
@@ -191,14 +200,14 @@ impl Tab {
                         base.background(t.background)
                             .color(t.foreground)
                             .box_shadow_blur(2.0)
-                            .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
+                            .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 25))
                     } else {
-                        base.background(peniko::Color::TRANSPARENT)
+                        base.background(floem::peniko::Color::TRANSPARENT)
                             .color(t.muted_foreground)
                     }
                 })
             })
-            .on_event_stop(floem::event::listener::Click, move |_, _| {
+            .on_event_stop(floem::event::listener::Click, move |_, ()| {
                 if let Some(signal) = active_signal {
                     signal.set(item_id_click.clone());
                 }
@@ -247,6 +256,7 @@ impl<V: IntoView + 'static> TabsContent<V> {
         }
     }
 
+    #[must_use]
     /// Set the active signal for this content
     pub fn active(mut self, signal: RwSignal<String>) -> Self {
         self.active_signal = Some(signal);
@@ -273,7 +283,7 @@ impl<V: IntoView + 'static> IntoView for TabsContent<V> {
 
         Box::new(
             floem::views::Container::with_id(self.view_id, self.child).style(move |s| {
-                let is_active = active_signal.map(|sig| sig.get() == id).unwrap_or(true);
+                let is_active = active_signal.is_none_or(|sig| sig.get() == id);
 
                 s.apply_if(!is_active, |s| s.display(floem::style::Display::None))
             }),
@@ -297,9 +307,9 @@ mod tests {
         // Build the view to get the container
         let _view = tab.build();
 
-        // This test verifies that Tab components can be constructed
-        // In a real UI, the flex_grow property would make tabs stretch equally
-        assert!(true, "Tab component builds successfully");
+        // The Tab component was constructed above; construction exercising the
+        // builder is what this unit test covers. flex_grow stretching is
+        // covered by the layout tests in tests/tabs.rs.
     }
 
     #[test]
@@ -311,9 +321,8 @@ mod tests {
             Tab::new("tab2", "Tab 2").active(active),
         ));
 
-        // This verifies the component can be constructed
-        // The actual flex behavior is tested visually
-        assert!(true, "TabsList with multiple tabs builds successfully");
+        // TabsList accepted multiple tabs through the builder; the flex
+        // behavior itself is covered by the layout tests in tests/tabs.rs.
     }
 
     #[test]
@@ -327,10 +336,10 @@ mod tests {
         let num_tabs = 3;
 
         // Available space = container_width - (2 * padding) - ((num_tabs - 1) * gap)
-        let available_space = container_width - (2.0 * padding) - ((num_tabs - 1) as f64 * gap);
+        let available_space = container_width - (2.0 * padding) - (f64::from(num_tabs - 1) * gap);
 
         // Each tab with flex-grow: 1 should get equal space
-        let expected_tab_width = available_space / num_tabs as f64;
+        let expected_tab_width = available_space / f64::from(num_tabs);
 
         // With flex-grow: 1, each tab should be approximately 94px
         // (300 - 6 - 6) / 3 = 96px per tab
@@ -376,11 +385,9 @@ mod tests {
         // the inline vs block distinction doesn't affect layout
         // because the parent flex container controls child layout.
 
-        // So: display(Flex) + flex_grow(1.0) ≈ inline-flex flex-1
-        assert!(
-            true,
-            "Documented equivalence between inline-flex flex-1 and Flex + flex_grow"
-        );
+        // So: display(Flex) + flex_grow(1.0) ≈ inline-flex flex-1. The
+        // equivalence is documented here rather than asserted; layout tests in
+        // tests/tabs.rs verify the actual flex behavior.
     }
 
     #[test]
@@ -393,8 +400,8 @@ mod tests {
         let gap = 3.0;
         let num_tabs = 4;
 
-        let available_space = container_width - (2.0 * padding) - ((num_tabs - 1) as f64 * gap);
-        let expected_width_per_tab = available_space / num_tabs as f64;
+        let available_space = container_width - (2.0 * padding) - (f64::from(num_tabs - 1) * gap);
+        let expected_width_per_tab = available_space / f64::from(num_tabs);
 
         // Each tab gets: (400 - 6 - 9) / 4 = 96.25px
         assert_eq!(
