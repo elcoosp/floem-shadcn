@@ -69,8 +69,162 @@ use floem_shadcn::styled::ShadcnStyleExt;
 use floem_shadcn::theme::{ShadcnThemeExt, ThemeMode};
 use floem_tailwind::TailwindExt; // <-- ADD THIS
 
+/// Build the demo view for the given section key.
+/// Build the demo view for the given section key.
+fn demo_view(section: &str) -> floem::AnyView {
+    demo_view_first_half(section)
+}
+fn demo_view_first_half(section: &str) -> floem::AnyView {
+    match section {
+        "badges" => badges_demo().into_any(),
+        "cards" => cards_demo().into_any(),
+        "inputs" => inputs_demo().into_any(),
+        "textarea" => textarea_demo().into_any(),
+        "checkbox" => checkbox_demo().into_any(),
+        "switch" => switch_demo().into_any(),
+        "tabs" => tabs_demo().into_any(),
+        "dialog" => dialog_demo().into_any(),
+        "alert" => alert_demo().into_any(),
+        "avatar" => avatar_demo().into_any(),
+        "progress" => progress_demo().into_any(),
+        "separator" => separator_demo().into_any(),
+        "skeleton" => skeleton_demo().into_any(),
+        "tooltip" => tooltip_demo().into_any(),
+        "accordion" => accordion_demo().into_any(),
+        "slider" => slider_demo().into_any(),
+        "radio_group" => radio_demo().into_any(),
+        "popover" => popover_demo().into_any(),
+        "sheet" => sheet_demo().into_any(),
+        "dropdown_menu" => dropdown_demo().into_any(),
+        "breadcrumb" => breadcrumb_demo().into_any(),
+        "table" => table_demo().into_any(),
+        "toast" => toast_demo().into_any(),
+        _ => demo_view_rest(section),
+    }
+}
+
+fn demo_view_rest(section: &str) -> floem::AnyView {
+    match section {
+        "toggle" => toggle_demo().into_any(),
+        "toggle_group" => toggle_group_demo().into_any(),
+        "hover_card" => hover_card_demo().into_any(),
+        "context_menu" => context_menu_demo().into_any(),
+        "sidebar" => sidebar_demo().into_any(),
+        "select" => select_demo().into_any(),
+        "combobox" => combobox_demo().into_any(),
+        "input_otp" => input_otp_demo().into_any(),
+        "date_picker" => date_picker_demo().into_any(),
+        "label" => label_demo().into_any(),
+        "collapsible" => collapsible_demo().into_any(),
+        "alert_dialog" => alert_dialog_demo().into_any(),
+        "drawer" => drawer_demo().into_any(),
+        "aspect_ratio" => aspect_ratio_demo().into_any(),
+        "scroll_area" => scroll_area_demo().into_any(),
+        "resizable" => resizable_demo().into_any(),
+        "menubar" => menubar_demo().into_any(),
+        "navigation_menu" => navigation_menu_demo().into_any(),
+        "pagination" => pagination_demo().into_any(),
+        "command" => command_demo().into_any(),
+        "calendar" => calendar_demo().into_any(),
+        "carousel" => carousel_demo().into_any(),
+        _ => buttons_demo().into_any(),
+    }
+}
+
 fn main() {
     floem::launch(app_view);
+}
+
+/// Build the showcase sidebar navigation for the given section signal.
+fn sidebar_nav(
+    active_section: RwSignal<String>,
+    theme_mode: RwSignal<ThemeMode>,
+) -> floem::AnyView {
+    Sidebar::new()
+        .header(sidebar_header(theme_mode))
+        .content(
+            SidebarContent::new()
+                .child(sidebar_group(
+                    "Form Inputs",
+                    active_section,
+                    vec![
+                        "Buttons",
+                        "Badges",
+                        "Cards",
+                        "Inputs",
+                        "Textarea",
+                        "Checkbox",
+                        "Switch",
+                        "Radio Group",
+                        "Slider",
+                        "Select",
+                        "Combobox",
+                        "Input OTP",
+                        "Date Picker",
+                        "Label",
+                    ],
+                ))
+                .child(SidebarSeparator::new())
+                .child(sidebar_group(
+                    "Layout & Feedback",
+                    active_section,
+                    vec![
+                        "Tabs",
+                        "Accordion",
+                        "Collapsible",
+                        "Dialog",
+                        "Alert Dialog",
+                        "Drawer",
+                        "Alert",
+                        "Avatar",
+                        "Progress",
+                        "Separator",
+                        "Skeleton",
+                        "Tooltip",
+                        "Aspect Ratio",
+                        "Scroll Area",
+                        "Resizable",
+                    ],
+                ))
+                .child(SidebarSeparator::new())
+                .child(sidebar_group(
+                    "Overlays & Navigation",
+                    active_section,
+                    vec![
+                        "Popover",
+                        "Sheet",
+                        "Dropdown Menu",
+                        "Menubar",
+                        "Navigation Menu",
+                        "Breadcrumb",
+                        "Pagination",
+                        "Command",
+                    ],
+                ))
+                .child(SidebarSeparator::new())
+                .child(sidebar_group(
+                    "Data & Misc",
+                    active_section,
+                    vec![
+                        "Table",
+                        "Calendar",
+                        "Carousel",
+                        "Toast",
+                        "Toggle",
+                        "Toggle Group",
+                        "Hover Card",
+                        "Context Menu",
+                        "Sidebar",
+                    ],
+                )),
+        )
+        .footer(
+            SidebarFooter::new().child(Label::derived(|| "v0.1.0").style(|s| {
+                s.font_size(12.0)
+                    .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
+            })),
+        )
+        .into_any()
 }
 
 fn app_view() -> impl IntoView {
@@ -78,162 +232,12 @@ fn app_view() -> impl IntoView {
     let theme_mode = RwSignal::new(ThemeMode::Light);
 
     Stack::horizontal((
-        Sidebar::new()
-            .header(
-                SidebarHeader::new().child(
-                    Stack::vertical((
-                        Label::derived(|| "floem-shadcn")
-                            .style(|s| s.font_size(18.0).font_weight(FontWeight::BOLD)),
-                        Button::new("Toggle Theme").outline().sm().on_event_stop(
-                            floem::event::listener::Click,
-                            move |_, _| {
-                                theme_mode.update(|m| {
-                                    *m = match m {
-                                        ThemeMode::Light => ThemeMode::Dark,
-                                        ThemeMode::Dark => ThemeMode::Light,
-                                    }
-                                });
-                            },
-                        ),
-                    ))
-                    .style(|s| s.gap(4.0)),
-                ),
-            )
-            .content(
-                SidebarContent::new()
-                    .child(sidebar_group(
-                        "Form Inputs",
-                        active_section,
-                        vec![
-                            "Buttons",
-                            "Badges",
-                            "Cards",
-                            "Inputs",
-                            "Textarea",
-                            "Checkbox",
-                            "Switch",
-                            "Radio Group",
-                            "Slider",
-                            "Select",
-                            "Combobox",
-                            "Input OTP",
-                            "Date Picker",
-                            "Label",
-                        ],
-                    ))
-                    .child(SidebarSeparator::new())
-                    .child(sidebar_group(
-                        "Layout & Feedback",
-                        active_section,
-                        vec![
-                            "Tabs",
-                            "Accordion",
-                            "Collapsible",
-                            "Dialog",
-                            "Alert Dialog",
-                            "Drawer",
-                            "Alert",
-                            "Avatar",
-                            "Progress",
-                            "Separator",
-                            "Skeleton",
-                            "Tooltip",
-                            "Aspect Ratio",
-                            "Scroll Area",
-                            "Resizable",
-                        ],
-                    ))
-                    .child(SidebarSeparator::new())
-                    .child(sidebar_group(
-                        "Overlays & Navigation",
-                        active_section,
-                        vec![
-                            "Popover",
-                            "Sheet",
-                            "Dropdown Menu",
-                            "Menubar",
-                            "Navigation Menu",
-                            "Breadcrumb",
-                            "Pagination",
-                            "Command",
-                        ],
-                    ))
-                    .child(SidebarSeparator::new())
-                    .child(sidebar_group(
-                        "Data & Misc",
-                        active_section,
-                        vec![
-                            "Table",
-                            "Calendar",
-                            "Carousel",
-                            "Toast",
-                            "Toggle",
-                            "Toggle Group",
-                            "Hover Card",
-                            "Context Menu",
-                            "Sidebar",
-                        ],
-                    )),
-            )
-            .footer(
-                SidebarFooter::new().child(Label::derived(|| "v0.1.0").style(|s| {
-                    s.font_size(12.0)
-                        .with_shadcn_theme(|s, t| s.color(t.muted_foreground))
-                })),
-            ),
+        sidebar_nav(active_section, theme_mode),
         floem::views::Scroll::new(floem::views::dyn_container(
             move || active_section.get(),
-            move |section| match section.as_str() {
-                "buttons" => buttons_demo().into_any(),
-                "badges" => badges_demo().into_any(),
-                "cards" => cards_demo().into_any(),
-                "inputs" => inputs_demo().into_any(),
-                "textarea" => textarea_demo().into_any(),
-                "checkbox" => checkbox_demo().into_any(),
-                "switch" => switch_demo().into_any(),
-                "tabs" => tabs_demo().into_any(),
-                "dialog" => dialog_demo().into_any(),
-                "alert" => alert_demo().into_any(),
-                "avatar" => avatar_demo().into_any(),
-                "progress" => progress_demo().into_any(),
-                "separator" => separator_demo().into_any(),
-                "skeleton" => skeleton_demo().into_any(),
-                "tooltip" => tooltip_demo().into_any(),
-                "accordion" => accordion_demo().into_any(),
-                "slider" => slider_demo().into_any(),
-                "radio_group" => radio_demo().into_any(),
-                "popover" => popover_demo().into_any(),
-                "sheet" => sheet_demo().into_any(),
-                "dropdown_menu" => dropdown_demo().into_any(),
-                "breadcrumb" => breadcrumb_demo().into_any(),
-                "table" => table_demo().into_any(),
-                "toast" => toast_demo().into_any(),
-                "toggle" => toggle_demo().into_any(),
-                "toggle_group" => toggle_group_demo().into_any(),
-                "hover_card" => hover_card_demo().into_any(),
-                "context_menu" => context_menu_demo().into_any(),
-                "sidebar" => sidebar_demo().into_any(),
-                "select" => select_demo().into_any(),
-                "combobox" => combobox_demo().into_any(),
-                "input_otp" => input_otp_demo().into_any(),
-                "date_picker" => date_picker_demo().into_any(),
-                "label" => label_demo().into_any(),
-                "collapsible" => collapsible_demo().into_any(),
-                "alert_dialog" => alert_dialog_demo().into_any(),
-                "drawer" => drawer_demo().into_any(),
-                "aspect_ratio" => aspect_ratio_demo().into_any(),
-                "scroll_area" => scroll_area_demo().into_any(),
-                "resizable" => resizable_demo().into_any(),
-                "menubar" => menubar_demo().into_any(),
-                "navigation_menu" => navigation_menu_demo().into_any(),
-                "pagination" => pagination_demo().into_any(),
-                "command" => command_demo().into_any(),
-                "calendar" => calendar_demo().into_any(),
-                "carousel" => carousel_demo().into_any(),
-                _ => buttons_demo().into_any(),
-            },
+            move |section| demo_view(&section),
         ))
-        .style(|s| s.flex_grow(1.0).h_full().p_8().bg_background()),
+        .style(|s| s.flex_grow(1.0_f32).h_full().p_8().bg_background()),
     ))
     .style(move |s| {
         let _ = theme_mode.get();
@@ -253,10 +257,10 @@ fn sidebar_group(label: &str, active_section: RwSignal<String>, items: Vec<&str>
         let id_clone = id.clone();
         content = content.child(
             SidebarMenuItem::new().child(
-                SidebarMenuButton::new(item.to_string())
+                SidebarMenuButton::with_label(item.to_string())
                     .is_active(move || active_section.get() == id)
-                    .on_event_stop(floem::event::listener::Click, move |_, _| {
-                        active_section.set(id_clone.clone())
+                    .on_event_stop(floem::event::listener::Click, move |_, ()| {
+                        active_section.set(id_clone.clone());
                     }),
             ),
         );
@@ -355,7 +359,7 @@ fn checkbox_demo() -> impl IntoView {
     demo_section(
         "Checkbox",
         "A checkbox component.",
-        Stack::vertical((Checkbox::new(c1.clone()).label("Accept terms"),)).style(|s| s.gap(8.0)),
+        Stack::vertical((Checkbox::new(c1).label("Accept terms"),)).style(|s| s.gap(8.0)),
     )
 }
 
@@ -531,7 +535,7 @@ fn sheet_demo() -> impl IntoView {
         "A slide-out panel.",
         Stack::vertical((
             Button::new("Open Sheet")
-                .on_event_stop(floem::event::listener::Click, move |_, _| open.set(true)),
+                .on_event_stop(floem::event::listener::Click, move |_, ()| open.set(true)),
             Sheet::new(
                 open,
                 SheetContent::new(Label::derived(|| "Sheet content")).side(SheetSide::Right),
@@ -603,7 +607,7 @@ fn toast_demo() -> impl IntoView {
         "Toast",
         "A notification system.",
         Stack::vertical((
-            Button::new("Show Toast").on_event_stop(floem::event::listener::Click, move |_, _| {
+            Button::new("Show Toast").on_event_stop(floem::event::listener::Click, move |_, ()| {
                 push_toast(toasts, ToastData::new("Title", "Description"));
             }),
             ToastContainer::new(toasts),
@@ -750,7 +754,7 @@ fn drawer_demo() -> impl IntoView {
         "A slide-out panel.",
         Stack::vertical((
             Button::new("Open Drawer")
-                .on_event_stop(floem::event::listener::Click, move |_, _| open.set(true)),
+                .on_event_stop(floem::event::listener::Click, move |_, ()| open.set(true)),
             Drawer::new(open)
                 .side(DrawerSide::Bottom)
                 .content(Label::derived(|| "Drawer content")),
@@ -876,4 +880,26 @@ fn demo_section<V: IntoView + 'static>(
         content,
     ))
     .style(|s| s.w_full().mb_4())
+}
+
+/// The showcase sidebar header (title + theme toggle).
+fn sidebar_header(theme_mode: RwSignal<ThemeMode>) -> floem::AnyView {
+    SidebarHeader::new()
+        .child(Stack::vertical((
+            Label::derived(|| "floem-shadcn")
+                .style(|s| s.font_size(18.0).font_weight(FontWeight::BOLD)),
+            Button::new("Toggle Theme").outline().sm().on_event_stop(
+                floem::event::listener::Click,
+                move |_, ()| {
+                    theme_mode.update(|m| {
+                        *m = match m {
+                            ThemeMode::Light => ThemeMode::Dark,
+                            ThemeMode::Dark => ThemeMode::Light,
+                        }
+                    });
+                },
+            ),
+        )))
+        .style(|s| s.gap(4.0))
+        .into_any()
 }
