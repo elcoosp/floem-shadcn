@@ -7,12 +7,17 @@ use floem::views::Decorators;
 use floem::{HasViewId, ViewId};
 
 #[derive(Clone)]
+/// The `SelectItemData`.
 pub struct SelectItemData {
+    /// The item.
     pub value: String,
+    /// The item.
     pub label: String,
+    /// The item.
     pub disabled: bool,
 }
 impl SelectItemData {
+    /// Creates a new it.
     pub fn new(v: impl Into<String>, l: impl Into<String>) -> Self {
         Self {
             value: v.into(),
@@ -20,11 +25,14 @@ impl SelectItemData {
             disabled: false,
         }
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self) -> Self {
         self.disabled = true;
         self
     }
 }
+/// The Select.
 pub struct Select {
     id: ViewId,
     selected: RwSignal<Option<String>>,
@@ -34,7 +42,149 @@ pub struct Select {
     trigger_origin: RwSignal<floem::kurbo::Point>,
     trigger_size: RwSignal<floem::kurbo::Size>,
 }
+
+/// Build the closed-select trigger chip (label + caret + layout tracking).
+fn select_trigger(
+    sel: RwSignal<Option<String>>,
+    placeholder: String,
+    items: Vec<SelectItemData>,
+    disabled: bool,
+    trigger_origin: RwSignal<floem::kurbo::Point>,
+    trigger_size: RwSignal<floem::kurbo::Size>,
+) -> impl IntoView {
+    floem::views::Stack::horizontal((
+        floem::views::Label::derived(move || {
+            if let Some(v) = sel.get() {
+                items
+                    .iter()
+                    .find(|i| i.value == v)
+                    .map(|i| i.label.clone())
+                    .unwrap_or(v)
+            } else {
+                placeholder.clone()
+            }
+        })
+        .style(move |s| {
+            s.with_shadcn_theme(move |s, t| {
+                let hv = sel.get().is_some();
+                s.flex_grow(1.0_f32).font_size(14.0).color(if hv {
+                    t.foreground
+                } else {
+                    t.muted_foreground
+                })
+            })
+        }),
+        floem::views::Label::new("▼").style(|s| {
+            s.with_shadcn_theme(move |s, t| {
+                s.font_size(10.0)
+                    .color(t.muted_foreground)
+                    .flex_shrink(0.0_f32)
+            })
+        }),
+    ))
+    .style(move |s| {
+        s.with_shadcn_theme(move |s, t| {
+            s.min_width(120.0)
+                .height(36.0)
+                .padding_left(12.0)
+                .padding_right(12.0)
+                .padding_top(8.0)
+                .padding_bottom(8.0)
+                .gap(8.0)
+                .items_center()
+                .border(1.0)
+                .border_color(t.input)
+                .border_radius(6.0)
+                .background(t.background)
+                .box_shadow_blur(2.0)
+                .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 25))
+                .apply_if(disabled, |s| s.cursor(CursorStyle::Default))
+                .apply_if(!disabled, |s| {
+                    s.cursor(CursorStyle::Pointer)
+                        .hover(|s| s.border_color(t.ring))
+                })
+        })
+    })
+    .on_event_stop(
+        LayoutChanged::listener(),
+        move |_cx, event: &LayoutChanged| {
+            trigger_origin.set(event.new_window_origin);
+            trigger_size.set(event.new_box.size());
+        },
+    )
+}
+
+/// Build the dropdown row for one select item.
+fn select_item_view(
+    item: &SelectItemData,
+    selected_signal: RwSignal<Option<String>>,
+    open_signal: RwSignal<bool>,
+) -> Box<dyn View> {
+    let item_value = item.value.clone();
+    let item_label = item.label.clone();
+    let item_disabled = item.disabled;
+    let check_value = item_value.clone();
+    let hover_value = item_value.clone();
+    let click_value = item_value;
+    Box::new(
+        floem::views::Container::new(
+            floem::views::Stack::horizontal((
+                floem::views::Label::new(item_label)
+                    .style(|s| s.font_size(14.0).flex_grow(1.0_f32)),
+                floem::views::Label::new("✓").style(move |s| {
+                    let v = check_value.clone();
+                    s.with_shadcn_theme(move |s, t| {
+                        let is_sel = selected_signal.get() == Some(v.clone());
+                        s.size(16.0, 16.0)
+                            .font_size(14.0)
+                            .color(t.foreground)
+                            .items_center()
+                            .justify_center()
+                            .flex_shrink(0.0_f32)
+                            .apply_if(!is_sel, |s| s.display(floem::style::Display::None))
+                    })
+                }),
+            ))
+            .style(|s| s.width_full().items_center().gap(8.0)),
+        )
+        .style(move |s| {
+            let v = hover_value.clone();
+            s.with_shadcn_theme(move |s, t| {
+                let is_sel = selected_signal.get() == Some(v.clone());
+                let base = s
+                    .width_full()
+                    .padding_top(6.0)
+                    .padding_bottom(6.0)
+                    .padding_left(8.0)
+                    .padding_right(8.0)
+                    .items_center()
+                    .border_radius(3.0)
+                    .cursor(if item_disabled {
+                        CursorStyle::Default
+                    } else {
+                        CursorStyle::Pointer
+                    });
+                if is_sel {
+                    base.background(t.accent).color(t.accent_foreground)
+                } else if item_disabled {
+                    base.color(t.muted_foreground).opacity(0.5_f32)
+                } else {
+                    base.color(t.foreground)
+                        .hover(|s| s.background(t.accent).color(t.accent_foreground))
+                }
+            })
+        })
+        .on_event_stop(floem::event::listener::Click, move |_, ()| {
+            if !item_disabled {
+                selected_signal.set(Some(click_value.clone()));
+                open_signal.set(false);
+            }
+        }),
+    ) as _
+}
 impl Select {
+    #[must_use]
+    /// Creates a new it.
     pub fn new(s: RwSignal<Option<String>>) -> Self {
         Self {
             id: ViewId::new(),
@@ -46,14 +196,20 @@ impl Select {
             trigger_size: RwSignal::new(floem::kurbo::Size::ZERO),
         }
     }
+    #[must_use]
+    /// The placeholder.
     pub fn placeholder(mut self, p: impl Into<String>) -> Self {
         self.placeholder = p.into();
         self
     }
+    #[must_use]
+    /// The items.
     pub fn items(mut self, i: Vec<SelectItemData>) -> Self {
         self.items = i;
         self
     }
+    #[must_use]
+    /// The disabled.
     pub fn disabled(mut self, d: bool) -> Self {
         self.disabled = d;
         self
@@ -79,146 +235,28 @@ impl IntoView for Select {
         let trigger_size = self.trigger_size;
         let is_open = RwSignal::new(false);
         let items_for_trigger = items.clone();
-        let trigger = floem::views::Stack::horizontal((
-            floem::views::Label::derived(move || {
-                if let Some(v) = sel.get() {
-                    items_for_trigger
-                        .iter()
-                        .find(|i| i.value == v)
-                        .map(|i| i.label.clone())
-                        .unwrap_or(v)
-                } else {
-                    ph.clone()
-                }
-            })
-            .style(move |s| {
-                s.with_shadcn_theme(move |s, t| {
-                    let hv = sel.get().is_some();
-                    s.flex_grow(1.0).font_size(14.0).color(if hv {
-                        t.foreground
-                    } else {
-                        t.muted_foreground
-                    })
-                })
-            }),
-            floem::views::Label::new("▼").style(|s| {
-                s.with_shadcn_theme(move |s, t| {
-                    s.font_size(10.0).color(t.muted_foreground).flex_shrink(0.0)
-                })
-            }),
-        ))
-        .style(move |s| {
-            s.with_shadcn_theme(move |s, t| {
-                s.min_width(120.0)
-                    .height(36.0)
-                    .padding_left(12.0)
-                    .padding_right(12.0)
-                    .padding_top(8.0)
-                    .padding_bottom(8.0)
-                    .gap(8.0)
-                    .items_center()
-                    .border(1.0)
-                    .border_color(t.input)
-                    .border_radius(6.0)
-                    .background(t.background)
-                    .box_shadow_blur(2.0)
-                    .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
-                    .apply_if(disabled, |s| s.cursor(CursorStyle::Default))
-                    .apply_if(!disabled, |s| {
-                        s.cursor(CursorStyle::Pointer)
-                            .hover(|s| s.border_color(t.ring))
-                    })
-            })
-        })
-        .on_event_stop(
-            LayoutChanged::listener(),
-            move |_cx, event: &LayoutChanged| {
-                trigger_origin.set(event.new_window_origin);
-                trigger_size.set(event.new_box.size());
-            },
+        let trigger = select_trigger(
+            sel,
+            ph,
+            items_for_trigger,
+            disabled,
+            trigger_origin,
+            trigger_size,
         );
-        let trigger = if !disabled {
+        let trigger = if disabled {
+            trigger.into_any()
+        } else {
             trigger
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     is_open.update(|v| *v = !*v);
                 })
                 .into_any()
-        } else {
-            trigger.into_any()
         };
         let to = trigger_origin;
         let ts = trigger_size;
         let item_views: Vec<Box<dyn View>> = items
             .iter()
-            .map(|item| {
-                let v = item.value.clone();
-                let l = item.label.clone();
-                let d = item.disabled;
-                let sel2 = self.selected;
-                let io2 = is_open;
-                let vc = v.clone();
-                let vs = v.clone();
-                let vk = v.clone();
-                Box::new(
-                    floem::views::Container::new(
-                        floem::views::Stack::horizontal((
-                            floem::views::Label::new(l).style(|s| s.font_size(14.0).flex_grow(1.0)),
-                            floem::views::Label::new("✓").style(move |s| {
-                                let v = vc.clone();
-                                s.with_shadcn_theme(move |s, t| {
-                                    let is_sel = sel2.get() == Some(v.clone());
-                                    s.size(16.0, 16.0)
-                                        .font_size(14.0)
-                                        .color(t.foreground)
-                                        .items_center()
-                                        .justify_center()
-                                        .flex_shrink(0.0)
-                                        .apply_if(!is_sel, |s| {
-                                            s.display(floem::style::Display::None)
-                                        })
-                                })
-                            }),
-                        ))
-                        .style(|s| s.width_full().items_center().gap(8.0)),
-                    )
-                    .style(move |s| {
-                        let v = vs.clone();
-                        s.with_shadcn_theme(move |s, t| {
-                            let is_sel = sel2.get() == Some(v.clone());
-                            let base = s
-                                .width_full()
-                                .padding_top(6.0)
-                                .padding_bottom(6.0)
-                                .padding_left(8.0)
-                                .padding_right(8.0)
-                                .items_center()
-                                .border_radius(3.0)
-                                .cursor(if d {
-                                    CursorStyle::Default
-                                } else {
-                                    CursorStyle::Pointer
-                                });
-                            if is_sel {
-                                base.background(t.accent).color(t.accent_foreground)
-                            } else if d {
-                                base.color(t.muted_foreground).opacity(0.5)
-                            } else {
-                                base.color(t.foreground)
-                                    .hover(|s| s.background(t.accent).color(t.accent_foreground))
-                            }
-                        })
-                    })
-                    .on_event_stop(
-                        floem::event::listener::Click,
-                        move |_, _| {
-                            if !d {
-                                sel2.set(Some(vk.clone()));
-                                io2.set(false);
-                            }
-                        },
-                    ),
-                ) as _
-            })
+            .map(|item| select_item_view(item, self.selected, is_open))
             .collect();
         let items_container = floem::views::Stack::vertical_from_iter(item_views)
             .style(|s| s.width_full().max_height(300.0));
@@ -238,7 +276,7 @@ impl IntoView for Select {
                     .border_color(t.border)
                     .border_radius(6.0)
                     .box_shadow_blur(4.0)
-                    .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 40))
+                    .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 40))
                     .z_index(100)
                     .flex_direction(floem::style::FlexDirection::Column)
                     .apply_if(!is_open.get(), |s| s.display(floem::style::Display::None))
@@ -247,12 +285,14 @@ impl IntoView for Select {
         Box::new(floem::views::Stack::new((trigger, dropdown)))
     }
 }
+/// The `SelectTrigger`.
 pub struct SelectTrigger<V> {
     id: ViewId,
     child: V,
     is_open: RwSignal<bool>,
 }
 impl<V: IntoView + 'static> SelectTrigger<V> {
+    /// Creates a new it.
     pub fn new(c: V, io: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -290,23 +330,25 @@ impl<V: IntoView + 'static> IntoView for SelectTrigger<V> {
                             .border_radius(6.0)
                             .background(t.background)
                             .box_shadow_blur(2.0)
-                            .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 25))
+                            .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 25))
                             .cursor(CursorStyle::Pointer)
                             .hover(|s| s.border_color(t.ring))
                     })
                 })
-                .on_event_stop(floem::event::listener::Click, move |_, _| {
+                .on_event_stop(floem::event::listener::Click, move |_, ()| {
                     io.update(|v| *v = !*v);
                 }),
         )
     }
 }
+/// The `SelectContent`.
 pub struct SelectContent<V> {
     id: ViewId,
     child: V,
     is_open: RwSignal<bool>,
 }
 impl<V: IntoView + 'static> SelectContent<V> {
+    /// Creates a new it.
     pub fn new(c: V, io: RwSignal<bool>) -> Self {
         Self {
             id: ViewId::new(),
@@ -344,7 +386,7 @@ impl<V: IntoView + 'static> IntoView for SelectContent<V> {
                         .border_color(t.border)
                         .border_radius(6.0)
                         .box_shadow_blur(4.0)
-                        .box_shadow_color(peniko::Color::from_rgba8(0, 0, 0, 40))
+                        .box_shadow_color(floem::peniko::Color::from_rgba8(0, 0, 0, 40))
                         .z_index(100)
                         .flex_direction(floem::style::FlexDirection::Column);
                     if io.get() {
@@ -357,21 +399,26 @@ impl<V: IntoView + 'static> IntoView for SelectContent<V> {
         )
     }
 }
+/// The `SelectItem`.
 pub struct SelectItem;
 impl SelectItem {
-    #[allow(dead_code)]
+    #[must_use]
+    /// Creates a new it.
     pub fn new(_: impl Into<String>, _: impl Into<String>) -> Self {
         Self
     }
-    #[allow(dead_code)]
+    #[must_use]
+    /// The disabled.
     pub fn disabled(self, _: bool) -> Self {
         self
     }
-    #[allow(dead_code)]
+    #[must_use]
+    /// The bind.
     pub fn bind(self, _: RwSignal<Option<String>>) -> Self {
         self
     }
-    #[allow(dead_code)]
+    #[must_use]
+    /// The auto close.
     pub fn auto_close(self, _: RwSignal<bool>) -> Self {
         self
     }
@@ -391,9 +438,11 @@ impl IntoView for SelectItem {
         Box::new(floem::views::Empty::new())
     }
 }
+/// The `SelectLabel`.
 pub struct SelectLabel;
 impl SelectLabel {
-    #[allow(dead_code)]
+    #[must_use]
+    /// Creates a new it.
     pub fn new(_: impl Into<String>) -> Self {
         Self
     }
@@ -413,8 +462,11 @@ impl IntoView for SelectLabel {
         Box::new(floem::views::Empty::new())
     }
 }
+/// The `SelectSeparator`.
 pub struct SelectSeparator;
 impl SelectSeparator {
+    #[must_use]
+    /// Creates a new it.
     pub fn new() -> Self {
         Self
     }
@@ -439,11 +491,13 @@ impl IntoView for SelectSeparator {
         Box::new(floem::views::Empty::new())
     }
 }
+/// The `SelectGroup`.
 pub struct SelectGroup<V> {
     id: ViewId,
     child: V,
 }
 impl<V: IntoView + 'static> SelectGroup<V> {
+    /// Creates a new it.
     pub fn new(_: impl Into<String>, child: V) -> Self {
         Self {
             id: ViewId::new(),
