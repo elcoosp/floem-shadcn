@@ -14,19 +14,25 @@ pub mod card;
 pub mod carousel;
 pub mod checkbox;
 pub mod collapsible;
+/// The combobox.
 pub mod combobox;
+/// The command.
 pub mod command;
 pub mod context_menu;
+/// The date picker.
 pub mod date_picker;
 pub mod dialog;
 pub mod drawer;
 pub mod dropdown_menu;
 pub mod empty;
+/// The hover card.
 pub mod hover_card;
+/// The input.
 pub mod input;
 pub mod input_group;
 pub mod input_otp;
 pub mod item;
+/// The kbd.
 pub mod kbd;
 pub mod label;
 pub mod menubar;
@@ -37,19 +43,28 @@ pub mod progress;
 pub mod radio_group;
 pub mod resizable;
 pub mod scroll_area;
+/// The select.
 pub mod select;
 pub mod separator;
 pub mod sheet;
 pub mod sidebar;
 pub mod skeleton;
+/// The slider.
 pub mod slider;
 pub mod spinner;
 pub mod switch;
 pub mod table;
 pub mod tabs;
+/// The textarea.
 pub mod textarea;
 pub mod toast;
 pub mod toggle;
 pub mod toggle_group;
 pub mod tooltip;
 pub mod typography;
+
+/// Chart component.
+pub mod chart;
+
+/// Field component.
+pub mod field;
