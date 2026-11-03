@@ -1,3 +1,5 @@
+//! Integration tests for the Combobox Test component.
+
 // Minimal test for Combobox component
 //!
 // Run with: cargo run --example combobox_test
@@ -19,7 +21,7 @@ fn app_view() -> impl IntoView {
         Label::derived(move || format!("Selected: {:?}", selected.get()))
             .style(|s| s.padding(8.0).margin_bottom(16.0)),
         // The combobox
-        Combobox::new(selected.clone(), search.clone())
+        Combobox::new(selected, search)
             .child(ComboboxTrigger::new("Select a framework...").items([
                 ("next", "Next.js"),
                 ("svelte", "SvelteKit"),
