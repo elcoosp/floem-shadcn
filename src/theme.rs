@@ -1,8 +1,9 @@
 //! Theme system for floem-shadcn
 
+use floem::peniko::Color;
+use floem::peniko::color::{AlphaColor, HueDirection, Oklch, Srgb};
 use floem::style::{Style, StylePropValue};
-use peniko::Color;
-use peniko::color::{AlphaColor, Oklch, Srgb};
+use num_traits::ToPrimitive;
 
 #[inline]
 fn oklch(l: f32, c: f32, h: f32) -> Color {
@@ -14,42 +15,73 @@ fn oklcha(l: f32, c: f32, h: f32, a: f32) -> Color {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+/// The `ThemeMode`.
 pub enum ThemeMode {
     #[default]
+    /// The item.
     Light,
+    /// The item.
     Dark,
 }
 #[derive(Debug, Clone, Copy, PartialEq)]
+/// The `ShadcnTheme`.
 pub struct ShadcnTheme {
+    /// The item.
     pub mode: ThemeMode,
+    /// The item.
     pub background: Color,
+    /// The item.
     pub foreground: Color,
+    /// The item.
     pub card: Color,
+    /// The item.
     pub card_foreground: Color,
+    /// The item.
     pub popover: Color,
+    /// The item.
     pub popover_foreground: Color,
+    /// The item.
     pub primary: Color,
+    /// The item.
     pub primary_foreground: Color,
+    /// The item.
     pub secondary: Color,
+    /// The item.
     pub secondary_foreground: Color,
+    /// The item.
     pub muted: Color,
+    /// The item.
     pub muted_foreground: Color,
+    /// The item.
     pub accent: Color,
+    /// The item.
     pub accent_foreground: Color,
+    /// The item.
     pub destructive: Color,
+    /// The item.
     pub destructive_foreground: Color,
+    /// The item.
     pub border: Color,
+    /// The item.
     pub input: Color,
+    /// The item.
     pub ring: Color,
+    /// The item.
     pub radius: f32,
+    /// The item.
     pub radius_sm: f32,
+    /// The item.
     pub radius_md: f32,
+    /// The item.
     pub radius_lg: f32,
 }
 thread_local! { static THEME: std::cell::RefCell<ShadcnTheme> = std::cell::RefCell::new(ShadcnTheme::light()); }
+#[must_use]
+/// The current theme.
 pub fn current_theme() -> ShadcnTheme {
     THEME.with(|t| *t.borrow())
 }
+/// Sets theme.
 pub fn set_theme(t: ShadcnTheme) {
     THEME.with(|c| *c.borrow_mut() = t);
 }
@@ -59,6 +91,8 @@ impl Default for ShadcnTheme {
     }
 }
 impl ShadcnTheme {
+    #[must_use]
+    /// The light.
     pub fn light() -> Self {
         Self {
             mode: ThemeMode::Light,
@@ -87,6 +121,8 @@ impl ShadcnTheme {
             radius_lg: 8.0,
         }
     }
+    #[must_use]
+    /// The dark.
     pub fn dark() -> Self {
         Self {
             mode: ThemeMode::Dark,
@@ -115,23 +151,32 @@ impl ShadcnTheme {
             radius_lg: 8.0,
         }
     }
-    fn adj(c: Color, d: f32) -> Color {
-        let o: AlphaColor<Oklch> = c.convert();
-        let [l, ch, h, a] = o.components;
-        AlphaColor::<Oklch>::new([(l + d).clamp(0., 1.), ch, h, a]).convert::<Srgb>()
+    fn adj(color: Color, delta: f32) -> Color {
+        let ok: AlphaColor<Oklch> = color.convert();
+        let [lightness, chroma, hue, alpha] = ok.components;
+        AlphaColor::<Oklch>::new([(lightness + delta).clamp(0., 1.), chroma, hue, alpha])
+            .convert::<Srgb>()
     }
+    #[must_use]
+    /// The darken.
     pub fn darken(&self, c: Color) -> Color {
         Self::adj(c, -0.05)
     }
+    #[must_use]
+    /// The lighten.
     pub fn lighten(&self, c: Color) -> Color {
         Self::adj(c, 0.05)
     }
+    #[must_use]
+    /// The hover color.
     pub fn hover_color(&self, c: Color) -> Color {
         match self.mode {
             ThemeMode::Light => self.darken(c),
             ThemeMode::Dark => self.lighten(c),
         }
     }
+    #[must_use]
+    /// The active color.
     pub fn active_color(&self, c: Color) -> Color {
         match self.mode {
             ThemeMode::Light => Self::adj(c, -0.10),
@@ -144,52 +189,62 @@ fn lerp_f32(a: f32, b: f32, t: f32) -> f32 {
 }
 impl StylePropValue for ShadcnTheme {
     fn interpolate(&self, o: &Self, val: f64) -> Option<Self> {
-        let t = val as f32;
+        let t = val.to_f32().unwrap_or(0.0);
         Some(Self {
             mode: if t < 0.5 { self.mode } else { o.mode },
-            background: self.background.lerp(o.background, t, Default::default()),
-            foreground: self.foreground.lerp(o.foreground, t, Default::default()),
-            card: self.card.lerp(o.card, t, Default::default()),
-            card_foreground: self
-                .card_foreground
-                .lerp(o.card_foreground, t, Default::default()),
-            popover: self.popover.lerp(o.popover, t, Default::default()),
+            background: self
+                .background
+                .lerp(o.background, t, HueDirection::default()),
+            foreground: self
+                .foreground
+                .lerp(o.foreground, t, HueDirection::default()),
+            card: self.card.lerp(o.card, t, HueDirection::default()),
+            card_foreground: self.card_foreground.lerp(
+                o.card_foreground,
+                t,
+                HueDirection::default(),
+            ),
+            popover: self.popover.lerp(o.popover, t, HueDirection::default()),
             popover_foreground: self.popover_foreground.lerp(
                 o.popover_foreground,
                 t,
-                Default::default(),
+                HueDirection::default(),
             ),
-            primary: self.primary.lerp(o.primary, t, Default::default()),
+            primary: self.primary.lerp(o.primary, t, HueDirection::default()),
             primary_foreground: self.primary_foreground.lerp(
                 o.primary_foreground,
                 t,
-                Default::default(),
+                HueDirection::default(),
             ),
-            secondary: self.secondary.lerp(o.secondary, t, Default::default()),
+            secondary: self.secondary.lerp(o.secondary, t, HueDirection::default()),
             secondary_foreground: self.secondary_foreground.lerp(
                 o.secondary_foreground,
                 t,
-                Default::default(),
+                HueDirection::default(),
             ),
-            muted: self.muted.lerp(o.muted, t, Default::default()),
-            muted_foreground: self
-                .muted_foreground
-                .lerp(o.muted_foreground, t, Default::default()),
-            accent: self.accent.lerp(o.accent, t, Default::default()),
+            muted: self.muted.lerp(o.muted, t, HueDirection::default()),
+            muted_foreground: self.muted_foreground.lerp(
+                o.muted_foreground,
+                t,
+                HueDirection::default(),
+            ),
+            accent: self.accent.lerp(o.accent, t, HueDirection::default()),
             accent_foreground: self.accent_foreground.lerp(
                 o.accent_foreground,
                 t,
-                Default::default(),
+                HueDirection::default(),
             ),
-            destructive: self.destructive.lerp(o.destructive, t, Default::default()),
+            destructive: self
+                .destructive
+                .lerp(o.destructive, t, HueDirection::default()),
             destructive_foreground: self.destructive_foreground.lerp(
                 o.destructive_foreground,
                 t,
-                Default::default(),
+                HueDirection::default(),
             ),
-            border: self.border.lerp(o.border, t, Default::default()),
-            input: self.input.lerp(o.input, t, Default::default()),
-            ring: self.ring.lerp(o.ring, t, Default::default()),
+            border: self.border.lerp(o.border, t, HueDirection::default()),
+            input: self.input.lerp(o.input, t, HueDirection::default()),
+            ring: self.ring.lerp(o.ring, t, HueDirection::default()),
             radius: lerp_f32(self.radius, o.radius, t),
             radius_sm: lerp_f32(self.radius_sm, o.radius_sm, t),
             radius_md: lerp_f32(self.radius_md, o.radius_md, t),
@@ -197,7 +252,10 @@ impl StylePropValue for ShadcnTheme {
         })
     }
 }
+/// The `ShadcnThemeExt`.
 pub trait ShadcnThemeExt {
+    #[must_use]
+    /// Configures shadcn theme.
     fn with_shadcn_theme(
         self,
         f: impl Fn(floem::style::Style, &ShadcnTheme) -> floem::style::Style + 'static,
