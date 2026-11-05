@@ -29,6 +29,7 @@ pub mod theme;
 /// The prelude.
 pub mod prelude {
     pub use crate::components::accordion::{Accordion, AccordionItem};
+    pub use crate::components::accordion_rich::RichAccordionItem;
     pub use crate::components::alert::{Alert, AlertVariant};
     pub use crate::components::alert_dialog::{
         AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
