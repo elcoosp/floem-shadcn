@@ -628,6 +628,16 @@ To see headless layout output during a failing test, add `-- --nocapture` and th
 
 ---
 
+## Changelog
+
+### 0.2.0
+
+- **Fixed the manifest blocker**: 0.1.x declared `floem-tailwind = { path = "https://github.com/elcoosp/floem-tailwind" }` — a URL is not a valid path dependency, so the crate could not be consumed from crates.io-style checkouts at all. It is a rev-pinned git dependency now.
+- **New `accordion_rich` module**: `RichAccordionItem` accepts arbitrary Floem views as trigger and content (the 0.1.x `AccordionItem` renders `String` title/content pairs only). Same shared `RwSignal<Option<String>>` toggle contract, chevron and `Display::None` mechanics as the string item.
+- Prepared for the [`quoin`](https://github.com/elcoosp/quoin) `floem-shadcn` backend (rich-elements Phase 2): quoin's `accordion`/`tabs`/`tooltip` lowerings consume this crate as a sibling path dependency (`../floem-shadcn`).
+
+---
+
 ## License
 
 MIT — see [`LICENSE`](LICENSE) for the full text. By contributing, you agree that your contributions will be licensed under the same terms.
