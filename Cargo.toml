@@ -1,6 +1,6 @@
 [package]
 name = "floem-shadcn"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 rust-version = "1.99"
 description = "shadcn/ui inspired components for Floem"
@@ -10,11 +10,19 @@ keywords = ["floem", "shadcn", "gui", "components", "ui"]
 categories = ["gui"]
 
 [dependencies]
+# Keep this declaration **bare** (no `branch`/`tag`): `floem-tailwind` declares
+# its own floem dependency bare, and a branch-qualified twin would create a
+# second package id — two floem feature-variants in one graph, with
+# `TailwindExt` implemented against the wrong one ("no method `w_full` on
+# `floem::style::Style`"). Bare declarations unify by resolved rev.
 floem = { git = "https://github.com/lapce/floem" }
-floem-tailwind = { path = "https://github.com/elcoosp/floem-tailwind" }
+# 0.1.x shipped `floem-tailwind = { path = "https://…" }` — a URL is not a
+# valid path dependency and broke every consumer. Git dep, as intended.
+floem-tailwind = { git = "https://github.com/elcoosp/floem-tailwind", rev = "7329b302ad67306a5c5d21c63f55d332b0b44ede" }
 num-traits = "0.2"
 
 [dev-dependencies]
+# Bare git, same source id as the main `floem` dependency (see above).
 floem-test = { git = "https://github.com/lapce/floem" }
 serial_test = "3"
 
