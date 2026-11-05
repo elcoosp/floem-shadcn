@@ -1,6 +1,7 @@
 //! shadcn-inspired components for Floem
 
 pub mod accordion;
+pub mod accordion_rich;
 pub mod alert;
 pub mod alert_dialog;
 pub mod aspect_ratio;
